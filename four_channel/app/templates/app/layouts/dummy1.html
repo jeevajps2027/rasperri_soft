@@ -1,0 +1,175 @@
+$("#save_btn").on("click", function () {
+    const partModel = $("#part_model").val();
+    if (!partModel) {
+        alert("Part Model is required.");
+        return;
+    }
+
+    const parameterSettings = {
+        sr_no: $("#srno").val(),
+        part_model: partModel,
+        part_name: $("#part_name").val(),
+        char_lock: $("#char_lock").val(),
+        char_lock_limit: $("#char_lock_limit").val(),
+        punch_no: $("#punch_no").is(":checked")
+    };
+
+    let validationFailed = false;
+    let validationMessage = "";
+    let stepGroups = {};
+    let channelGroups = {};
+
+    // ⮕ Before validation, update `allRowsData` with visible inputs
+    $("#tableBody-1 tr").each(function (index) {
+        const globalIndex = (currentPage - 1) * rowsPerPage + index;
+        const cells = $(this).find('td');
+
+        allRowsData[globalIndex].parameter_name = cells.eq(1).find('input').val()?.trim() || '';
+        allRowsData[globalIndex].channel_no = cells.eq(2).find('button').text()?.trim() || '';
+        allRowsData[globalIndex].low_master = cells.eq(3).find('input').val()?.trim() || '';
+        allRowsData[globalIndex].high_master = cells.eq(4).find('input').val()?.trim() || '';
+        allRowsData[globalIndex].nominal = cells.eq(5).find('input').val()?.trim() || '';
+        allRowsData[globalIndex].lsl = cells.eq(6).find('input').val()?.trim() || '';
+        allRowsData[globalIndex].usl = cells.eq(7).find('input').val()?.trim() || '';
+        allRowsData[globalIndex].ltl = cells.eq(8).find('input').val()?.trim() || '';
+        allRowsData[globalIndex].utl = cells.eq(9).find('input').val()?.trim() || '';
+        allRowsData[globalIndex].master_grp = cells.eq(10).find('button').text()?.trim() || '';
+        allRowsData[globalIndex].step_no = cells.eq(11).find('button').text()?.trim() || '';
+        allRowsData[globalIndex].auto_man = cells.eq(12).find('input[type="checkbox"]').is(':checked');
+        allRowsData[globalIndex].timer = cells.eq(13).find('input').val()?.trim() || '';
+        allRowsData[globalIndex].digits = cells.eq(14).find('button').text()?.trim() || '';
+        allRowsData[globalIndex].id_od = cells.eq(15).find('button').text()?.trim() || '';
+    });
+
+    // ⮕ Now validate all 21 rows
+    allRowsData.forEach((row, index) => {
+        const rowIndex = index + 1; // For display in error messages
+
+        const hasParameter = row.parameter_name.trim() !== "";
+        let emptyFields = [];
+
+        if (hasParameter) {
+            if (!row.channel_no) emptyFields.push("CHANNEL_NO");
+            if (!row.low_master) emptyFields.push("LOW_MASTER");
+            if (!row.high_master) emptyFields.push("HIGH_MASTER");
+            if (!row.nominal) emptyFields.push("NOMINAL");
+            if (!row.lsl) emptyFields.push("LSL");
+            if (!row.usl) emptyFields.push("USL");
+            if (!row.ltl) emptyFields.push("LTL");
+            if (!row.utl) emptyFields.push("UTL");
+            if (!row.master_grp) emptyFields.push("MASTER_GRP");
+            if (!row.step_no) emptyFields.push("STEP_NO");
+        }
+
+        if (row.auto_man && !row.timer) {
+            validationFailed = true;
+            validationMessage += `Row ${rowIndex}: TIMER is required when AUTO_MAN is checked.\n`;
+        }
+
+        if (emptyFields.length > 0) {
+            validationFailed = true;
+            validationMessage += `Row ${rowIndex}: Missing fields [${emptyFields.join(", ")}]\n`;
+        }
+
+        const low_master = parseFloat(row.low_master);
+        const high_master = parseFloat(row.high_master);
+        const lsl = parseFloat(row.lsl);
+        const usl = parseFloat(row.usl);
+        const ltl = parseFloat(row.ltl);
+        const utl = parseFloat(row.utl);
+
+        if (!isNaN(low_master) && !isNaN(high_master) && low_master >= high_master) {
+            validationFailed = true;
+            validationMessage += `Row ${rowIndex}: LOW_MASTER must be smaller than HIGH_MASTER.\n`;
+        }
+        if (!isNaN(lsl) && !isNaN(usl) && usl <= lsl) {
+            validationFailed = true;
+            validationMessage += `Row ${rowIndex}: USL must be greater than LSL.\n`;
+        }
+        if (!isNaN(utl) && !isNaN(ltl) && utl <= ltl) {
+            validationFailed = true;
+            validationMessage += `Row ${rowIndex}: UTL must be greater than LTL.\n`;
+        }
+        if (!isNaN(lsl) && !isNaN(ltl) && lsl <= ltl) {
+            validationFailed = true;
+            validationMessage += `Row ${rowIndex}: LSL must be greater than LTL.\n`;
+        }
+        if (!isNaN(usl) && !isNaN(utl) && usl >= utl) {
+            validationFailed = true;
+            validationMessage += `Row ${rowIndex}: USL must be smaller than UTL.\n`;
+        }
+
+        // Grouping by STEP_NO
+        const stepNo = row.step_no;
+        if (stepNo) {
+            if (!stepGroups[stepNo]) stepGroups[stepNo] = [];
+            stepGroups[stepNo].push(row);
+        }
+
+        // Grouping by CHANNEL_NO
+        const channelNo = row.channel_no;
+        if (channelNo) {
+            if (!channelGroups[channelNo]) {
+                channelGroups[channelNo] = { masterGrp: row.master_grp, rows: [rowIndex] };
+            } else {
+                if (channelGroups[channelNo].masterGrp !== row.master_grp) {
+                    validationFailed = true;
+                    validationMessage += `Row ${rowIndex}: MASTER_GRP mismatch for CHANNEL_NO ${channelNo}.\n`;
+                }
+            }
+        }
+    });
+
+    // ⮕ STEP_NO validation
+    for (let step in stepGroups) {
+        const rows = stepGroups[step];
+        if (rows.length > 4) {
+            validationFailed = true;
+            validationMessage += `Step ${step}: Cannot have more than 4 rows.\n`;
+        }
+        const allChecked = rows.every(r => r.auto_man);
+        const anyChecked = rows.some(r => r.auto_man);
+
+        if (anyChecked && !allChecked) {
+            validationFailed = true;
+            validationMessage += `Step ${step}: If one row has AUTO_MAN checked, all must be checked.\n`;
+        }
+
+        const timers = [...new Set(rows.filter(r => r.auto_man).map(r => r.timer))];
+        if (timers.length > 1) {
+            validationFailed = true;
+            validationMessage += `Step ${step}: All TIMER values must match when AUTO_MAN is checked.\n`;
+        }
+    }
+
+    if (validationFailed) {
+        alert("Validation Error:\n" + validationMessage);
+        return;
+    }
+
+    // ⮕ Ready to POST
+    const postData = {
+        part_model: partModel,
+        parameter_settings: parameterSettings,
+        table_data: allRowsData
+    };
+
+    console.log("postData", postData);
+
+    $.ajax({
+        url: "/parameter/",
+        type: "POST",
+        data: JSON.stringify(postData),
+        contentType: "application/json",
+        headers: {
+            "X-CSRFToken": $("meta[name='csrf-token']").attr("content")
+        },
+        success: function (response) {
+            showNotification('Data saved successfully', true);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+            showNotification('Error: Failed to save the data', false);
+        }
+    });
+});

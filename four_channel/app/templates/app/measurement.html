@@ -1,0 +1,2068 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'fontawesome-free-6.7.2-web/css/all.min.css' %}">
+    <script src="{% static 'jquery-jquery-f79d5f1/dist/jquery.min.js' %}"></script>
+
+
+    <title>MEASUREMENT</title>
+   
+  
+    <link rel="stylesheet" href="{% static 'css/measurement_values.css'%}">
+    
+    
+</head>
+<body>
+    <div class="notify" style="display: none;"></div>
+
+    <div id="loading_spinner" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i> 
+    </div>
+    <div class="container-1">
+        <div class="container-1-1">
+            <button type="submit" id="menu_btn">
+                <i class="fas fa-bars" id="menu_icon"></i>[F12]
+            </button>
+            <input type="text" id="date_time" >
+            <input type="text" id="operator" >
+            <input type="text" id="shift" class="shift-name">
+            <input type="text" id="message" style="margin-left: 1%;">
+            <button type="submit" id="exit_btn">
+                <i class="fas fa-sign-out-alt" id="exit_icon"></i>
+            </button>
+        </div>
+        <div class="container-1-2">
+            <label for="part_model">PART MODEL:</label>
+            <input type="text" id="part_model">
+
+            <label for="part_no" style="margin-left: 1%;">PART NAME:</label>
+            <input type="text" id="part_no" >
+
+            <label for="part_status" style="margin-left: 2%;">PART STATUS:</label>
+            <input type="text" id="accept">
+            <input type="text" id="rework">
+            <input type="text" id="reject">
+            <input type="text" id="total">
+        </div>
+        <div class="container-1-3">
+            <input type="text" id="notification_bar">
+            <input type="text" id="overall_status" >
+        </div>
+
+    </div>
+
+<!--//////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+<div class="container-2">
+    <div class="container_2_1">
+        <div class="section" id="sub_container_1">
+            <input type="text" id="para_name1" class="input-box" placeholder="Parameter Name"/>
+        
+            <div class="input-row-top">
+                <input type="text" id="lsl_1" class="input-box1-top" placeholder="LSL" />
+                <input type="text" id="nominal_1" class="input-box1-top" placeholder="Nominal" />
+                <input type="text" id="usl_1" class="input-box1-top" placeholder="USL" />
+            </div>
+
+
+
+            <input type="text" class="Output_box" id="Output_box1" />
+        
+            <div class="label-row">
+                <label for="max1">MAX</label>
+                <label for="min1">MIN</label>
+                <label for="tir1">TIR</label>
+            </div>
+        
+            <div class="input-row">
+                <input type="text" id="max1" class="input-box1"  />
+                <input type="text" id="min1" class="input-box1" />
+                <input type="text" id="tir1" class="input-box1" />
+            </div>
+        </div>
+        
+        <div class="section"  id="sub_container_2">
+            <input type="text" id="para_name2" class="input-box" placeholder="Parameter Name"/>
+        
+            <div class="input-row-top">
+                <input type="text" id="lsl_2" class="input-box1-top" placeholder="LSL" />
+                <input type="text" id="nominal_2" class="input-box1-top" placeholder="Nominal" />
+                <input type="text" id="usl_2" class="input-box1-top" placeholder="USL" />
+            </div>
+
+
+
+            <input type="text" class="Output_box"  id="Output_box2"  />
+        
+            <div class="label-row">
+                <label for="max1">MAX</label>
+                <label for="min1">MIN</label>
+                <label for="tir1">TIR</label>
+            </div>
+        
+            <div class="input-row">
+                <input type="text" id="max2" class="input-box1"  />
+                <input type="text" id="min2" class="input-box1" />
+                <input type="text" id="tir2" class="input-box1" />
+            </div>
+        </div>
+        <div class="section"  id="sub_container_3">
+            <input type="text" id="para_name3" class="input-box" placeholder="Parameter Name"/>
+        
+            <div class="input-row-top">
+                <input type="text" id="lsl_3" class="input-box1-top" placeholder="LSL" />
+                <input type="text" id="nominal_3" class="input-box1-top" placeholder="Nominal" />
+                <input type="text" id="usl_3" class="input-box1-top" placeholder="USL" />
+            </div>
+
+
+
+            <input type="text" class="Output_box"  id="Output_box3"  />
+        
+            <div class="label-row">
+                <label for="max1">MAX</label>
+                <label for="min1">MIN</label>
+                <label for="tir1">TIR</label>
+            </div>
+        
+            <div class="input-row">
+                <input type="text" id="max3" class="input-box1"  />
+                <input type="text" id="min3" class="input-box1" />
+                <input type="text" id="tir3" class="input-box1" />
+            </div>
+        </div>
+        <div class="section"  id="sub_container_4">
+             <input type="text" id="para_name4" class="input-box" placeholder="Parameter Name"/>
+        
+            <div class="input-row-top">
+                <input type="text" id="lsl_4" class="input-box1-top" placeholder="LSL" />
+                <input type="text" id="nominal_4" class="input-box1-top" placeholder="Nominal" />
+                <input type="text" id="usl_4" class="input-box1-top" placeholder="USL" />
+            </div>
+
+
+
+            <input type="text" class="Output_box"  id="Output_box4"  />
+        
+            <div class="label-row">
+                <label for="max1">MAX</label>
+                <label for="min1">MIN</label>
+                <label for="tir1">TIR</label>
+            </div>
+        
+            <div class="input-row">
+                <input type="text" id="max4" class="input-box1"  />
+                <input type="text" id="min4" class="input-box1" />
+                <input type="text" id="tir4" class="input-box1" />
+            </div>
+        </div>
+    </div>
+   
+   
+
+
+
+<div class="output_container" id="output_values_container" style="overflow-y: auto;">
+    <div>
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>Sr No</th>
+                    <th>Parameter Name</th>
+                    <th>CUR</th>
+                    <th>MAX</th>
+                    <th>MIN</th>
+                    <th>TIR</th>
+
+                </tr>
+            </thead>
+            <tbody id="table_body">
+            
+            </tbody>
+        </table>
+    </div>
+</div>
+   
+    
+</div>
+
+<!--//////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <div class="container-3">
+        <div class="container-3-1">
+            <label for="punch_no">PUNCH NO:</label>
+            <input type="text" id="punch_no">
+
+            <div >
+               <textarea id="probe-A"></textarea>
+               <textarea id="probe-B"></textarea>
+                <textarea id="probe-C"></textarea>
+               <textarea id="probe-D"></textarea>
+            </div>
+            <button id="rest-btn" class="toggle-btn" >START[F4]<br>STOP[F5]</button>
+
+        </div>
+       
+        <div class="container-3-2">
+           
+
+            <button type="submit" class="container-3-2-btn" id="master_btn">MASTERING[F1]</button>
+            <button type="submit" class="container-3-2-btn" id="model_btn" onclick="showNextPartName()">MODEL[F2]</button>
+            <button type="submit" class="container-3-2-btn" id="live_spc_btn">LIVE SPC[F3]</button>
+            <button type="submit" class="container-3-2-btn" id="report_btn_main">REPORT[F6]</button>
+
+            <button type="button" class="container-3-2-btn" id="spc_btn" style="display:none;">SPC[F7]</button>
+            <button type="button" class="container-3-2-btn" id="report_btn" style="display:none;">REPORT[F8]</button>
+
+           
+        </div>
+
+        <div id="punch_overwrite" class="center-notification">
+            <div id="punch_overwrite_container">
+                <p id="error_message"></p>
+                <p>Do you want to OVERWRITE</p>
+                <button id="overwrite_cancel_button" onclick="punchOverwriteCancel()">CANCEL</button>
+                <button id="overwrite_ok_button" onclick="punchOverwrite()">OK</button>
+            </div>
+            <div id="punch_overwrite_credentials">
+                <label for="userid_punch">USER ID:</label>
+                <input type="text" id="userid_punch" class="userpassinput1"><br>
+                <label for="password_punch">PASSWORD:</label>
+                <input type="text" id="password_punch" class="userpassinput"><br><br>
+                <button id="punch_login" onclick="punchOverwriteLogin()">OK</button>
+                </div>
+        </div>
+
+
+        </div>
+    
+        <input type="text" id="db_port" value="{{ comport_com_port }}" hidden>
+        <input type="text" id="com_ports" value="{{ ports_string }}" hidden>
+        <input type="text" id="baud_rate" value="{{ comport_baud_rate }}" hidden>
+        <input type="text" id="parity" value="{{ comport_parity }}" hidden>
+        <input type="text" id="stopbit" value="{{ comport_stopbit }}" hidden>
+        <input type="text" id="databit" value="{{ comport_databit }}" hidden>
+        <textarea id="serial-data-display" cols="50" rows="10" readonly hidden></textarea>  
+   
+   
+<script>
+
+
+// Get the table body element
+const tableBody = document.getElementById("table_body");
+
+// Loop to create 21 rows
+for (let i = 1; i <= 21; i++) {
+    // Create a new row
+    let row = document.createElement("tr");
+    row.id = `row_${i}`;  // Assign unique ID to the row
+
+
+    // Set unique IDs for input fields
+    let paramId = `param_${i}`;
+    let curId = `cur_${i}`;
+    let maxId = `max_${i}`;
+    let minId = `min_${i}`;
+    let tirId = `tir_${i}`;
+
+    // Create 3 columns (Sr No, Parameter Name, Values)
+    row.innerHTML = `
+        <td>${i}</td>
+        <td><input type="text" id="${paramId}" ></td>
+        <td><input type="text" id="${curId}"></td>
+        <td><input type="text" id="${maxId}"></td>
+         <td><input type="text" id="${minId}"></td>
+        <td><input type="text" id="${tirId}"></td>
+    `;
+
+    // Append the row to the table body
+    tableBody.appendChild(row);
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+            // Get the username passed from the backend
+            let receivedUserName = "{{ username|safe }}";
+            console.log('Your receivedUserName is:', receivedUserName);
+
+            // Get the button element
+            const menuButton = document.getElementById("menu_btn");
+
+            // Add a click event listener to the button
+            menuButton.addEventListener("click", function (event) {
+                // Check if the username is SAADMIN
+                if (receivedUserName === "SAADMIN") {
+                    // Redirect to the comport page
+                    window.location.href = "{% url 'comport' %}";
+                } else {
+                    // Show an alert message and prevent redirection
+                    event.preventDefault();
+                    alert("You are not authorized to access this page.");
+                }
+            });
+        });
+
+document.addEventListener('keydown', function(event) {
+        // Check for specific function keys
+        switch (event.key) {
+            case 'F1':
+                event.preventDefault(); // Prevent default action
+                document.getElementById('master_btn').click(); // Trigger Add New button
+                break;
+            case 'F2':
+                event.preventDefault(); // Prevent default action
+                document.getElementById('model_btn').click(); // Trigger Save button
+                break;
+            case 'F3':
+                event.preventDefault(); // Prevent default action
+                document.getElementById('spc_btn').click(); // Trigger Delete button
+                break;
+            // case 'F6':
+            //     event.preventDefault(); // Prevent default action
+            //     document.getElementById('report_btn').click(); // Trigger Cancel button
+            //     break;
+
+
+            case 'F12':
+                event.preventDefault(); // Prevent default action
+                document.getElementById('menu_btn').click(); // Trigger Cancel button
+                break;    
+        }
+    });
+
+
+
+    document.getElementById("exit_btn").addEventListener("click", function() {
+        // Redirect to the measurement URL
+        window.location.href = "{% url 'login' %}";
+    });
+    
+
+
+$(document).ready(function () {
+    // Delay the execution by 2 seconds
+    setTimeout(function () {
+        // Get the input values
+        var dateTime = $("#date_time").val(); // Example: 21/12/2024 6:53:57 PM
+        console.log('Original value:', dateTime);
+
+        // Convert the original format to Date object
+        var dateParts = dateTime.split(' ');
+        var date = dateParts[0].split('/');
+        var time = dateParts[1].split(':');
+        var ampm = dateParts[2];
+        
+        // Convert to 12-hour format (adjust time to 12-hour clock)
+        var hours = parseInt(time[0]);
+        if (ampm === 'PM' && hours < 12) {
+            hours += 12; // Convert PM hours to 24-hour format
+        }
+        if (ampm === 'AM' && hours === 12) {
+            hours = 0; // Convert 12 AM to 0 (midnight)
+        }
+
+        // Construct Date object with the corrected time
+        var formattedDate = new Date(date[2], date[1] - 1, date[0], hours, time[1], time[2]);
+
+        // Format the date to "yyyy/mm/dd hh:mm:ss AM/PM"
+        var year = formattedDate.getFullYear();
+        var month = (formattedDate.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if needed
+        var day = formattedDate.getDate().toString().padStart(2, '0'); // Add leading zero if needed
+        var hours12 = formattedDate.getHours() % 12 || 12; // 12-hour format
+        var minutes = formattedDate.getMinutes().toString().padStart(2, '0');
+        var seconds = formattedDate.getSeconds().toString().padStart(2, '0');
+        var period = (formattedDate.getHours() >= 12) ? 'PM' : 'AM';
+
+        var formattedDateTime = `${year}/${month}/${day} ${hours12}:${minutes}:${seconds} ${period}`;
+        console.log('Formatted value to send:', formattedDateTime);
+
+        var shift = $("#shift").val(); // Example: SHIFT-2
+        var partModel = $("#part_model").val(); // Get the value of the part model input
+
+
+        // Send AJAX GET request
+        $.ajax({
+            url: '/measurement_count/', // Replace this with your actual endpoint
+            type: 'POST',
+            data: { 
+                date: formattedDateTime, 
+                shift: shift,
+                part_model: partModel,
+            },
+            success: function (response) {
+                console.log("Data received successfully:");
+                console.log("Accept Last Occurrence:", response.accept_occurrence);
+                console.log("Reject Last Occurrence:", response.reject_occurrence);
+                console.log("Rework Last Occurrence:", response.rework_occurrence);
+                console.log("Total Occurrence:", response.total_occurrence);
+
+                // Display the values in the input fields
+                $('#accept').val(response.accept_occurrence);
+                $('#reject').val(response.reject_occurrence);
+                $('#rework').val(response.rework_occurrence);
+                $('#total').val(response.total_occurrence);
+            },
+            error: function (error) {
+                console.log("Error:", error);
+            },
+        });
+    }, 2000); // Delay of 2000 milliseconds (2 seconds)
+});
+
+
+
+// Initialize the list of part names and the current index
+        let receivedValue = "{{ part_model|safe }}";
+        console.log('your part_model is:',receivedValue);
+        let partNames = receivedValue
+            .replace(/[\[\]' ]/g, '') // Remove [, ], ', and spaces
+            .split(','); // Split by comma to get an array
+
+        let currentIndex = 1; // Start with the first part name
+
+       // Function to update the part model and call sendPartModelToBackend
+function showNextPartName() {
+    if (partNames.length > 0) {
+        const partModel = partNames[currentIndex];
+        // Update the input field with the current part model
+        document.getElementById('part_model').value = partModel;
+
+        // Send the updated part model to the backend
+        sendPartModelToBackend(partModel);
+        sendPartModelForCount(partModel);
+
+        // Increment the index and loop back to the start if needed
+        currentIndex = (currentIndex + 1) % partNames.length;
+    } else {
+        // Handle no part names case
+        alert("No part names available.");
+    }
+}
+// Add a keydown event listener for the F2 key
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'F2') {
+        // Prevent the default behavior of the F2 key (e.g., renaming files in some OS)
+        event.preventDefault();
+
+        // Call the showNextPartName function
+        showNextPartName();
+    }
+});
+
+
+// Initialize the part model input on page load and send the initial value
+$(document).ready(function () {
+    if (partNames.length > 0) {
+        // Initialize the input box with the first part name
+        const initialPartModel = partNames[0];
+        $('#part_model').val(initialPartModel);
+
+        // Send the initial part model to the backend
+        console.log("Initial partModel sent to the backend:", initialPartModel);
+        sendPartModelToBackend(initialPartModel);
+    } else {
+        console.warn("No part names available on page load.");
+    }
+});
+
+        // Initialize the input box on page load
+        window.onload = function () {
+            if (partNames.length > 0) {
+                document.getElementById('part_model').value = partNames[0];
+            }
+        };
+/////////////////////////////////////////////////////////////////
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Retrieve the punch value from localStorage
+    var savedPunchValue = localStorage.getItem('punchValue');
+    
+    if (savedPunchValue) {
+        // Set the punch value in the textarea
+        document.getElementById('punch_no').value = savedPunchValue;
+        
+        // Clear the localStorage value to avoid persisting it across multiple reloads
+        localStorage.removeItem('punchValue');
+    }
+
+    // Set focus on the punch_textarea
+    document.getElementById('punch_no').focus();
+});
+
+
+
+
+
+function getCSRFToken() {
+    const cookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+    return cookie ? cookie.split('=')[1] : '';
+}
+
+
+// Global object to store the response data for future use
+let responseData = {};
+
+
+// Global variable to store the total number of steps
+let totalSteps ;
+
+// Function to send the part model to the backend and store the response data
+function sendPartModelToBackend(partModel) {
+    console.log("Sending updated partModel to backend:", partModel);
+
+    $.ajax({
+        url: '/measurement/', // Replace with your backend endpoint
+        method: 'POST',
+        data: { part_model: partModel },
+        success: function (response) {
+            console.log("part_name_value:", response.part_name_value);
+            console.log("char_lock_value:", response.char_lock_value);
+            console.log("char_lock_limit_value:", response.char_lock_limit_value);
+            console.log("punch_no_value:", response.punch_no_value);
+
+
+            const restButton = document.getElementById('rest-btn'); // Get the button element
+
+
+            if (response.punch_no_value === true) {
+                const punchNoField = document.getElementById('punch_no');
+                if (punchNoField) {
+                    punchNoField.disabled = false; // Ensure the field is enabled
+                    punchNoField.style.filter = 'none'; // Remove blur effect
+                    punchNoField.focus(); // Focus on the input field
+
+                    if (restButton) {
+                        restButton.disabled = true; // Disable the button
+                        restButton.style.filter = 'blur(2px)'; // Apply blur effect
+                    }
+                    
+                }
+
+                // Listen for "Enter" key press
+                // Listen for "Enter" key press
+                punchNoField.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        document.activeElement.blur(); 
+                        const inputValue = punchNoField.value;
+                        const charLockValue = response.char_lock_value;
+                        const charLockLimitValue = response.char_lock_limit_value;
+                        const partModel = document.getElementById('part_model').value; // Get part_model
+
+                        
+
+                        // Validation checks for input value
+                        if (!inputValue.startsWith(charLockValue)) {
+                            alert(`Input must start with ${charLockValue}`);
+                            punchNoField.value = '';
+                            return;
+                        }
+
+                        const expectedLength = Number(charLockLimitValue);
+                        if (inputValue.length !== expectedLength) {
+                            alert(`Input must be exactly ${expectedLength} characters long.`);
+                            punchNoField.value = '';
+                            return;
+                        }
+
+                        // Re-enable and remove blur effect from the rest button
+                        if (restButton) {
+                            restButton.disabled = false; // Enable the button
+                            restButton.style.filter = 'none'; // Remove blur effect
+                        }
+
+                        // Step 1: Send POST request to check if the punch number exists
+                        fetch('/delete_measure_data/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCSRFToken()
+                            },
+                            body: JSON.stringify({ input_value: inputValue, part_model: partModel }) // Send part_model and comp_sr_no
+                        })
+                        .then(response => response.json()) // Ensure the response is JSON
+                        .then(data => {
+                            if (data.status === 'exists') {
+                                // Step 2: Show overwrite confirmation popup
+                                document.getElementById('error_message').innerText = data.message;
+                                document.getElementById('punch_overwrite').style.display = 'block';
+
+                                // Handle OK button click
+                                document.getElementById('overwrite_ok_button').onclick = function () {
+                                    document.getElementById('punch_overwrite_container').style.display = 'none';
+                                    // Show credentials input field
+                                    document.getElementById('punch_overwrite_credentials').style.display = 'block';
+                                };
+
+                                // Handle Cancel button click
+                                document.getElementById('overwrite_cancel_button').onclick = function () {
+                                    document.getElementById('punch_overwrite').style.display = 'none';
+                                    location.reload();
+                                };
+
+                                // Step 3: Handle deletion with credentials
+                                document.getElementById('punch_login').onclick = function () {
+                                    const userId = document.getElementById('userid_punch').value; // Get user ID from input field
+                                    const password = document.getElementById('password_punch').value; // Get password from input field
+
+                                    // Validate credentials before posting
+                                    if (userId !== 'admin' || password !== 'admin') {
+                                        alert('Invalid credentials. Please check username and password.');
+                                        return;
+                                    }
+                                    localStorage.setItem('punchValue', inputValue);
+                                    // Send delete request with credentials
+                                    fetch('/delete_measure_data/', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRFToken': getCSRFToken()
+                                        },
+                                        body: JSON.stringify({
+                                            input_value: inputValue,
+                                            part_model: partModel,
+                                            user_id: userId,
+                                            password: password
+                                        })
+                                    })
+                                    .then(response => response.json())
+                                    .then(deleteData => {
+                                        alert(deleteData.message); // Show success/error message
+                                        location.reload();
+                                        if (deleteData.success) {
+                                            document.getElementById('punch_overwrite').style.display = 'none';
+                                            $('#punch_overwrite').hide();
+                                            
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        alert('Failed to delete punch number.');
+                                    });
+                                };
+                            }
+                            //  else {
+                            //     // Keep the button disabled and blurred if 'punch_no_value' is false
+                            //     $('#rest-btn').prop('disabled', false).css('filter', 'none');
+                            // }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Failed to process punch number.');
+                        });
+                    }
+                });
+
+
+                
+
+
+            } 
+            else {
+                // Keep the button disabled and blurred if 'punch_no_value' is false
+               // $('#rest-btn').prop('disabled', false).css('filter', 'none');
+                const punchNoField = document.getElementById('punch_no');
+                if (punchNoField) {
+                    punchNoField.disabled = true; // Disable the field
+                    punchNoField.style.filter = 'blur(2px)'; // Apply blur effect
+                }
+
+                if (restButton) {
+                    restButton.disabled = false;
+                    restButton.style.filter = 'none';
+                }
+            }
+
+
+
+
+            
+
+            // Display the 'part_name_value' in the input field with id 'part_no'
+            $('#part_no').val(response.part_name_value);
+
+            // Update the global responseData object
+            responseData = {
+                partNameValue: response.part_name_value,
+                charLockValue: response.char_lock_value,
+                charLockLimitValue: response.char_lock_limit_value,
+                punchNoValue: response.punch_no_value,
+                parameterValues: response.parameter_values,
+                parameterNameArray: response.parameter_name_array,
+                channelNoArray: response.channel_no_array,
+                lowMasterArray: response.low_master_array,
+                highMasterArray: response.high_master_array,
+                nominalArray: response.nominal_array,
+                lslArray: response.lsl_array,
+                uslArray: response.usl_array,
+                ltlArray: response.ltl_array,
+                utlArray: response.utl_array,
+                stepNoArray: response.step_no_array,
+                autoManArray: response.auto_man_array,
+                timerArray: response.timer_array,
+                digitsArray: response.digits_array,
+                parameter_factor_values:response.parameter_factor_values,
+            };
+
+
+            console.log("Step No:", response.step_no_array);
+            console.log(" response.parameter_name_array No:", response.parameter_name_array);
+
+            
+            console.log("Response Data:", responseData);
+
+            // Update the global totalSteps variable
+            const stepNo = response.step_no_array;
+            totalSteps = Math.max(...stepNo); // Find the largest step number
+            console.log("Number of Steps:", totalSteps);
+
+            // Log the totalSteps after it has been updated
+            console.log("Global totalSteps (after update):", totalSteps);
+
+            // Iterate through the parameter values and display all fields for each parameter
+            const parameterValues = response.parameter_values;
+
+            console.log("parameterValues",parameterValues)
+          
+
+
+
+
+            updateUI(responseData);
+           
+
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+let currentStep = 1; // Ensure currentStep is an integer
+
+// Function to update UI based on current step
+function updateUI(responseData) {
+    if (!responseData || typeof responseData !== 'object') {
+        console.error("Error: responseData is undefined or not an object", responseData);
+        return;
+    }
+
+    if (!responseData.stepNoArray) {
+        console.error("Error: stepNoArray is missing in responseData", responseData);
+        return;
+    }
+
+    let indices = responseData.stepNoArray
+        .map((step, index) => parseInt(step) === currentStep ? index : -1)
+        .filter(index => index !== -1);
+
+    console.log("Matching Indices:", indices);
+
+    let totalGauges = 4; // Total number of available gauges
+
+    // Loop through all containers to clear values & apply blur effect initially
+    for (let i = 1; i <= totalGauges; i++) {
+        let container = $('#sub_container_' + i);
+        
+        // Clear input fields inside the container
+        container.find('input, textarea').val('');
+        
+        // Explicitly clear Output_box
+        container.find('.Output_box').val('');
+        
+        // Apply blur effect to all initially
+        container.css({ 'filter': 'blur(5px)', 'pointer-events': 'none', 'opacity': '0.5' });
+    }
+
+    // Now, update only the required gauges
+    indices.forEach((index, displayIndex) => {
+        let gaugeIndex = displayIndex + 1; // 1-based indexing for UI elements
+        console.log(`Updating Gauge ${gaugeIndex} with index ${index}`);
+
+        // Extract values properly
+        const parameterName = responseData.parameterNameArray[index];
+        const probeNumber = responseData.channelNoArray[index];
+        const lowMaster = responseData.lowMasterArray[index];
+        const highMaster = responseData.highMasterArray[index];
+        const lsl = responseData.lslArray[index];
+        const usl = responseData.uslArray[index];
+        const ltl = responseData.ltlArray[index];
+        const utl = responseData.utlArray[index];
+        const stepNo = responseData.stepNoArray[index];
+        const autoMan = responseData.autoManArray[index];
+        const timer = responseData.timerArray[index];
+        const digits = responseData.digitsArray[index];
+        const parameter_factor_values = responseData.parameter_factor_values;
+
+        let e_value = 0, d_value = 0, o1_value = 0, a1_value = 0;
+        let probeData = responseData.parameterValues.find(item => item.probe_number === String(probeNumber));
+
+        if (probeData) {
+            e_value = probeData.e || 0;
+            d_value = probeData.d || 0;
+            o1_value = probeData.o1 || 0;
+            a1_value = probeData.a1 || 0;
+            console.log(`Probe Number: ${probeData.probe_number}, E: ${e_value}, D: ${d_value}, O1: ${o1_value}`);
+        } else {
+            console.log("No Probe Data Found for Channel:", probeNumber);
+        }
+
+        // Update UI Elements
+        $('#para_name' + gaugeIndex).val(parameterName);
+        $('#lsl_' + gaugeIndex).val(`LSL: ${lsl}`).css('color', 'purple');
+        $('#nominal_' + gaugeIndex).val(`NOM: ${responseData.nominalArray[index]}`);
+        $('#usl_' + gaugeIndex).val(`USL: ${usl}`).css('color', 'purple');
+
+        // Ensure displaySerialData is called correctly
+        if (stepNo === currentStep.toString()) {
+            displaySerialData(
+                parameterName, probeNumber, lowMaster, highMaster, lsl, usl, ltl, utl, 
+                stepNo, autoMan, timer, digits, e_value, d_value, o1_value, gaugeIndex, a1_value,parameter_factor_values
+            );
+        }
+
+        // Remove blur effect from used containers
+        $('#sub_container_' + gaugeIndex).css({ 'filter': 'none', 'pointer-events': 'auto', 'opacity': '1' });
+
+        // Handle textarea input dynamically
+        const textareaId = mapProbeToTextareaId(probeNumber);
+        console.log("textareaId:", textareaId);
+
+        const textarea = document.getElementById(textareaId);
+        if (textarea) {
+            // Remove existing event listener to avoid multiple bindings
+            textarea.removeEventListener('input', handleTextareaInput);
+            textarea.addEventListener('input', handleTextareaInput);
+
+            function handleTextareaInput() {
+                let textareaValue = (textarea.value.trim() === '' || isNaN(parseFloat(textarea.value))) ? 0 : parseFloat(textarea.value);
+
+                if (stepNo === currentStep.toString()) {
+                    displaySerialData(
+                        parameterName, probeNumber, lowMaster, highMaster, lsl, usl, ltl, utl, 
+                        stepNo, autoMan, timer, digits, e_value, d_value, o1_value, gaugeIndex, a1_value,parameter_factor_values
+                    );
+                }
+            }
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+// Global variables
+let displayOutputs = []; // Stores displayOutput values for all steps
+let isStart = true; // Tracks the current state of the button
+let updateInterval = null; // Stores interval reference
+let notificationBar;
+let button;
+
+// Initialize elements
+function initElements() {
+    button = document.getElementById('rest-btn');
+    notificationBar = document.getElementById('notification_bar');
+
+    if (!button || !notificationBar) {
+        console.error("Required elements not found!");
+        return;
+    }
+
+    button.addEventListener('click', handleAction);
+    document.addEventListener('keydown', handleKeyPress);
+    
+    updateUI(); // Initialize UI for step 1
+}
+
+// Handle button click
+function handleAction() {
+    if (isStart) {
+        startAction();
+    } else {
+        stopAction();
+    }
+    isStart = !isStart; // Toggle the state
+}
+
+// Start measurement
+function startAction(timer) {
+    console.log(`Start action triggered for Step ${currentStep}!`);
+    notificationBar.value = `MEASUREMENT IS STARTING FOR STEP ${currentStep} MANUALLY`;
+    updateButton(` STOP[F5]- Step ${currentStep}`, 'stop-btn');
+
+    
+    button.disabled = false; // Disable button
+            button.style.filter = ""; // Apply blur effect
+            button.style.pointerEvents = ""; // Disable interactions
+
+
+    let indices = getStepIndices();
+    console.log("indices iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",indices)
+    updateInterval = setInterval(() => {
+    console.log("======= Starting new interval =======");
+    console.log("🔍 Full gaugeOutputs:", JSON.stringify(gaugeOutputs, null, 2));
+
+    Object.entries(gaugeOutputs).forEach(([groupKey, gaugeGroup]) => {
+        console.log(`📦 Group Key: ${groupKey}, Gauge Group:`, gaugeGroup);
+
+        Object.entries(gaugeGroup).forEach(([key1, value1]) => {
+            console.log(`🔑 Intermediate Key: ${key1}, Value:`, value1);
+
+            // If value1 is a nested object (like {3: 12.47})
+            if (typeof value1 === 'object' && value1 !== null) {
+                Object.entries(value1).forEach(([gaugeIndexStr, val]) => {
+                    let gaugeIndex = parseInt(gaugeIndexStr);
+                    console.log(`✅ Calling updateMaxMinTir for gaugeIndex: ${gaugeIndex}`);
+                    updateMaxMinTir(gaugeIndex);
+                });
+            } else {
+                // Just in case it's not an object
+                let gaugeIndex = parseInt(key1);
+                console.log(`✅ Calling updateMaxMinTir for gaugeIndex: ${gaugeIndex}`);
+                updateMaxMinTir(gaugeIndex);
+            }
+        });
+    });
+}, 100);
+
+}
+
+// Stop measurement
+function stopAction() {
+    console.log(`Stop action triggered for Step ${currentStep}!`);
+    notificationBar.value = `MEASUREMENT IS COMPLETED FOR STEP ${currentStep} MANUALLY`;
+    updateButton(`START[F4] - Step ${currentStep + 1}`, 'start-btn');
+    clearInterval(updateInterval);
+
+    let indices = getStepIndices();
+    let container = indices.length;
+    let parameterNames = indices.map(index => responseData.parameterNameArray[index]);
+
+    updateTableValues(currentStep, indices, parameterNames, container);
+    clearMaxMinTirFields(indices);
+    checkFinalStep();
+    updateUI(responseData);
+}
+
+// Get indices for current step
+function getStepIndices() {
+    return responseData.stepNoArray
+        .map((step, index) => parseInt(step) === currentStep ? index : -1)
+        .filter(index => index !== -1);
+}
+
+// Clear min/max/tir input fields
+function clearMaxMinTirFields(indices) {
+    indices.forEach((index, displayIndex) => {
+        let gaugeIndex = displayIndex + 1;
+        ['max', 'min', 'tir'].forEach(field => {
+            let input = document.getElementById(`${field}${gaugeIndex}`);
+            if (input) input.value = "";
+        });
+    });
+}
+
+// Check if it's the final step
+function checkFinalStep() {
+    if (currentStep < totalSteps) {
+        currentStep++;
+    } else {
+        console.log("All steps completed!");
+        notificationBar.value = "YOU HAVE COMPLETED THE MEASUREMENT FOR THIS JOB. DO THE NEXT JOB.";
+        updateButton("START[F4]", "start-btn");
+        finalizeUI();
+        checkOverallStatus();
+        collectFinalData();
+    }
+}
+
+// Check and update overall status based on row colors
+function checkOverallStatus() {
+    console.log("Final Step Reached: Checking All Rows");
+
+    let isRed = false;
+    let isYellow = false;
+    let overallStatus = document.getElementById("overall_status");
+
+    for (let i = 1; i <= 21; i++) {
+        let curInput = document.getElementById(`cur_${i}`);
+
+        if (curInput) {
+            let bgColor = window.getComputedStyle(curInput).backgroundColor;
+            console.log(`Row ${i} Background Color: ${bgColor}`);
+
+            if (bgColor === "rgb(255, 0, 0)") {  // Red color
+                isRed = true;
+            } else if (bgColor === "rgb(255, 255, 0)") {  // Yellow color
+                isYellow = true;
+            }
+        } else {
+            console.warn(`Row ${i} not found.`);
+        }
+    }
+
+    // Set overall status based on color conditions
+    if (isRed) {
+        overallStatus.value = "REJECT";
+        overallStatus.style.backgroundColor = "red";
+    } else if (isYellow) {
+        overallStatus.value = "REWORK";
+        overallStatus.style.backgroundColor = "yellow";
+    } else {
+        overallStatus.value = "ACCEPT";
+        overallStatus.style.backgroundColor = "#00ff00";
+    }
+}
+
+// Disable button after completion
+function finalizeUI() {
+    button.disabled = true;
+    button.style.opacity = "0.5";
+    button.style.pointerEvents = "auto";
+}
+
+
+
+// Collect data from the final step
+function collectFinalData() {
+    console.log("🚀 Final Step Reached: Collecting Data");
+
+    let paramValues = [], curValues = [], maxValues = [], minValues = [], tirValues = [];
+    let curBackgroundColors = [], statusValues = [];
+
+    // Define the color-to-status mapping
+    const statusMap = {
+        "rgb(0, 255, 0)": "ACCEPT",  // Green
+        "rgb(255, 255, 0)": "REWORK", // Yellow
+        "rgb(255, 0, 0)": "REJECT"    // Red
+    };
+
+    for (let i = 1; i <= 21; i++) {
+        ['param', 'cur', 'max', 'min', 'tir'].forEach(field => {
+            let input = document.getElementById(`${field}_${i}`);
+            if (input && input.value.trim()) {
+                eval(`${field}Values`).push(input.value.trim());
+
+                // Log collected value
+                console.log(`${field.toUpperCase()}_${i}:`, input.value.trim());
+
+                // If the field is "cur", collect and map background color to status
+                if (field === 'cur') {
+                    let bgColor = window.getComputedStyle(input).backgroundColor;
+                    let status = statusMap[bgColor] || "UNKNOWN"; // Default to UNKNOWN if no match
+
+                    curBackgroundColors.push(bgColor);
+                    statusValues.push(status);
+
+                    console.log(`CUR_${i} Background Color:`, bgColor);
+                    console.log(`CUR_${i} Status:`, status);
+                }
+            } else {
+                console.log(`${field.toUpperCase()}_${i}: (No Data or Element Missing)`);
+            }
+        });
+    }
+
+    console.log("📊 Collected Data:");
+    console.log("paramValues:", paramValues);
+    console.log("curValues:", curValues);
+    console.log("curBackgroundColors:", curBackgroundColors);
+    console.log("statusValues:", statusValues);
+    console.log("maxValues:", maxValues);
+    console.log("minValues:", minValues);
+    console.log("tirValues:", tirValues);
+
+    DataToSend(paramValues, curValues, maxValues, minValues, tirValues,statusValues);
+}
+
+
+// Handle keypress for F4 (Start) and F5 (Stop)
+function handleKeyPress(event) {
+    if ((event.key === 'F4' && isStart) || (event.key === 'F5' && !isStart)) {
+        event.preventDefault();
+        handleAction();
+    }
+}
+
+// Update button text and ID
+function updateButton(text, id) {
+    button.innerHTML = text;
+    button.id = id;
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initElements);
+
+
+
+
+
+
+
+
+
+function handleActionStart(timer) { 
+    const button = document.querySelector('[id="rest-btn"],[id="start-btn"]');
+    console.log("button",button)
+    const notificationBar = document.getElementById('notification_bar');
+
+    if (!button) {
+        console.error("Button not found!");
+        return;
+    }
+
+    let updateInterval = null;
+    let stepNow = currentStep; // Store the current step at function start
+
+    console.log(`Start action triggered for Step ${stepNow}!`);
+    notificationBar.value = `MEASUREMENT IS STARTING FOR STEP ${stepNow} AUTOMATICALLY`;
+
+    button.innerHTML = `STOP[F5] - Step ${stepNow}`;
+    button.id = 'stop-btn';
+
+    button.disabled = true; // Disable button
+            button.style.filter = "blur(3px)"; // Apply blur effect
+            button.style.pointerEvents = "none"; // Disable interactions
+
+    let indices = responseData.stepNoArray
+        .map((step, index) => parseInt(step) === stepNow ? index : -1)
+        .filter(index => index !== -1);
+
+        updateInterval = setInterval(() => {
+    console.log("======= Starting new interval =======");
+    console.log("🔍 Full gaugeOutputs:", JSON.stringify(gaugeOutputs, null, 2));
+
+    Object.entries(gaugeOutputs).forEach(([groupKey, gaugeGroup]) => {
+        console.log(`📦 Group Key: ${groupKey}, Gauge Group:`, gaugeGroup);
+
+        Object.entries(gaugeGroup).forEach(([key1, value1]) => {
+            console.log(`🔑 Intermediate Key: ${key1}, Value:`, value1);
+
+            // If value1 is a nested object (like {3: 12.47})
+            if (typeof value1 === 'object' && value1 !== null) {
+                Object.entries(value1).forEach(([gaugeIndexStr, val]) => {
+                    let gaugeIndex = parseInt(gaugeIndexStr);
+                    console.log(`✅ Calling updateMaxMinTir for gaugeIndex: ${gaugeIndex}`);
+                    updateMaxMinTir(gaugeIndex);
+                });
+            } else {
+                // Just in case it's not an object
+                let gaugeIndex = parseInt(key1);
+                console.log(`✅ Calling updateMaxMinTir for gaugeIndex: ${gaugeIndex}`);
+                updateMaxMinTir(gaugeIndex);
+            }
+        });
+    });
+}, 100);
+
+
+    // ✅ Stop after `timer` seconds and proceed to the next step
+    setTimeout(() => {
+        console.log(`Stop action triggered for Step ${stepNow}!`);
+        notificationBar.value = `MEASUREMENT IS COMPLETED FOR STEP ${stepNow}AUTOMATICALLY `;
+
+        button.innerHTML = `START[F4] - Step ${stepNow + 1}`;  // Now correctly displays next step
+        button.id = 'start-btn';
+        clearInterval(updateInterval);
+
+        // Extract indices for the current step
+        let container = indices.length;
+        let parameterNames = indices.map(index => responseData.parameterNameArray[index]);
+
+        updateTableValues(stepNow, indices, parameterNames, container);
+
+        // ✅ Clear max, min, and tir fields
+        indices.forEach((index, displayIndex) => {
+            let gaugeIndex = displayIndex + 1;
+            let maxField = document.getElementById(`max${gaugeIndex}`);
+            let minField = document.getElementById(`min${gaugeIndex}`);
+            let tirField = document.getElementById(`tir${gaugeIndex}`);
+
+            if (maxField) maxField.value = "";
+            if (minField) minField.value = "";
+            if (tirField) tirField.value = "";
+        });
+
+        button.disabled = false; // Disable button
+            button.style.filter = ""; // Apply blur effect
+            button.style.pointerEvents = ""; // Disable interactions
+
+
+        // ✅ Ensure `currentStep` only increments once per execution
+        if (button.id === 'start-btn') {
+            currentStep = stepNow + 1; // Ensure only a single increment
+            updateUI(responseData);
+            if (currentStep > totalSteps) {
+       
+        console.log("All steps completed!");
+        notificationBar.value = "YOU HAVE COMPLETED THE MEASUREMENT FOR THIS JOB. DO THE NEXT JOB.";
+        updateButton("START[F4]", "start-btn");
+        finalizeUI();
+        checkOverallStatus();
+        collectFinalData();
+    }
+        }
+
+    }, timer * 1000);
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+let gaugeOutputs = {};  
+let probeIntervals = {}; // Store intervals for each Step, Probe, and Gauge
+let activeStep = null; // Track the current step
+
+function displaySerialData(parameterName, probeNumber, lowMaster, highMaster, lsl, usl, ltl, utl, stepNo, autoMan, timer, digits, e_value, d_value, o1_value, gaugeIndex, a1_value,parameter_factor_values) {
+    console.log("StepNo:", stepNo);
+    console.log("parameterName:", parameterName);
+    console.log("autoMan:", autoMan);
+    console.log("timer:", timer);
+    console.log("a1_value:", a1_value);
+    console.log("gaugeIndex:", gaugeIndex);
+    console.log("probeNumber:", probeNumber);
+
+
+    console.log("parameter_factor_values jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",parameter_factor_values)
+
+    let notificationBar = document.getElementById('notification_bar');
+    const button = document.querySelector('[id="rest-btn"],[id="start-btn"]');
+
+    if (autoMan) {
+        notificationBar.value = "MEASUREMENT FOR THE CURRENT STEP IS IN AUTOMATIC MODE";
+        button.disabled = true;
+        button.style.filter = "blur(3px)";
+        button.style.pointerEvents = "none";
+    } else {
+        notificationBar.value = "DO MEASUREMENT FOR CURRENT STEP MANUALLY";
+    }
+
+    const textareaId = mapProbeToTextareaId(probeNumber);
+    const textarea = document.getElementById(textareaId);
+
+    if (!textarea) {
+        console.warn(`Textarea with ID ${textareaId} not found.`);
+        return;
+    }
+
+    // **If the step changes, clear all previous intervals**
+    if (activeStep !== stepNo) {
+        console.log(`Step changed from ${activeStep} to ${stepNo}. Clearing previous intervals.`);
+        clearAllIntervals();
+        activeStep = stepNo; // Update active step
+    }
+
+    // **Unique interval key for Step, Probe, and Gauge**
+    const intervalKey = `${stepNo}_${probeNumber}_${gaugeIndex}`;
+
+    // **Prevent multiple intervals for the same Step, Probe, and Gauge**
+    if (probeIntervals[intervalKey]) {
+        clearInterval(probeIntervals[intervalKey]); // Remove old interval
+        delete probeIntervals[intervalKey]; // Clean up the reference
+    }
+
+    let lastValue = null;
+
+    function updateCalculation() {
+        const newSerialData = !isNaN(parseFloat(textarea.value)) ? parseFloat(textarea.value) : 0;
+
+        if (newSerialData === lastValue) return; // Prevent unnecessary updates
+        lastValue = newSerialData;
+
+        const numericEValue = parseFloat(e_value) || 0;
+        const numericDValue = parseFloat(d_value) || 0;
+        const numericO1Value = parseFloat(o1_value) || 0;
+
+        let displayOutput = numericEValue + (newSerialData * numericDValue + numericO1Value);
+        displayOutput = parseFloat(displayOutput.toFixed(digits));
+
+         // 🔁 Apply factor-based logic here
+        for (let i = 0; i < parameter_factor_values.length; i++) {
+            const factor = parameter_factor_values[i];
+            const factorName = factor.parameter_name;
+            const method = factor.method;
+            const factorValue = parseFloat(factor.value);
+
+            // Compare current parameter name
+            if (factorName === parameterName) {
+                displayOutput = method === '+' ? displayOutput + factorValue : displayOutput - factorValue;
+                displayOutput = parseFloat(displayOutput.toFixed(digits));
+            }
+        }
+
+        if (!isNaN(displayOutput)) {
+            // Store output separately per Step, Probe, and Gauge
+            if (!gaugeOutputs[stepNo]) {
+                gaugeOutputs[stepNo] = {};
+            }
+            if (!gaugeOutputs[stepNo][probeNumber]) {
+                gaugeOutputs[stepNo][probeNumber] = {};
+            }
+            gaugeOutputs[stepNo][probeNumber][gaugeIndex] = displayOutput;
+        }
+
+        console.log(`displayOutput for Gauge ${gaugeIndex} (Step ${stepNo}, Probe ${probeNumber}):`, displayOutput);
+
+        if (isNaN(displayOutput)) {
+            console.error("Invalid displayOutput:", displayOutput);
+            return;
+        }
+
+        let outputBoxId = `Output_box${gaugeIndex}`; // Unique output box ID
+        let outputBox = document.getElementById(outputBoxId);
+
+        if (outputBox) {
+            outputBox.value = displayOutput;
+
+            if (displayOutput < ltl) {
+                outputBox.style.backgroundColor = "red";
+            } else if (displayOutput >= ltl && displayOutput < lsl) {
+                outputBox.style.backgroundColor = "yellow";
+            } else if (displayOutput >= lsl && displayOutput <= usl) {
+                outputBox.style.backgroundColor = "#00ff00";
+            } else if (displayOutput > usl && displayOutput <= utl) {
+                outputBox.style.backgroundColor = "yellow";
+            } else if (displayOutput > utl) {
+                outputBox.style.backgroundColor = "red";
+            }
+        } else {
+            console.warn(`Output box ${outputBoxId} not found`);
+        }
+
+        if (autoMan && newSerialData >= a1_value) {
+            console.log(`Triggering handleActionStart() because ${newSerialData} >= ${a1_value}`);
+            setTimeout(() => {
+                handleActionStart(timer);
+            }, 500);
+        }
+    }
+
+    // **Set a new interval for this Step, Probe, and Gauge**
+    probeIntervals[intervalKey] = setInterval(updateCalculation, 100);
+}
+
+// **Function to clear all previous intervals when step changes**
+function clearAllIntervals() {
+    for (let key in probeIntervals) {
+        clearInterval(probeIntervals[key]);
+        delete probeIntervals[key];
+    }
+    console.log("All previous intervals cleared.");
+}
+
+
+
+
+
+
+
+
+function updateMaxMinTir(gaugeIndex) {
+    let outputBox = document.getElementById(`Output_box${gaugeIndex}`);
+    console.log("outputBox",outputBox)
+    console.log("gaugeIndex",gaugeIndex)
+
+    if (!outputBox || isNaN(parseFloat(outputBox.value))) {
+        console.warn(`No valid data for Gauge ${gaugeIndex}`);
+        return;
+    }
+
+    let currentValue = parseFloat(outputBox.value);
+
+    // Get corresponding max, min, and tir fields
+    let maxField = document.getElementById(`max${gaugeIndex}`);
+    let minField = document.getElementById(`min${gaugeIndex}`);
+    let tirField = document.getElementById(`tir${gaugeIndex}`);
+
+    // Ensure previous values exist
+    let previousMax = parseFloat(maxField.value) || currentValue;
+    let previousMin = parseFloat(minField.value) || currentValue;
+
+    // Update max and min dynamically
+    let newMax = Math.max(previousMax, currentValue);
+    let newMin = Math.min(previousMin, currentValue);
+    let newTir = ((newMax - newMin) / 2).toFixed(4);
+
+    // Update the fields
+    maxField.value = newMax.toFixed(4);
+    minField.value = newMin.toFixed(4);
+    tirField.value = newTir;
+}
+
+
+function updateTableValues(step, indices, parameterNames, container) {
+    console.log("Step:", step, "Indices:", indices, "Parameter Names:", parameterNames);
+
+    if (!Array.isArray(parameterNames) || parameterNames.length === 0) {
+        console.error("parameterNames array is empty or not an array:", parameterNames);
+        return;
+    }
+
+  
+
+    indices.forEach((index, paramIndex) => {  // Use paramIndex as the row index
+    let rowIndex = paramIndex + 1;  // Start from 0,1,2,3 instead of 2,3,4,5
+    let rowIndex_table = index + 1;
+    console.log("Updating rowInrowIndex_tabledex ssssssssssssssssssssssssss:", rowIndex_table);
+    console.log("Updating rowIndex:", rowIndex);
+
+        let paramInput = document.getElementById(`param_${rowIndex_table}`);
+        let curInput = document.getElementById(`cur_${rowIndex_table}`);
+        let maxInput = document.getElementById(`max_${rowIndex_table}`);
+        let minInput = document.getElementById(`min_${rowIndex_table}`);
+        let tirInput = document.getElementById(`tir_${rowIndex_table}`);
+
+        if (!paramInput) {
+            console.warn(`paramInput for Row ${rowIndex} not found.`);
+            return;
+        }
+
+        let paramName = parameterNames[paramIndex] !== undefined ? parameterNames[paramIndex] : "UNKNOWN";
+        console.log(`Assigning parameter name for Row ${rowIndex}: ${paramName}`);
+        paramInput.value = paramName;
+
+        // Check if indices contain only one element
+        let targetIndex = indices.length === 1 ? container : rowIndex;
+
+        let outputBox = document.getElementById(`Output_box${targetIndex}`);
+        let maxBox = document.getElementById(`max${targetIndex}`);
+        let minBox = document.getElementById(`min${targetIndex}`);
+        let tirBox = document.getElementById(`tir${targetIndex}`);
+
+        console.log(`Values for Row ${targetIndex}:`, {
+            paramName,
+            outputBox: outputBox ? outputBox.value : null,
+            maxBox: maxBox ? maxBox.value : null,
+            minBox: minBox ? minBox.value : null,
+            tirBox: tirBox ? tirBox.value : null
+        });
+
+        if (curInput && maxInput && minInput && tirInput && outputBox && maxBox && minBox && tirBox) {
+            curInput.value = outputBox.value;
+            maxInput.value = maxBox.value;
+            minInput.value = minBox.value;
+            tirInput.value = tirBox.value;
+
+            console.log(`Updated Row ${targetIndex} with parameter ${paramName}`);
+
+            // Ensure the event listener is applied properly
+            outputBox.addEventListener("input", function () {
+                let existingBgColor = curInput.style.backgroundColor; // Store the existing background color
+                let computedBgColor = window.getComputedStyle(outputBox).backgroundColor;
+
+                console.log(`Existing Background Color for Row ${targetIndex}: ${existingBgColor}`);
+                console.log(`Computed Background Color for Row ${targetIndex}: ${computedBgColor}`);
+
+                // Only update background color if it was not previously set by another source
+                if (!existingBgColor || existingBgColor === "rgba(0, 0, 0, 0)" || existingBgColor === "transparent") {
+                    curInput.style.backgroundColor = computedBgColor;
+                }
+            });
+
+            // Trigger event listener immediately to apply color on load if necessary
+            outputBox.dispatchEvent(new Event("input"));
+        } else {
+            console.warn(`Some elements missing for Row ${targetIndex}`);
+        }
+    });
+}
+
+
+
+
+
+
+
+function DataToSend(paramValues, curValues, maxValues, minValues, tirValues,statusValues) {
+    $('#loading_spinner').show();
+    
+    const overallStatusInput = document.getElementById("overall_status").value;
+    const partModel = document.getElementById("part_model").value;
+    const partName = document.getElementById("part_no").value;
+    const date = document.getElementById("date_time").value;
+    const operator = document.getElementById("operator").value;
+    const shift = document.getElementById("shift").value;
+    const punchNo = document.getElementById("punch_no").value;
+
+    const parameterName = responseData.parameterNameArray;  
+    const lsl = responseData.lslArray;
+    const usl = responseData.uslArray;
+    const ltl = responseData.ltlArray;
+    const utl = responseData.utlArray;
+    const nominal = responseData.nominalArray;
+  
+    let dataToSend = [];
+
+    for (let i = 0; i < paramValues.length; i++) {
+        dataToSend.push({
+            date: date,
+            punchNo: punchNo,
+            partModel: partModel,
+            partName: partName,
+            operator: operator,
+            shift: shift,
+            parameterName: paramValues[i],  // Now using filtered values
+            lsl: lsl[i] || "",
+            usl: usl[i] || "",
+            ltl: ltl[i] || "",
+            utl: utl[i] || "",
+            nominal: nominal[i] || "",
+            output: curValues[i] || "",  // Assuming curValues corresponds to output
+            max: maxValues[i] || "",
+            min: minValues[i] || "",
+            tir: tirValues[i] || "",
+            statusCell : statusValues[i] || "",
+            overallStatusInput: overallStatusInput,
+        });
+    }
+
+    console.log("Data being sent to the backend jjjjjjjjjjjjjjjjjjjjjjjjjkkkkkkkkkkkkkkkkkk:", dataToSend);
+
+    // Send the combined data to the backend using jQuery AJAX
+    $.ajax({
+        url: '/measure_data/', // Replace with your Django view URL
+        type: 'POST',
+        headers: { 'X-CSRFToken': getCSRFToken() }, // Include CSRF token
+        data: JSON.stringify(dataToSend),
+        contentType: 'application/json',
+        success: function (response) {
+            $('#loading_spinner').hide();
+            console.log('Data successfully sent to the backend:', response);
+            showNotification('Data successfully sent to the backend!', true);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        },
+        error: function (error) {
+            console.error('Error sending data to the backend:', error);
+            showNotification('Error sending data to the backend.', false);
+            $('#loading_spinner').hide();
+        }
+    });
+}
+
+
+function showNotification(message, isSuccess) {
+    const notifyDiv = document.querySelector('.notify');
+    notifyDiv.innerHTML = message; // Set the message
+    notifyDiv.style.display = 'block'; // Show the notification
+    notifyDiv.style.backgroundColor = isSuccess ? 'green' : 'red'; // Set background color
+    notifyDiv.style.color = 'white'; // Set text color
+    notifyDiv.style.padding = '10px';
+    notifyDiv.style.borderRadius = '5px';
+    notifyDiv.style.marginTop = '10px';
+    notifyDiv.style.textAlign = 'center';
+
+    // Hide the notification after 3 seconds
+    setTimeout(() => {
+        notifyDiv.style.display = 'none';
+    }, 3000);
+}
+
+  
+// Helper function to get CSRF token from the browser's cookies
+function getCSRFToken() {
+    const csrfToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken'))
+        ?.split('=')[1];
+    return csrfToken;
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Function to map probe numbers to textarea IDs
+function mapProbeToTextareaId(probeNumber) {
+    const probeMapping = {
+        1: "probe-A",
+        2: "probe-B",
+        3: "probe-C",
+        4: "probe-D"
+    };
+
+    return probeMapping[probeNumber] || null; // Return null if no mapping is found
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+
+$(document).ready(function () {
+    // Function to trigger the same functionality as button click
+    function triggerAjaxRequest() {
+        const partName = $("#part_model").val(); // Capture the input value
+        $.ajax({
+            url: "{% url 'master' %}", // URL for 'newma' view
+            method: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+            data: { part_model: partName }, // Send the part_model
+            success: function (response) {
+                if (response.redirect_url) {
+                    // Redirect to newma and send part_model as a query parameter
+                    window.location.href = response.redirect_url + "?part_model=" + encodeURIComponent(partName);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            },
+        });
+    }
+
+    // Trigger the function when the button is clicked
+    $("#master_btn").click(function () {
+        triggerAjaxRequest();
+    });
+
+    // Trigger the function when the F1 key is pressed
+    $(document).keydown(function (e) {
+        if (e.key === "F1") { // Check if the pressed key is F1
+            e.preventDefault(); // Prevent the default F1 action (help page)
+            triggerAjaxRequest(); // Trigger the AJAX request
+        }
+    });
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+function sendPartModelForCount(partModel) {
+    $.ajax({
+        url: "/changed_name/", // URL for 'measurement' view
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+        data: JSON.stringify({ part_names: partModel }), // Send partModel as JSON
+        contentType: "application/json", // Specify JSON content type
+        success: function (response) {
+            console.log("Part model sent successfully:", partModel);
+            console.log("Response from server:", response);
+        },
+        error: function (error) {
+            console.error("Error sending part model:", error);
+        },
+    });
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Event listener for report_btn_main click
+    document.getElementById("report_btn_main").addEventListener("click", function () {
+        // Show the two additional buttons when the main button is clicked
+        document.getElementById("spc_btn").style.display = "inline-block";
+        document.getElementById("report_btn").style.display = "inline-block"; // Show the report button as well
+    });
+
+    // Event listener for the report_btn click (this will trigger the redirect)
+    document.getElementById("report_btn").addEventListener("click", function () {
+        const partName = document.getElementById("part_model").value.trim();
+
+        if (!partName) {
+            alert("Please enter a part model!");
+            return;
+        }
+
+        // Redirect to the report/ page with the part_model as a query parameter
+        const redirectUrl = `/report/?part_model=${encodeURIComponent(partName)}`;
+        window.location.href = redirectUrl;
+    });
+    
+    // Optional: F6 key press listener to trigger the same action as the report_btn click
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "F6") { // Check if F6 key is pressed
+            e.preventDefault(); // Prevent default behavior of F6
+            document.getElementById("report_btn_main").click(); // Simulate a click on the report_btn
+        }
+    });
+
+     // Optional: F6 key press listener to trigger the same action as the report_btn click
+     document.addEventListener("keydown", function (e) {
+        if (e.key === "F8") { // Check if F6 key is pressed
+            e.preventDefault(); // Prevent default behavior of F6
+            document.getElementById("report_btn").click(); // Simulate a click on the report_btn
+        }
+    });
+});
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    document.addEventListener("DOMContentLoaded", function () {
+    // Function to handle the click event
+    function handleClickspc() {
+        const partName = document.getElementById("part_model").value.trim();
+
+        if (!partName) {
+            alert("Please enter a part model!");
+            return;
+        }
+
+        // Redirect to the report/ page with the part_model as a query parameter
+        const redirectUrl = `/spc/?part_model=${encodeURIComponent(partName)}`;
+        window.location.href = redirectUrl;
+    }
+
+    // Event listener for the button click
+    document.getElementById("live_spc_btn").addEventListener("click", handleClickspc);
+
+    // Event listener for the F3 key press
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "F3") { // Check if the pressed key is F3
+            e.preventDefault(); // Prevent the default F3 action
+            handleClickspc(); // Trigger the handleClick function
+        }
+    });
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Function to handle the click event
+    function handleClickspcCharts() {
+        const partName = document.getElementById("part_model").value.trim();
+
+        if (!partName) {
+            alert("Please enter a part model!");
+            return;
+        }
+
+        // Redirect to the report/ page with the part_model as a query parameter
+        const redirectUrl = `/spcCharts/?part_model=${encodeURIComponent(partName)}`;
+        window.location.href = redirectUrl;
+    }
+
+    // Event listener for the button click
+    document.getElementById("spc_btn").addEventListener("click", handleClickspcCharts);
+
+    // Event listener for the F3 key press
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "F7") { // Check if the pressed key is F3
+            e.preventDefault(); // Prevent the default F3 action
+            handleClickspcCharts(); // Trigger the handleClick function
+        }
+    });
+});
+
+
+
+
+
+
+var shiftValues = JSON.parse('{{ shift_time|escapejs }}');
+console.log('Shift values:', shiftValues);
+
+var operator = JSON.parse('{{ user_name|escapejs }}');
+console.log('operator name is this values:', operator);
+
+if (Array.isArray(operator) && operator.length > 0) {
+        document.getElementById('operator').value = operator[0].username;
+    } else {
+        console.error('No operator data found');
+    }
+
+    
+// Function to convert 12-hour time to 24-hour format
+function convertTo24Hour(timeString) {
+    let [time, modifier] = timeString.trim().split(' ');
+    let [hours, minutes, seconds] = time.split(':');
+    if (modifier === 'PM' && hours !== '12') {
+        hours = parseInt(hours, 10) + 12;
+    }
+    if (modifier === 'AM' && hours === '12') {
+        hours = 0;
+    }
+    return `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+}
+
+// Function to determine and update the shift name based on the current time
+function setDateTimes() {
+    let now = new Date();
+    let currentTime = now.toTimeString().split(' ')[0]; // 'HH:MM:SS'
+    let currentDate = now.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+    // Determine the shift based on the current time
+    let shiftName = null;
+    for (let i = shiftValues.length - 1; i >= 0; i--) {
+        let shift = shiftValues[i];
+        let shiftTime = shift.shift_time.trim();  // Trim whitespace from shift_time
+        let shift24HourTime = convertTo24Hour(shiftTime);
+
+        if (currentTime >= shift24HourTime) {
+            shiftName = shift.shift;  // Set the shift name (e.g., "SHIFT-1")
+            break;
+        }
+    }
+
+    // If no shift is found (e.g., if the current time is before all shifts), default to the first shift
+    if (!shiftName) {
+        shiftName = shiftValues[0].shift; // Default to the first shift
+    }
+
+    // Set the shift name in the input box
+    let fromDateElements = document.getElementsByClassName('shift-name');
+    for (let element of fromDateElements) {
+        element.value = shiftName;  // Set the shift name in the input box
+    }
+
+
+}
+
+// Function to update the current date and time in the input box and check for shift change
+function updateClock() {
+    // Get the current date and time
+    var currentDate = new Date();
+    var hours = currentDate.getHours();
+    var minutes = currentDate.getMinutes();
+    var seconds = currentDate.getSeconds();
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+
+    // Format the hours, minutes, and seconds
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Handle midnight (0 hours)
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+
+    // Create the time string
+    var currentTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+
+    // Get the date components
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1; // Month is zero-based
+    var year = currentDate.getFullYear();
+
+    // Create the date string
+    var currentDateFormatted = day + '/' + month + '/' + year;
+
+    // Set the value of the input box
+    document.getElementById("date_time").value = currentDateFormatted + ' ' + currentTime;
+
+    // Check if current time matches the next shift time
+    checkShiftNotification(currentTime);
+
+    // Call this function again after 1 second
+    setTimeout(updateClock, 1000);
+}
+
+// Function to check if the current time matches the next shift time
+function checkShiftNotification(currentTime) {
+    let shiftTime = null;
+    for (let i = 0; i < shiftValues.length; i++) {
+        let shift = shiftValues[i];
+        let shiftTime24Hour = convertTo24Hour(shift.shift_time);
+        if (currentTime >= shiftTime24Hour) {
+            shiftTime = shift.shift_time;
+            break;
+        }
+    }
+
+    // If shift time is found and matches the current time, show notification
+    if (shiftTime && currentTime === shiftTime) {
+        showShiftNotification();
+    }
+}
+
+// Function to display shift change notification
+function showShiftNotification() {
+    let notification = document.createElement('div');
+    notification.id = 'shift-notification';
+    notification.innerText = 'It\'s time to switch to the next shift!';
+    notification.style.position = 'fixed';
+    notification.style.top = '10px';
+    notification.style.right = '10px';
+    notification.style.backgroundColor = 'green';
+    notification.style.color = 'white';
+    notification.style.padding = '10px';
+    notification.style.borderRadius = '5px';
+    document.body.appendChild(notification);
+
+    // Remove the notification after 3 seconds and refresh the page
+    setTimeout(function() {
+        notification.style.display = 'none';
+        location.reload(); // Refresh the page
+    }, 3000);
+}
+
+// Call the function to initially display the clock
+updateClock();
+
+// Call setDateTimes every second to update the shift name
+setInterval(setDateTimes, 1000);
+        
+
+
+
+// Initialize WebSocket connection
+// Initialize WebSocket connection
+const socket = new WebSocket('ws://localhost:8000/ws/measurement/');
+
+// Variables to track data activity
+let isConnected = false; // Tracks connection status
+let lastMessageTime = Date.now(); // Tracks the time of the last received message
+let timeoutDuration = 5000; // Set timeout duration (e.g., 5000ms = 5 seconds)
+
+// Function to check connection status periodically
+function checkConnection() {
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - lastMessageTime;
+
+    // Check if the elapsed time exceeds the timeout duration
+    if (elapsedTime > timeoutDuration) {
+        if (isConnected) {
+            displayDisconnected(); // Change status to disconnected
+            isConnected = false;  // Mark as disconnected
+        }
+    } else {
+        if (!isConnected) {
+            displayConnected(); // Change status to connected
+            isConnected = true;  // Mark as connected
+        }
+    }
+}
+
+// Function to display "Connected" message
+function displayConnected() {
+    const messageBox = document.getElementById("message");
+    messageBox.value = "Connected";
+    messageBox.style.color = "black";
+    messageBox.style.backgroundColor = "green";
+}
+
+// Function to display "Disconnected" message
+function displayDisconnected() {
+    const messageBox = document.getElementById("message");
+    messageBox.value = "Disconnected";
+    messageBox.style.color = "black";
+    messageBox.style.backgroundColor = "red";
+}
+
+// Function to start serial communication
+function startSerialCommunication() {
+    const messageBox = document.getElementById("message"); // Get the input box
+    if (socket.readyState === WebSocket.OPEN) {
+        const dbPort = document.getElementById("db_port").value;
+        const comPorts = document.getElementById("com_ports").value;
+        const baudRate = document.getElementById("baud_rate").value;
+        const parity = document.getElementById("parity").value;
+        const stopbit = document.getElementById("stopbit").value;
+        const databit = document.getElementById("databit").value;
+
+        console.log('COM port:', comPorts);
+        console.log('DB port:', dbPort);
+
+        if (dbPort === comPorts) {
+            const comparableValue = dbPort; // If equal, use dbPort
+            console.log("Matching Value:", comparableValue);
+
+            socket.send(JSON.stringify({
+                command: 'start_serial',
+                com_port: dbPort,
+                baud_rate: baudRate,
+                parity: parity,
+                stopbit: stopbit,
+                databit: databit,
+            }));
+
+            displayConnected(); // Initially set to connected
+            lastMessageTime = Date.now(); // Reset the timer
+        } else {
+            displayDisconnected(); // Set to disconnected if ports don't match
+        }
+    } else {
+        setTimeout(startSerialCommunication, 100); // Retry every 100ms if WebSocket isn't ready
+    }
+}
+
+// WebSocket event listeners
+socket.onopen = function(event) {
+    console.log("WebSocket connection established.");
+    startSerialCommunication();
+};
+
+// When data is received
+socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    const message = data.message;
+
+    // Update last message time
+    lastMessageTime = Date.now();
+
+    // Append data to textarea
+    const serialDataDisplay = document.getElementById("serial-data-display");
+    serialDataDisplay.value += message + '\n';
+    serialDataDisplay.scrollTop = serialDataDisplay.scrollHeight;
+
+    // Update status to connected
+    displayConnected();
+};
+
+// Handle errors
+socket.onerror = function(event) {
+    displayDisconnected();
+};
+
+// Handle close events
+socket.onclose = function(event) {
+    displayDisconnected();
+};
+
+// Periodically check connection status
+setInterval(checkConnection, 1000); // Check every 1 second
+
+// jQuery WebSocket handling for COM port
+$(document).ready(function () {
+    const ws = new WebSocket('ws://localhost:8000/ws/comport/');
+
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        
+        if (data.message) {
+            lastMessageTime = Date.now(); // Reset timer when data is received
+
+            // Match "+" pattern
+            const plusChannels = data.message.match(/[A-K]\+[^\+A-K]*/g);
+            if (plusChannels) {
+                plusChannels.forEach(channel => {
+                    const channelId = channel.charAt(0);
+                    const channelData = channel.charAt(1) + channel.substr(2); 
+                    $(`#probe-${channelId}`).val(channelData);
+                });
+            }
+
+            // Match "-" pattern
+            const minusChannels = data.message.match(/[A-K]\-[^\-A-K]*/g);
+            if (minusChannels) {
+                minusChannels.forEach(channel => {
+                    const channelId = channel.charAt(0);
+                    const channelData = channel.charAt(1) + channel.substr(2); 
+                    $(`#probe-${channelId}`).val(channelData);
+                });
+            }
+        }
+    };
+});
+
+
+    </script>
+    
+    
+</body>
+</html>

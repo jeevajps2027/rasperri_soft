@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'fontawesome-free-6.7.2-web/css/all.min.css' %}">
+    <script src="{% static 'jquery-jquery-f79d5f1/dist/jquery.min.js' %}"></script>
+
+    <script src="{% static 'plotly-plotly.js-c8e0bef/dist/plotly.min.js' %}"></script>
+
+   
+  
+    <link rel="stylesheet" href="{% static 'css/spcs.css'%}">
+    <title>SPC</title>  
+</head>
+<style>
+    
+    
+
+</style>
+<body>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <div class="container-1">
+        <div class="container-1-1">
+
+            <label for="part_count">PART COUNT:</label>
+            <input type="text" id="part_count" >
+           
+            <input type="text" id="clock-box" >
+
+            <label for="part_model">PART MODEL:</label>
+            <input type="text" id="part_model" >
+
+            <label for="parameter_button">PARAMETER NAME:</label>
+    <button id="parameter_button" onclick="cycleParameterName()">Click to Cycle</button>
+
+    
+           
+    <div id="loading_spinner" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i> 
+    </div>
+           
+
+            <button type="submit" id="exit_btn">
+                <i class="fas fa-times" id="exit_icon"></i>
+            </button>  
+        </div>
+    </div>
+    <div class="container_gen" style="display: none;">
+    <div class="container_1_1">
+        <label for="usl">USL:</label>
+        <input type="text" id="usl" >
+        <label for="lsl">LSL:</label>
+        <input type="text" id="lsl" >
+        <label for="utl">UTL:</label>
+        <input type="text" id="utl" >
+        <label for="ltl">LTL:</label>
+        <input type="text" id="ltl" >
+        <label for="nominal">NOMINAL:</label>
+        <input type="text" id="nominal" >
+        <label for="mean">MEAN:</label>
+        <input type="text" id="mean" >
+        <label for="cp">CP:</label>
+        <input type="text" id="cp" >
+        <label for="cpk">CPK:</label>
+        <input type="text" id="cpk" >
+    </div>
+    <div class="container-2" style="overflow-y: auto;">
+    </div>
+    <div class="container-3">
+    </div>
+</div>
+
+<div class="grid_container" style="display: none;">
+    <div class="grid_item" id="grid_item_1"></div>
+    <div class="grid_item" id="grid_item_2"></div>
+    <div class="grid_item" id="grid_item_3"></div>
+    <div class="grid_item" id="grid_item_4"></div>
+</div>
+
+
+
+<script>
+    
+
+    
+    document.getElementById("exit_btn").addEventListener("click", function() {
+        // Redirect to the measurement URL
+        window.location.href = "{% url 'measurement' %}";
+    });
+
+
+
+      // Function to get query parameters from the URL
+      function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Retrieve the 'part_model' value and set it in the input box
+        document.addEventListener("DOMContentLoaded", function () {
+            const partModel = getQueryParam("part_model");
+            if (partModel) {
+                document.getElementById("part_model").value = partModel;
+            } else {
+                document.getElementById("part_model").placeholder = "No part model provided.";
+            }
+        });
+
+        $(document).ready(function () {
+        // Get the value of the input field
+        var partModel = $('#part_model').val();
+
+        // Send it to the backend via AJAX
+        $.ajax({
+            url: '/spc/', // Replace with your actual URL
+            type: 'GET',
+            data: { part_model: partModel },
+            success: function (response) {
+                console.log('Data sent successfully:');
+            },
+            error: function (xhr, status, error) {
+                console.error('Error sending data:', error);
+            }
+        });
+    });
+
+
+
+    $(document).ready(function () {
+    // Automatically send the first parameter_name on page load
+    const partModel = $('#part_model').val(); // Ensure partModel has a value
+    const firstParameterName = $('#parameter_button').text(); // Get the initial value from the button
+
+    if (partModel && firstParameterName) {
+        sendDataToBackend(partModel, firstParameterName);
+    }
+
+    // Event listener for button click
+    $('#parameter_button').click(function () {
+        const selectedParameterName = $(this).text(); // Get the value from the button text
+        if (partModel) {
+            sendDataToBackend(partModel, selectedParameterName);
+        } else {
+            alert("Please select a part model first.");
+        }
+    });
+
+    function sendDataToBackend(partModel, parameterName) {
+    $('#loading_spinner').show();
+    const payload = {
+        partModel: partModel,
+        parameterName: parameterName,
+    };
+
+    console.log("Payload sent to the backend:", payload);
+
+    const csrfToken = getCookie('csrftoken');
+
+    $.ajax({
+        url: '/spc/',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        headers: {
+            'X-CSRFToken': csrfToken
+        },
+        success: function (response) {
+            $('#loading_spinner').hide();
+
+            if (response.chart_html) {
+                // Ensure charts is an array
+                const charts = Array.isArray(response.chart_html) ? response.chart_html : [response.chart_html];
+                console.log("usl:",response.usl)
+                console.log("lsl:",response.lsl)
+                console.log("utl:",response.utl)
+                console.log("ltl:",response.ltl)
+                console.log("nominal:",response.nominal)
+                console.log("mean:",response.mean)
+               
+
+                // Clear existing content
+                $('.grid_item').empty();
+                $('.container-2').empty(); // Clear container-2 for the single chart case
+                $('.container-3').empty();
+
+                // If only one chart, display it in the container-2
+                if (charts.length === 1) {
+                    $('.container-2').html(charts[0]);
+                    $('.container-3').html(response.table_html);
+                    $('.container_gen').show();
+                    $('.grid_container').hide();
+                    $('#usl').val(response.usl);
+                    $('#lsl').val(response.lsl);
+                    $('#utl').val(response.utl);
+                    $('#ltl').val(response.ltl);
+                    $('#nominal').val(response.nominal);
+                    $('#mean').val(response.mean.toFixed(4));
+                    $('#cp').val(response.cp.toFixed(4));
+                    $('#cpk').val(response.cpk.toFixed(4));
+
+
+                } else {
+                    // Otherwise, handle the grid display
+                    charts.forEach((chartHtml, index) => {
+                        const gridItemId = `#grid_item_${index + 1}`;
+                        $(gridItemId).html(chartHtml);
+                    });
+
+                    // If fewer charts than grid items, leave the remaining grid items empty
+                    for (let i = charts.length + 1; i <= 4; i++) {
+                        $(`#grid_item_${i}`).empty();
+                    }
+
+                    // Show the grid container if multiple charts
+                    $('.grid_container').show();
+                    $('.container_gen').hide();
+                }
+            } else {
+                alert('Error: No chart HTML returned.');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log('AJAX error: ' + status + ' ' + error);
+            alert('Error fetching chart data.');
+            $('#loading_spinner').hide();
+        }
+    });
+}
+
+
+
+
+
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+});
+
+
+    // Raw parameterNamesString that contains unwanted characters
+const parameterNamesString = "{{ parameter_names|safe }}"; // Rendered as a string
+console.log("Raw parameterNamesString:", parameterNamesString);
+
+// Use a regular expression to extract values inside single quotes
+const parameterNames = parameterNamesString.match(/'([^']+)'/g).map(name => name.replace(/'/g, '').trim());
+console.log("parameterNames Array:", parameterNames);
+
+
+let currentIndex = 0; // Initialize index
+console.log("Initial currentIndex:", currentIndex);
+console.log("parameterNames[0]:", parameterNames[0]);
+
+function cycleParameterName() {
+    // Update index to the next parameter
+    currentIndex = (currentIndex + 1) % parameterNames.length;
+
+    // Update the button text
+    document.getElementById('parameter_button').textContent = parameterNames[currentIndex];
+}
+
+// Set initial button text
+if (parameterNames.length > 0) {
+    document.getElementById('parameter_button').textContent = parameterNames[0];
+}
+
+
+
+
+
+
+
+      // Function to update the clock
+function updateClock() {
+  var now = new Date();
+  var hours = now.getHours();
+  var minutes = now.getMinutes();
+  var seconds = now.getSeconds();
+  var day = now.getDate();
+  var month = now.getMonth() + 1; // January is 0, so we add 1 to get the actual month
+  var year = now.getFullYear();
+
+  // Format the time string
+  var ampm = hours >= 12 ? 'PM' : 'AM'; // Determine if it's AM or PM
+  hours = hours % 12; // Convert to 12-hour format
+  hours = hours ? hours : 12; // Handle midnight (0 hours)
+  var timeString = hours + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0') + " " + ampm;
+
+  // Format the date string
+  var dateString = day.toString().padStart(2, '0') + "-" + month.toString().padStart(2, '0') + "-" + year;
+
+  var dateTimeString = timeString + " / " + dateString;
+
+  // Update the clock display
+  document.getElementById("clock-box").value = dateTimeString;
+
+  // Call this function again after 1 second
+  setTimeout(updateClock, 1000);
+}
+
+// Call the function to initially display the clock
+updateClock();
+
+
+</script>
+</body>
+</html>

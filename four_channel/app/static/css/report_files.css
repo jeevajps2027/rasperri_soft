@@ -1,0 +1,342 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box; /* Includes border in the width and height calculations */
+    overflow: hidden; /* Prevents scrolling caused by overflow */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    border: 5px solid lightseagreen ;
+} 
+
+.container-1 {
+    height: 15%;
+    width: 100%;
+    border: 1px solid black;
+}
+
+
+.container-2 {
+    width: 100%;
+    border: 1px solid black;
+    overflow-x: auto;  /* Enables horizontal scrolling */
+   
+    max-height: 80vh;  /* Limits the height and allows scrolling if necessary */
+    position: relative;
+   
+}
+
+#myTable {
+    table-layout: fixed;
+    border-collapse: collapse;
+    min-width: 2000px; /* Ensures the table is wider than the container */
+    border: 2px solid black;
+    word-wrap: break-word;
+}
+
+
+
+
+
+
+.container-1-1 {
+    height: 45%; /* Allow the container to fill 100% height of its parent */
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+
+
+#exit_btn {
+   margin-left:8% ;
+    background-color: #ff4c4c; /* Example: red background */
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    width: 5%;
+   
+}
+
+
+#exit_btn:hover{
+    background: linear-gradient(45deg,rgb(248, 52, 52),rgb(61, 1, 1));
+    transform: translateX(3px);
+}
+
+#exit_btn:active{
+    background: linear-gradient(45deg,rgb(61, 1, 1),rgb(248, 52, 52));
+    transform: translateX(-3px);
+}
+
+#exit_icon {
+    font-size: 2vw; /* Adjust the icon size */
+    color: white; /* Set the icon color */
+}
+
+
+.container-1-2 {
+    height: 45%; /* Allow the container to fill 100% height of its parent */
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+
+.container-1-2 label ,.container-1-1  label{
+    font-weight: bold;
+    font-size: 1.2vw;
+    margin-left: 1%;
+}
+
+input[type="datetime-local"] {
+    width: 18%;
+    font-size: 1vw;
+    font-weight: bold;
+    margin-left: 1%;
+}
+
+select{
+    width: 10%;
+    font-size: 1vw;
+    font-weight: bold;
+}
+
+#part_model{
+    width: 17%;
+    margin-left: 3%;
+    font-weight: bold;
+    font-size: 2vw;
+    text-align: center;
+}
+
+#total_count{
+    width: 10%;
+    margin-left: 1%;
+    font-weight: bold;
+    font-size: 2vw;
+    text-align: center;
+    background-color: orange;
+}
+#clock-box{
+    width: 17%;
+    margin-left: 2%;
+    font-weight: bold;
+    font-size: 1.3vw;
+    text-align: center;
+}
+
+#status_select {
+    color: black; /* Default text color */
+    font-size: 1vw;
+    text-align: center;
+}
+
+#status_select option {
+    color: black; /* Default option color */
+    font-weight: bold;
+    font-size: 1vw;
+    text-align: center;
+}
+#shift_select option {
+    color: black; /* Default option color */
+    font-weight: bold;
+    font-size: 1vw;
+    text-align: center;
+}
+
+
+#mode option {
+    color: black; /* Default option color */
+    font-weight: bold;
+    font-size: 1vw;
+    text-align: center;
+}
+
+
+
+
+button#search_btn {
+    background-color: blue; /* Light gray background */
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+   margin-left: 2%;
+    width: 5%;
+    height: 100%;
+}
+
+button#search_btn:hover {
+    background: linear-gradient(45deg,rgb(59, 59, 238),rgb(1, 1, 53));
+    transform: translateX(3px);
+}
+
+button#search_btn:active {
+    background: linear-gradient(45deg,rgb(1, 1, 53),rgb(59, 59, 238));
+    transform: translateX(-3px);
+}
+
+#search_icon {
+    font-size: 2vw; /* Adjust icon size */
+    color: white; /* Icon color */
+}
+
+button#download_btn {
+    background-color: #10ee10; /* Light gray background */
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left:1% ;
+    width: 5%;
+    height: 100%;
+}
+
+
+button#download_btn:hover {
+    background: linear-gradient(45deg,#33dc33,#002b00);
+    transform: translateX(3px);
+}
+
+button#download_btn:active {
+    background: linear-gradient(45deg,#002b00,#33dc33);
+    transform: translateX(3px);
+}
+
+#download_icon {
+    font-size: 2vw; /* Adjust icon size */
+    color: #333; /* Icon color */
+}
+
+
+button#left_arrow_btn,button#right_arrow_btn {
+    background-color:purple; /* Light gray background */
+    border: none;
+    padding: 10px;
+    border-radius: 50px;
+    cursor: pointer;
+    width: 5%;
+    height: 100%;
+}
+
+button#left_arrow_btn{
+    margin-left: 1%;
+}
+button#right_arrow_btn{
+    margin-left: 1%;
+}
+button#left_arrow_btn:hover ,button#right_arrow_btn:hover  {
+    background: linear-gradient(45deg,rgb(199, 18, 199),rgb(53, 1, 53));
+    transform: translateX(3px);
+}
+
+button#left_arrow_btn:active ,button#right_arrow_btn:active {
+    background: linear-gradient(45deg,rgb(53, 1, 53),rgb(199, 18, 199));
+    transform: translateX(-3px);
+}
+
+#left_arrow_icon, #right_arrow_icon {
+    font-size: 2vw; /* Adjust icon size */
+    color: white; /* Icon color */
+}
+
+    table { 
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 100%;
+            max-height: 80vh;
+            border: 2px solid black;
+            word-wrap: break-word;
+            overflow-x: auto;
+           
+        }
+
+
+       
+
+        th, td {
+            text-align: center;
+            border: 1px solid black;
+        }
+
+        th, td {
+            max-width: 150px; /* Adjust column width as needed */
+            word-break: break-word; /* Forces long words to break */
+            overflow-wrap: break-word;
+            text-align: center;
+        }
+
+        thead {
+            height:10%;
+            width: 100%;
+            font-size: 1vw;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            background-color: lightseagreen ;
+        }
+        tbody{
+            font-size: 0.8vw;
+        }
+        
+        #tableBody-1 input {
+            height: 90%;
+            width: 90%;
+            box-sizing: border-box;
+            font-size: 1vw;
+            font-weight: bold;
+            text-align: center;
+            outline: none;
+            border: none;
+            
+        }
+
+
+
+
+        /* Set a standard height for all rows */
+table tr {
+    height: 2em; /* This ensures the height is relative to the font size */
+}
+
+/* Adjust the width of the first column */
+table td:nth-child(1), table th:nth-child(1) {
+    width: 10%; /* 10% of the table's total width */
+}
+
+/* Adjust the width of columns 2 and 3 */
+table td:nth-child(2), table th:nth-child(2) {
+    width: 35%; /* 35% of the table's total width */
+}
+
+table td:nth-child(3), table th:nth-child(3) {
+    width: 35%; /* 35% of the table's total width */
+}
+
+/* Ensure the remaining columns have the same width */
+table td:nth-child(n+4), table th:nth-child(n+4) {
+    width: 25%; /* The remaining 20% of the table's total width */
+}
+
+
+
+#loading_spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5vw;
+    color: #022244;
+    z-index: 9999; /* Ensure spinner appears on top */
+}
+
+.fa-spinner {
+    margin-top: 10%;
+    margin-right: 20%; /* Add space between spinner and text */
+}

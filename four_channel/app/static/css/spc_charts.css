@@ -1,0 +1,305 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box; /* Includes border in the width and height calculations */
+    overflow: hidden; /* Prevents scrolling caused by overflow */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    border: 5px solid rgb(32, 178, 170) ;
+} 
+
+.container-1 {
+    height: 15%;
+    width: 100%;
+    border: 1px solid black;
+}
+.container-2 {
+    width: 100%;
+    border: 1px solid black;
+    overflow: hidden;  /* Hides overflow content */
+    height: 80vh;      /* Set a height for the container */
+    position: relative;
+}
+
+.container-1-1 {
+    height: 45%; /* Allow the container to fill 100% height of its parent */
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+
+
+#exit_btn {
+   margin-left:5% ;
+    background-color: #ff4c4c; /* Example: red background */
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    width: 5%;
+   
+}
+
+
+#exit_btn:hover{
+    background: linear-gradient(45deg,rgb(248, 52, 52),rgb(61, 1, 1));
+    transform: translateX(3px);
+}
+
+#exit_btn:active{
+    background: linear-gradient(45deg,rgb(61, 1, 1),rgb(248, 52, 52));
+    transform: translateX(-3px);
+}
+
+#exit_icon {
+    font-size: 2vw; /* Adjust the icon size */
+    color: white; /* Set the icon color */
+}
+#parameter_button{
+    width: 13%;
+    background-color: blue;
+    color: white;
+    font-weight: bold;
+    font-size: 1.3vw;
+    text-align: center;
+    }
+    #parameter_button:hover{
+    background: linear-gradient(45deg, rgb(37, 37, 247),rgb(0, 0, 27));
+    transform: translateY(3px);
+    }
+    
+    #parameter_button:active{
+    background: linear-gradient(45deg,rgb(0, 0, 27), rgb(37, 37, 247));
+    transform: translateY(-3px);
+    }
+
+
+#sample_size_button{
+    width: 5%;
+    background-color:blue;
+    color: white;
+    font-weight: bold;
+    font-size: 1.3vw;
+    text-align: center;   
+}
+
+#sample_size_button:hover{
+    background: linear-gradient(45deg, rgb(37, 37, 247),rgb(0, 0, 27));
+    transform: translateY(3px);
+    }
+    
+    #sample_size_button:active{
+    background: linear-gradient(45deg,rgb(0, 0, 27), rgb(37, 37, 247));
+    transform: translateY(-3px);
+    }
+
+
+
+.container-1-2 {
+    height: 45%; /* Allow the container to fill 100% height of its parent */
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+
+.container-1-2 label ,.container-1-1  label{
+    font-weight: bold;
+    font-size: 1.2vw;
+    margin-left: 1%;
+}
+
+input[type="datetime-local"] {
+    width: 18%;
+    font-size: 1vw;
+    font-weight: bold;
+    margin-left: 1%;
+}
+
+select{
+    width: 10%;
+    font-size: 1vw;
+    font-weight: bold;
+}
+
+#part_model{
+    width: 17%;
+    margin-left: 3%;
+    font-weight: bold;
+    font-size: 2vw;
+    text-align: center;
+}
+
+
+#clock-box{
+    width: 17%;
+    margin-left: 2%;
+    font-weight: bold;
+    font-size: 1.3vw;
+    text-align: center;
+}
+
+
+#shift_select {
+    width: 15%;
+}
+#shift_select option {
+    color: black; /* Default option color */
+    font-weight: bold;
+    font-size: 1vw;
+    text-align: center;
+}
+
+
+#mode option {
+    color: black; /* Default option color */
+    font-weight: bold;
+    font-size: 1vw;
+    text-align: center;
+}
+
+
+
+
+button#search_btn {
+    background-color: purple; /* Light gray background */
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+   margin-left: 5%;
+    width: 5%;
+    height: 100%;
+}
+
+button#search_btn:hover {
+    background: linear-gradient(45deg,rgb(170, 18, 236),rgb(1, 1, 53));
+    transform: translateX(3px);
+}
+
+button#search_btn:active {
+    background: linear-gradient(45deg,rgb(1, 1, 53),rgb(170, 18, 236));
+    transform: translateX(-3px);
+}
+
+#search_icon {
+    font-size: 2vw; /* Adjust icon size */
+    color: white; /* Icon color */
+}
+
+
+button#download_btn {
+    background-color: #10ee10; /* Light gray background */
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left:1% ;
+    width: 5%;
+    height: 100%;
+}
+
+button#download_btn:hover {
+    background: linear-gradient(45deg,#33dc33,#002b00);
+    transform: translateX(3px);
+}
+
+button#download_btn:active {
+    background: linear-gradient(45deg,#002b00,#33dc33);
+    transform: translateX(3px);
+}
+
+#download_icon {
+    font-size: 2vw; /* Adjust icon size */
+    color: #333; /* Icon color */
+}
+
+
+    table { 
+            table-layout: fixed;
+            border-collapse: collapse;
+            width: 100%;
+            max-height: 80vh;
+            border: 2px solid black;
+           
+        }
+
+
+       
+
+        th, td {
+            text-align: center;
+            border: 1px solid black;
+        }
+
+        thead {
+            height:10%;
+            width: 100%;
+            font-size: 1vw;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            background-color: lightseagreen ;
+        }
+        
+        #tableBody-1 input {
+            height: 90%;
+            width: 90%;
+            box-sizing: border-box;
+            font-size: 1vw;
+            font-weight: bold;
+            text-align: center;
+            outline: none;
+            border: none;
+            
+        }
+
+
+
+
+        /* Set a standard height for all rows */
+table tr {
+    height: 1.5em; /* This ensures the height is relative to the font size */
+}
+
+/* Adjust the width of the first column */
+table td:nth-child(1), table th:nth-child(1) {
+    width: 10%; /* 10% of the table's total width */
+}
+
+/* Adjust the width of columns 2 and 3 */
+table td:nth-child(2), table th:nth-child(2) {
+    width: 35%; /* 35% of the table's total width */
+}
+
+table td:nth-child(3), table th:nth-child(3) {
+    width: 35%; /* 35% of the table's total width */
+}
+
+/* Ensure the remaining columns have the same width */
+table td:nth-child(n+4), table th:nth-child(n+4) {
+    width: 20%; /* The remaining 20% of the table's total width */
+}
+
+
+
+#loading_spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5vw;
+    color: #022244;
+    z-index: 9999; /* Ensure spinner appears on top */
+}
+
+.fa-spinner {
+    margin-top: 10%;
+    margin-right: 20%; /* Add space between spinner and text */
+}

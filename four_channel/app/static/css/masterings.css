@@ -1,0 +1,331 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box; /* Includes border in the width and height calculations */
+    overflow: hidden; /* Prevents scrolling caused by overflow */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    border: 5px solid lightseagreen ;
+} 
+.container_1 {
+    height: 25%;
+    width: 100%;
+    border: 1px solid black;
+} 
+.container_1_1 {
+    height:25%;
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    margin: 0;
+    padding: 0;
+}  
+#clock-box{
+    width: 30%; 
+    height: 100%;
+    box-sizing: border-box; 
+    font-weight: bold;
+    font-size: 2vw;
+    text-align: center;
+}
+
+#message{
+    width: 10%;
+    height: 100%;
+    box-sizing: border-box;
+    margin-left: 50%;
+    font-weight: bold;
+    font-size: 1vw;
+    text-align: center;
+}
+
+/* Style for the button */
+#close_btn {
+    display: inline-block;
+    background: linear-gradient(145deg, #f10404, #f50505); /* Creates a gradient for the 3D look */
+    border: 1px solid gray;
+    border-radius: 12px; /* Smooth rounded corners */
+    padding: 10px 15px;
+    cursor: pointer;
+    height: 100%;
+    width: 5%;
+    margin-left: 2%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Adds smooth hover effects */
+}
+
+/* Style for the icon */
+#close_icon {
+    font-size: 1.5vw; /* Adjust the icon size */
+    color: white; /* Set the icon color */
+    transition: transform 0.2s ease; /* Adds hover animation for the icon */
+}
+
+/* Hover effect for the button */
+#close_btn:hover {
+    background: linear-gradient(45deg, red, rgb(141, 8, 8));
+    transform: translateY(-3px); /* Moves the button slightly upward */
+}
+
+/* Active (pressed) effect for the button */
+#close_btn:active {
+    transform: translateY(2px); /* Moves the button slightly downward */
+}
+
+/* Hover effect for the icon */
+#close_icon:hover {
+    transform: scale(1.2); /* Enlarges the icon slightly on hover */
+}
+
+.container_2 {
+    height:50%;
+    width: 100%;
+    background-color: lightblue;
+    border: 1px solid black;
+    display: flex;
+} 
+
+.sub_container_2{
+    height: 100%;
+    width: 25%;
+    border: 1px solid black;
+    background-color: rgb(149, 183, 246);
+    display: flex;
+    flex-direction: column; /* Stack canvas and input vertically */
+    align-items: center;   /* Center horizontally */
+    position: relative; /* Required for absolute positioning adjustments */
+}
+
+.sub_container_2:hover{
+    background: linear-gradient(45deg, rgb(11, 94, 247),rgb(192, 211, 247), rgb(13, 94, 245));
+    transform: translateX(2px); /* Moves the button slightly downward */
+}
+
+#cal_container1, #cal_container2, #cal_container3, #cal_container4 /* Add more as needed */ {
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+/* Hover gradient effect for selected container */
+.hover-gradient:hover {
+    background: linear-gradient(45deg, rgb(253, 165, 1), rgb(73, 219, 245), rgb(253, 165, 2));
+    transform: translateX(2px); /* Moves the button slightly downward */
+}
+
+.sub_container_2 label{
+    font-weight: bold;
+    font-size: 2vw;
+}
+
+.sub_container_2 select{
+    font-weight: bold;
+    font-size: 2vw;
+    text-align: center;
+    margin-top: 1%;
+}
+#partModel{
+    width: 80%;
+    height: 50%;
+    font-size: 2.5vw;
+    text-align: center;
+    font-weight: bold;
+}
+
+.probe-container {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Add space between the elements */
+}
+    
+input[type="radio"] {
+    transform: scale(1.5); /* Adjust the scale value to increase size */
+    
+}
+#mastering{
+    width: 30%;
+    height: 50%;
+}
+.sub_container_2 button {
+    height: 40%;
+    width: 80%;
+    margin-top: 1%;
+    font-weight: bold;
+    font-size: 2vw;
+    text-align: center;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3), 0px -2px 6px rgba(255, 255, 255, 0.1) inset;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.sub_container_2 button:active {
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4) inset, 0px -2px 6px rgba(255, 255, 255, 0.1) inset;
+    transform: translateY(2px);
+}
+
+.sub_container_2 button:hover {
+    background: linear-gradient(45deg, blue, rgb(4, 28, 100));
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4), 0px -2px 8px rgba(255, 255, 255, 0.2) inset;
+    transform: scale(1.05);
+}
+
+.container_3{
+    height: 23%;
+    width: 100%;
+    border: 1px solid black;
+}
+#pre{
+    height: 90%;
+    width: 100%;
+    background-color: yellow;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2vw; 
+}
+.container-4{
+    height: 60%;
+    width: 100%;
+    display: flex;
+    border: 1px solid black;
+    background-color: bisque;
+}
+/* Container Styling */
+.sub_container_4 {
+    height: 100%;
+    width: 25%;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Top Input Box */
+.input-box {
+    width: 100%;
+    height: 10%;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5vw;
+    margin-bottom: 10px;
+}
+
+/* Grid Container */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    flex-grow: 1;
+    margin-top: 3%;
+}
+
+/* Individual Grid Items */
+.item {
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+    justify-content: flex-start; /* Align items at the top */
+    align-items: center; /* Center horizontally */
+    border: 1px solid black;
+    background-color: rgb(228, 194, 244);
+}
+
+.item-label {
+    margin-top: 3%;
+    margin-bottom: 5px; /* Space between label and input */
+    font-weight: bold; /* Make label text bold */
+    font-size: 1.2vw;
+    text-align: center; /* Center align the label text */
+}
+
+.input-box1 {
+    width: 80%; /* Adjust the width of the input box */
+    padding: 5px;
+    font-size: 1vw;
+    box-sizing: border-box;
+}
+
+/* Center Input Box */
+.center-box {
+    margin-top: 3%;
+   font-weight: bold;
+   font-size: 3vw;
+   text-align: center;
+    height: 20%;
+}
+
+
+.input-box1{
+    width: 100%;
+    height:50%;
+    font-weight: bold;
+    font-size: 2vw;
+    margin-top: 5%;
+    text-align: center;
+}
+.container-5{
+    height: 15%;
+    width: 100%;
+    display: flex;
+    border: 1px solid black;
+}
+.container_5_1{
+    height: 100%;
+    width: 100%;
+    border: 1px solid black;
+    background-color: beige;
+}
+#measureBtn {
+    height: 60%;
+    width: 20%;
+    margin-top: 1%;
+    margin-left: 75%;
+    border: none; /* Remove the black border for a cleaner look */
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    font-size: 1.5vw;
+    border-radius: 10px; /* Add rounded corners */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3), 0px -2px 6px rgba(255, 255, 255, 0.1) inset;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+}
+
+#measureBtn:hover {
+    background: linear-gradient(45deg, red, darkred);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4), 0px -2px 8px rgba(255, 255, 255, 0.2) inset;
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+#measureBtn:active {
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4) inset, 0px -2px 6px rgba(255, 255, 255, 0.1) inset;
+    transform: translateY(2px); /* Button depress effect */
+}
+
+
+#customAlert{
+    display: none;
+    position: fixed; 
+    top: 20px;
+    width: 500px;
+    height: 100px;
+    left: 50%;
+    text-align: center;
+    font-weight: bold;
+    transform: translateX(-50%);
+    background-color: yellow; 
+    color: black; 
+    border: 1px solid black ; 
+    padding: 10px;
+    z-index: 1000;
+}

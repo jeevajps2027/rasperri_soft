@@ -1,0 +1,1197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'fontawesome-free-6.7.2-web/css/all.min.css' %}">
+    <script src="{% static 'jquery-jquery-f79d5f1/dist/jquery.min.js' %}"></script>
+
+
+    <title>PARAMETER</title>
+   
+    <link rel="stylesheet" href="{% static 'css/parametersss.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+   
+    
+</head>
+<body>
+    <style>
+        /* Switch wrapper */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 5vw;
+  height: 5vh;
+  
+}
+
+/* Hide default checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 35%;
+  border: 2px solid black;
+}
+
+/* Circle inside slider */
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 3.5vh;
+  width: 2vw;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+/* When checkbox is checked */
+.switch input:checked + .slider {
+  background-color: #4caf50;
+}
+
+/* Move the circle */
+.switch input:checked + .slider::before {
+  transform: translateX(26px);
+}
+
+/* Optional: make it round */
+.slider.round {
+  border-radius: 34px;
+}
+
+.switch-container {
+  position: fixed; /* Or 'absolute' if inside a specific parent */
+  left: 2vw;
+  z-index: 999;
+}
+
+    </style>
+
+
+   
+<div class="container_1">
+
+
+    <div class="container_1_1">
+        <div class="switch-container">
+            <label class="switch">
+                <input type="checkbox" id="toggle-switch">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          
+        <label>PARAMETER SETTINGS</label>
+
+       
+        <button type="button" id="close_btn">
+            <i class="fas fa-times" id="close_icon"></i>
+        </button>
+    </div>
+    <div class="container_1_2">
+        <label for="srno">SR NO:</label>
+        <select id="srno">
+            <option value=""></option>
+            {% for id, part_model in parameter_settings_dict.items %}
+                <option value="{{ id }}" {% if id == 1 %}selected{% endif %}>{{ id }}</option>
+            {% endfor %}
+        </select>
+        
+        <label for="part_model">PART MODEL:</label>
+        <input type="text" id="part_model">
+        
+
+        <label for="part_name">PART NAME:</label>
+        <input type="text" id="part_name">
+    </div>
+    <div class="container_1_3">
+        <label for="char_lock">CHAR LOCK:</label>
+        <input type="text" id="char_lock">
+
+        <label for="char_lock_limit">CHAR LOCK LIMIT:</label>
+        <input type="text" id="char_lock_limit">
+
+        <label for="punch_no">PUNCH NO:</label>
+        <input type="checkbox" id="punch_no">
+
+        <button type="button" id="left_arrow_btn">
+            <i class="fas fa-arrow-left" id="left_arrow_icon"></i>
+        </button>
+
+        <button type="button" id="right_arrow_btn">
+            <i class="fas fa-arrow-right" id="right_arrow_icon"></i>
+        </button>
+    </div>
+
+    
+</div>
+<div class="container_2">
+    <div id="notification" class="notify" style="display: none;" ></div>
+    <table border="1" >
+        <thead>
+            <tr>
+                <th style="width: 5%;">SR.NO</th>
+                <th style="width: 15%;">PARAMETER NAME</th>
+                <th style="width: 6%;">CHANNEL NO</th>
+                <th style="width: 8%;">LOW MASTER</th>
+                <th style="width: 8%;">HIGH MASTER</th>
+                <th style="width: 6%;">NOMINAL</th>
+                <th style="width: 6%;">LSL</th>
+                <th style="width: 6%;">USL</th>
+                <th style="width: 6%;">LTL</th>
+                <th style="width: 6%;">UTL</th>
+                <th style="width: 5%;">MASTER GRP</th>
+                <th style="width: 5%;">STEP NO</th>
+                <th style="width: 6%;">AUTO/MAN</th>
+                <th style="width: 5%;">TIMER</th>
+                <th style="width: 5%;">DIGITS</th>
+                <th style="width: 5%;">ID/OD</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody-1">
+               
+        </tbody>
+        
+    </table>
+</div>
+<div class="container_3">
+    <div class="container_1_4">
+        <button type="button" id="addnew_btn">
+            <i class="fas fa-plus" id="addnew_icon"></i> Add New
+        </button>
+        <button type="button" id="save_btn">
+            <i class="fas fa-save" id="save_icon"></i> Save
+        </button>
+        <button type="button" id="delete_btn">
+            <i class="fas fa-trash" id="delete_icon"></i> Delete
+        </button>
+    </div>
+
+    
+</div>
+
+
+<script>
+    
+
+document.addEventListener("DOMContentLoaded", function () {
+    const tableBody = document.getElementById("tableBody-1");
+    const inputFields = ["part_model", "part_name", "char_lock", "char_lock_limit"];
+    const switchInput = document.getElementById("toggle-switch");
+
+let isPadEnabled = switchInput.checked;
+
+switchInput.addEventListener("change", function () {
+    isPadEnabled = this.checked;
+    if (!isPadEnabled) {
+        numberPad.style.display = "none";
+    }
+});
+
+
+    const numberPad = document.createElement("div");
+    numberPad.id = "numberPad";
+    numberPad.className = "num-pad";
+    numberPad.style.display = "none";
+
+    const toggleButton = document.createElement("button");
+    toggleButton.textContent = "ALP";
+    toggleButton.className = "num-btn";
+    toggleButton.onclick = toggleMode;
+    numberPad.appendChild(toggleButton);
+    numberPad.appendChild(document.createElement("br"));
+
+    let isAlphabetMode = false;
+    let alphabetKeys = {
+        "abc": ["A", "B", "C"],
+        "def": ["D", "E", "F"],
+        "ghi": ["G", "H", "I"],
+        "jkl": ["J", "K", "L"],
+        "mno": ["M", "N", "O"],
+        "pqrs": ["P", "Q", "R", "S"],
+        "tuv": ["T", "U", "V"],
+        "wxyz": ["W", "X", "Y", "Z"]
+    };
+    let keyPressCount = {};
+    let lastKeyPressed = null;
+    let keyPressTimeout = null;
+    let activeInput = null;
+
+    let buttons = [];
+    createNumberPad();
+    document.body.appendChild(numberPad);
+
+    // Apply keypad to dynamically added table input fields
+    tableBody.addEventListener("focusin", function (event) {
+        if (event.target.tagName === "INPUT" && event.target.type === "text") {
+            activateKeypad(event.target);
+        }
+    });
+
+    // Apply keypad to specific input fields outside the table
+    inputFields.forEach((id) => {
+        const field = document.getElementById(id);
+        if (field) {
+            field.addEventListener("focus", function () {
+                activateKeypad(field);
+            });
+        }
+    });
+
+  
+
+    function activateKeypad(inputElement) {
+        if (!isPadEnabled) return;
+
+        activeInput = inputElement;
+        numberPad.style.display = "block";
+        positionNumberPad(activeInput, numberPad);
+
+        const isNumberOnly = inputElement.classList.contains("number-only");
+        numberPad.innerHTML = "";
+
+        if (isNumberOnly) {
+            isAlphabetMode = false;
+            createNumberPad();
+        } else {
+            numberPad.appendChild(toggleButton);
+            numberPad.appendChild(document.createElement("br"));
+            if (isAlphabetMode) {
+                createAlphabetPad();
+            } else {
+                createNumberPad();
+            }
+        }
+    }
+
+
+    function toggleMode() {
+        isAlphabetMode = !isAlphabetMode;
+        toggleButton.textContent = isAlphabetMode ? "NUM" : "ALP";
+        keyPressCount = {};
+        lastKeyPressed = null;
+        numberPad.innerHTML = "";
+        numberPad.appendChild(toggleButton);
+        numberPad.appendChild(document.createElement("br"));
+
+        if (isAlphabetMode) {
+            createAlphabetPad();
+        } else {
+            createNumberPad();
+        }
+    }
+
+    function createNumberPad() {
+        buttons = [];
+        for (let i = 1; i <= 9; i++) {
+            buttons.push(createButton(i));
+            if (i % 3 === 0) numberPad.appendChild(document.createElement("br"));
+        }
+        buttons.push(createButton("_"));  // ✅ Add underscore button
+        buttons.push(createButton(0));
+        buttons.push(createButton("."));
+        numberPad.appendChild(document.createElement("br"));
+        buttons.push(createButton("C", clearLastCharacter));
+        buttons.push(createButton("OK", hideNumberPad));
+    }
+
+    function createAlphabetPad() {
+    buttons = [];
+    for (let key in alphabetKeys) {
+        buttons.push(createButton(key, function () { handleAlphabetClick(key); }));
+        if (buttons.length % 3 === 0) numberPad.appendChild(document.createElement("br"));
+    }
+
+    numberPad.appendChild(document.createElement("br"));
+
+    // ➕ Add symbol buttons
+    const symbols = ["+", "-", "*", "/", "%"];
+    symbols.forEach((sym, index) => {
+        buttons.push(createButton(sym));
+        if ((index + 1) % 3 === 0) numberPad.appendChild(document.createElement("br"));
+    });
+
+    numberPad.appendChild(document.createElement("br"));
+    buttons.push(createButton("TAB", addSpace));  // ✅ Add space button
+    buttons.push(createButton("C", clearLastCharacter));
+    buttons.push(createButton("OK", hideNumberPad));
+}
+
+
+    function createButton(value, callback) {
+        const button = document.createElement("button");
+        button.textContent = value;
+        button.className = "num-btn";
+        button.onclick = callback ? callback : function () { handleButtonClick(value); };
+        numberPad.appendChild(button);
+        return button;
+    }
+
+    function handleButtonClick(value) {
+        if (activeInput) {
+            activeInput.value += value;
+        }
+    }
+
+    function handleAlphabetClick(key) {
+        if (!alphabetKeys[key] || !activeInput) return;
+
+        if (lastKeyPressed !== key) {
+            activeInput.value += alphabetKeys[key][0];
+            keyPressCount[key] = 0;
+        } else {
+            keyPressCount[key] = (keyPressCount[key] + 1) % alphabetKeys[key].length;
+            activeInput.value = activeInput.value.slice(0, -1) + alphabetKeys[key][keyPressCount[key]];
+        }
+
+        lastKeyPressed = key;
+        clearTimeout(keyPressTimeout);
+        keyPressTimeout = setTimeout(() => {
+            lastKeyPressed = null;
+        }, 1000);
+    }
+
+    function addSpace() {
+        if (activeInput) {
+            activeInput.value += " ";
+        }
+    }
+
+    function clearLastCharacter() {
+        if (activeInput && activeInput.value.length > 0) {
+            activeInput.value = activeInput.value.slice(0, -1);
+        }
+    }
+    document.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && numberPad.style.display === "block") {
+        hideNumberPad();
+    }
+});
+
+    function hideNumberPad() {
+        numberPad.style.display = "none";
+    }
+
+    function positionNumberPad(input, pad) {
+    const rect = input.getBoundingClientRect();
+    const padWidth = pad.offsetWidth || 220; // width of your num-pad
+    const padHeight = pad.offsetHeight || 300;
+    const padding = 10;
+
+    let top = rect.bottom + window.scrollY + padding;
+    let left = rect.left + window.scrollX;
+
+    // 🔽 Check if pad goes off-screen on the right
+    if (left + padWidth > window.innerWidth) {
+        // Shift to the left side of the input box
+        left = rect.right - padWidth + window.scrollX;
+    }
+
+    // 🔼 Check if pad goes off-screen at the bottom
+    if (top + padHeight > window.innerHeight + window.scrollY) {
+        top = rect.top + window.scrollY - padHeight - padding;
+    }
+
+    pad.style.position = "absolute";
+    pad.style.left = `${left}px`;
+    pad.style.top = `${top}px`;
+    pad.style.display = "block";
+}
+
+
+    
+});
+
+
+
+
+
+
+
+document.getElementById('close_btn').addEventListener('click', () => {
+    // Redirect to the measurement page
+    window.location.href = '/measurement/'; // Replace '/measurement' with your desired URL
+});
+ 
+  const parameterSettings = JSON.parse('{{ parameter_settings_json|escapejs }}');
+    console.log("parameterSettings:", parameterSettings);  // For debugging
+
+    // Add an event listener to update the PART MODEL field
+    document.getElementById('srno').addEventListener('change', function () {
+        const selectedId = this.value; // The selected SR NO
+        const partModelInput = document.getElementById('part_model');
+
+        // Log the selected SR NO to the console
+        console.log("Selected SR NO:", selectedId);
+
+        // Retrieve the corresponding PART MODEL
+        const partModel = parameterSettings[selectedId] || '';
+
+        // Log the corresponding PART MODEL to the console
+        console.log("Corresponding PART MODEL:", partModel);
+
+        // Update the PART MODEL input field
+        partModelInput.value = partModel;
+    });
+
+    // Initialize the PART MODEL input field with the default selected SR NO value (1)
+    document.getElementById('part_model').value = parameterSettings[1] || ''; // Default to 1
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// // Function to add a new row dynamically
+// function addNewRow(rowNumber) {
+//     const tableBody = document.getElementById("tableBody-1");
+
+//     const columnNames = [
+//         "SR_NO", "PARAMETER_NAME", "CHANNEL_NO", "LOW_MASTER", "HIGH_MASTER", 
+//         "NOMINAL", "LSL", "USL", "LTL", "UTL","MASTER_GRP", "STEP_NO", "AUTO_MAN", "TIMER", "DIGITS", "ID_OD"
+//     ];
+
+//     const cycleOptions = {
+//         "CHANNEL_NO": [1, 2, 3, 4],
+//         "MASTER_GRP": [1, 2, 3, 4],
+//         "STEP_NO": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21],
+//         "DIGITS": [1, 2, 3, 4],
+//         "ID_OD": ["ID", "OD"]
+//     };
+
+//     const numericColumns = [
+//         "LOW_MASTER", "HIGH_MASTER", "NOMINAL", "LSL", "USL", "LTL", "UTL", "TIMER"
+//     ];
+
+//     const row = document.createElement("tr");
+//     row.id = `row-${rowNumber}`;
+
+//     columnNames.forEach((colName, index) => {
+//         const cell = document.createElement("td");
+
+//         if (index === 0) {
+//             cell.textContent = rowNumber;
+//             cell.style.backgroundColor = "white";
+//         } else if (index === 12) {
+//             const checkbox = document.createElement("input");
+//             checkbox.type = "checkbox";
+//             checkbox.style.cursor = "pointer";
+//             cell.appendChild(checkbox);
+//             checkbox.addEventListener("change", (event) => {
+//                 const timerInput = document.querySelector(`#row-${rowNumber}-TIMER`);
+//                 if (event.target.checked) {
+//                     timerInput.disabled = false;
+//                 } else {
+//                     timerInput.disabled = true;
+//                     timerInput.value = '';
+//                 }
+//             });
+//         } else if (index === 13) {
+//             const timerInput = document.createElement("input");
+//             timerInput.type = "text";
+//             timerInput.id = `row-${rowNumber}-TIMER`;
+//             timerInput.disabled = true;
+//             timerInput.addEventListener("input", () => {
+//                 timerInput.value = timerInput.value.replace(/[^0-9.]/g, '');
+//                 if ((timerInput.value.match(/\./g) || []).length > 1) {
+//                     timerInput.value = timerInput.value.slice(0, -1);
+//                 }
+//             });
+//             cell.appendChild(timerInput);
+//         }  else if (cycleOptions[colName]) {
+//             // Columns that require cycling through values
+//             const button = document.createElement("button");
+//             button.textContent = cycleOptions[colName][0];
+//             button.style.cursor = "pointer";
+//             button.style.backgroundColor = "#f4f1de";
+//             button.style.color = "black";
+//             button.style.fontWeight = "bold";
+//             button.style.height = "80%";
+//             button.style.width = "80%";
+//             button.style.fontSize = "22px";
+//             button.style.padding = "5px 10px";
+//             button.style.border = "2px solid black";
+//             button.style.borderRadius = "10px";
+//             button.style.boxSizing = "border-box";
+//             button.style.textAlign = "center";
+
+//             // Hover effect
+//             button.addEventListener("mouseenter", () => {
+//                 button.style.backgroundColor = "#e0dcc5";
+//             });
+//             button.addEventListener("mouseleave", () => {
+//                 button.style.backgroundColor = "#f4f1de";
+//             });
+
+//             // Click event to cycle through values
+//             button.dataset.index = 0;
+//             button.addEventListener("click", () => {
+//                 let currentIndex = parseInt(button.dataset.index, 10);
+//                 currentIndex = (currentIndex + 1) % cycleOptions[colName].length;
+//                 button.textContent = cycleOptions[colName][currentIndex];
+//                 button.dataset.index = currentIndex;
+//             });
+
+//             cell.appendChild(button);
+//         } else {
+//             const input = document.createElement("input");
+//             input.type = "text";
+//             if (numericColumns.includes(colName)) {
+//                 input.addEventListener("input", () => {
+//                     input.value = input.value.replace(/[^0-9.]/g, '');
+//                     if ((input.value.match(/\./g) || []).length > 1) {
+//                         input.value = input.value.slice(0, -1);
+//                     }
+//                 });
+//             }
+//             cell.appendChild(input);
+//         }
+
+//         row.appendChild(cell);
+//     });
+
+//     tableBody.appendChild(row);
+// }
+
+
+
+
+// Function to reset form fields and clear the values inside ALL table rows (across all pages)
+function resetFormAndTable() {
+    // Reset form fields
+    document.getElementById('srno').selectedIndex = 0;
+    document.getElementById('part_model').value = '';
+    document.getElementById('part_name').value = '';
+    document.getElementById('char_lock').value = '';
+    document.getElementById('char_lock_limit').value = '';
+    document.getElementById('punch_no').checked = false;
+
+    // Reset values in allRowsData (which contains all pages' data)
+    allRowsData.forEach(row => {
+        row.parameter_name = "";
+        row.channel_no = "1";
+        row.low_master = "";
+        row.high_master = "";
+        row.nominal = "";
+        row.lsl = "";
+        row.usl = "";
+        row.ltl = "";
+        row.utl = "";
+        row.master_grp = "1";
+        row.step_no = "1";
+        row.auto_man = false;
+        row.timer = "";
+        row.digits = "4";
+        row.id_od = "OD";
+    });
+
+    // Re-render the table to reflect the cleared values across all pages
+    renderTableRows(currentPage);
+}
+
+// Adding event listener for the "Add New" button
+document.getElementById('addnew_btn').addEventListener('click', resetFormAndTable);
+
+// Adding event listener to the 'part_model' field to trigger resetFormAndTable when it's changed
+document.getElementById('part_model').addEventListener('click', resetFormAndTable);
+///////////////////////////////////////////////////////////////////////////////////////////
+$(document).ready(function () {
+    const csrftoken = $("meta[name='csrf-token']").attr("content");
+
+    $("#save_btn").on("click", function () {
+        const partModel = $("#part_model").val();
+        if (!partModel) {
+            alert("Part Model is required.");
+            return;
+        }
+
+        const parameterSettings = {
+            sr_no: $("#srno").val(),
+            part_model: partModel,
+            part_name: $("#part_name").val(),
+            char_lock: $("#char_lock").val(),
+            char_lock_limit: $("#char_lock_limit").val(),
+            punch_no: $("#punch_no").is(":checked")
+        };
+
+        // ⮕ Step 1: Before validation, update `allRowsData` with currently visible inputs
+        $("#tableBody-1 tr").each(function (index) {
+            const globalIndex = (currentPage - 1) * rowsPerPage + index;
+            const cells = $(this).find('td');
+
+            if (!allRowsData[globalIndex]) return; // Safety check
+
+            allRowsData[globalIndex].parameter_name = cells.eq(1).find('input').val()?.trim() || '';
+            allRowsData[globalIndex].channel_no = cells.eq(2).find('button').text()?.trim() || '';
+            allRowsData[globalIndex].low_master = cells.eq(3).find('input').val()?.trim() || '';
+            allRowsData[globalIndex].high_master = cells.eq(4).find('input').val()?.trim() || '';
+            allRowsData[globalIndex].nominal = cells.eq(5).find('input').val()?.trim() || '';
+            allRowsData[globalIndex].lsl = cells.eq(6).find('input').val()?.trim() || '';
+            allRowsData[globalIndex].usl = cells.eq(7).find('input').val()?.trim() || '';
+            allRowsData[globalIndex].ltl = cells.eq(8).find('input').val()?.trim() || '';
+            allRowsData[globalIndex].utl = cells.eq(9).find('input').val()?.trim() || '';
+            allRowsData[globalIndex].master_grp = cells.eq(10).find('button').text()?.trim() || '';
+            allRowsData[globalIndex].step_no = cells.eq(11).find('button').text()?.trim() || '';
+            allRowsData[globalIndex].auto_man = cells.eq(12).find('input[type="checkbox"]').is(':checked');
+            allRowsData[globalIndex].timer = cells.eq(13).find('input').val()?.trim() || '';
+            allRowsData[globalIndex].digits = cells.eq(14).find('button').text()?.trim() || '';
+            allRowsData[globalIndex].id_od = cells.eq(15).find('button').text()?.trim() || '';
+        });
+
+        // ⮕ Step 2: Now validate full allRowsData (21 rows)
+        let validationFailed = false;
+        let validationMessage = "";
+        let stepGroups = {};
+        let channelGroups = {};
+
+        allRowsData.forEach((row, index) => {
+            const rowIndex = index + 1;
+
+            // **Apply validation only for rows with parameter_name present**
+            if (row.parameter_name.trim() === "") return; // Skip rows without parameter_name
+
+            const hasParameter = row.parameter_name.trim() !== "";
+            let emptyFields = [];
+
+            if (hasParameter) {
+                if (!row.channel_no) emptyFields.push("CHANNEL_NO");
+                if (!row.low_master) emptyFields.push("LOW_MASTER");
+                if (!row.high_master) emptyFields.push("HIGH_MASTER");
+                if (!row.nominal) emptyFields.push("NOMINAL");
+                if (!row.lsl) emptyFields.push("LSL");
+                if (!row.usl) emptyFields.push("USL");
+                if (!row.ltl) emptyFields.push("LTL");
+                if (!row.utl) emptyFields.push("UTL");
+                if (!row.master_grp) emptyFields.push("MASTER_GRP");
+                if (!row.step_no) emptyFields.push("STEP_NO");
+            }
+
+            // **New Condition:**
+            // If the row has `parameter_name`, apply all validation rules
+            if (row.auto_man && !row.timer) {
+                validationFailed = true;
+                validationMessage += `Row ${rowIndex}: TIMER is required when AUTO_MAN is checked.\n`;
+            }
+
+            if (emptyFields.length > 0) {
+                validationFailed = true;
+                validationMessage += `Row ${rowIndex}: Missing fields [${emptyFields.join(", ")}]\n`;
+            }
+
+            const low_master = parseFloat(row.low_master);
+            const high_master = parseFloat(row.high_master);
+            const lsl = parseFloat(row.lsl);
+            const usl = parseFloat(row.usl);
+            const ltl = parseFloat(row.ltl);
+            const utl = parseFloat(row.utl);
+
+            if (!isNaN(low_master) && !isNaN(high_master) && low_master >= high_master) {
+                validationFailed = true;
+                validationMessage += `Row ${rowIndex}: LOW_MASTER must be smaller than HIGH_MASTER.\n`;
+            }
+            if (!isNaN(lsl) && !isNaN(usl) && usl <= lsl) {
+                validationFailed = true;
+                validationMessage += `Row ${rowIndex}: USL must be greater than LSL.\n`;
+            }
+            if (!isNaN(utl) && !isNaN(ltl) && utl <= ltl) {
+                validationFailed = true;
+                validationMessage += `Row ${rowIndex}: UTL must be greater than LTL.\n`;
+            }
+            if (!isNaN(lsl) && !isNaN(ltl) && lsl <= ltl) {
+                validationFailed = true;
+                validationMessage += `Row ${rowIndex}: LSL must be greater than LTL.\n`;
+            }
+            if (!isNaN(usl) && !isNaN(utl) && usl >= utl) {
+                validationFailed = true;
+                validationMessage += `Row ${rowIndex}: USL must be smaller than UTL.\n`;
+            }
+
+            const stepNo = row.step_no;
+            if (stepNo) {
+                if (!stepGroups[stepNo]) stepGroups[stepNo] = [];
+                stepGroups[stepNo].push(row);
+            }
+
+            const channelNo = row.channel_no;
+            if (channelNo) {
+                if (!channelGroups[channelNo]) {
+                    channelGroups[channelNo] = { masterGrp: row.master_grp, rows: [rowIndex] };
+                } else {
+                    if (channelGroups[channelNo].masterGrp !== row.master_grp) {
+                        validationFailed = true;
+                        validationMessage += `Row ${rowIndex}: MASTER_GRP mismatch for CHANNEL_NO ${channelNo}.\n`;
+                    }
+                }
+            }
+        });
+
+        // ⮕ Validate STEP_NO rules
+        for (let step in stepGroups) {
+            const rows = stepGroups[step];
+            if (rows.length > 4) {
+                validationFailed = true;
+                validationMessage += `Step ${step}: Cannot have more than 4 rows.\n`;
+            }
+            const allChecked = rows.every(r => r.auto_man);
+            const anyChecked = rows.some(r => r.auto_man);
+
+            if (anyChecked && !allChecked) {
+                validationFailed = true;
+                validationMessage += `Step ${step}: If one row has AUTO_MAN checked, all must be checked.\n`;
+            }
+
+            const timers = [...new Set(rows.filter(r => r.auto_man).map(r => r.timer))];
+            if (timers.length > 1) {
+                validationFailed = true;
+                validationMessage += `Step ${step}: All TIMER values must match when AUTO_MAN is checked.\n`;
+            }
+        }
+
+        if (validationFailed) {
+            alert(`Validation Error:\n${validationMessage}`);
+            return;
+        }
+
+        const postData = {
+            part_model: partModel,
+            parameter_settings: parameterSettings,
+            table_data: allRowsData
+        };
+
+        console.log("postData", postData);
+
+        $.ajax({
+            url: "/parameter/",
+            type: "POST",
+            data: JSON.stringify(postData),
+            contentType: "application/json",
+            headers: {
+                "X-CSRFToken": csrftoken
+            },
+            success: function (response) {
+                showNotification('Data saved successfully', true);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                showNotification('Error: Failed to save the data', false);
+            }
+        });
+    });
+
+    // Optional: Style for error rows
+    $("<style>")
+        .prop("type", "text/css")
+        .html(`
+            .error-row {
+                background-color: #f8d7da;
+                color: #721c24;
+            }
+        `)
+        .appendTo("head");
+});
+
+
+function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+    
+
+
+//////////////////////////////////////////////////////////////////////////
+let allRowsData = []; // Store all rows globally
+let currentPage = 1;
+const rowsPerPage = 7;
+const totalRows = 21; // 3 pages (7 rows per page)
+
+// Function to fetch data from the backend
+function sendPartModelToBackend(partModel) {
+    if (partModel) {
+        console.log("Part Model sent to the backend:", partModel);
+
+        $.ajax({
+            type: 'GET',
+            url: '/parameter/',
+            data: { 'part_model': partModel },
+            success: function (response) {
+                $('#tableBody-1').empty(); // Clear existing rows
+                let data = response.parameter_settings[0]; // Store main object
+
+                console.log("the value from the backend",data);
+                
+                if (!data) {
+                    console.error("No data received from the backend.");
+                    allRowsData = [];
+                } else {
+                    // Assign values correctly
+                    $('#part_model').val(data.part_model);
+                    $('#part_name').val(data.part_name);
+                    $('#char_lock').val(data.char_lock);
+                    $('#char_lock_limit').val(data.char_lock_limit);
+                    $('#punch_no').prop('checked', data.punch_no);
+
+                    allRowsData = data.table_data; // Store table rows
+
+                    // Sort the rows by sr_no in ascending order
+                    allRowsData.sort((a, b) => a.sr_no - b.sr_no);
+                }
+
+                // Ensure exactly 21 rows exist, filling with placeholders if needed
+                while (allRowsData.length < totalRows) {
+                    allRowsData.push({
+                        sr_no: allRowsData.length + 1,
+                        parameter_name: '',
+                        channel_no: '1',
+                        low_master: '',
+                        high_master: '',
+                        nominal: '',
+                        lsl: '',
+                        usl: '',
+                        ltl: '',
+                        utl: '',
+                        master_grp: '1',
+                        step_no: '1',
+                        auto_man: false,
+                        timer: '',
+                        digits: '4',
+                        id_od: 'OD'
+                    });
+                }
+
+                if (allRowsData.length > 0) {
+                    renderTableRows(currentPage);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    } else {
+        console.log("No part model provided. Displaying empty rows.");
+        allRowsData = [];
+        while (allRowsData.length < totalRows) {
+            allRowsData.push({
+                sr_no: allRowsData.length + 1,
+                parameter_name: '',
+                channel_no: '1',
+                low_master: '',
+                high_master: '',
+                nominal: '',
+                lsl: '',
+                usl: '',
+                ltl: '',
+                utl: '',
+                master_grp: '1',
+                step_no: '1',
+                auto_man: false,
+                timer: '',
+                digits: '4',
+                id_od: 'OD'
+            });
+        }
+        renderTableRows(currentPage);
+    }
+}
+
+
+// Function to render table rows for the current page
+function renderTableRows(page) {
+    let tableBody = $('#tableBody-1');
+    tableBody.empty(); // Clear previous rows
+    
+    let start = (page - 1) * rowsPerPage;
+    let end = Math.min(start + rowsPerPage, allRowsData.length);
+
+    for (let i = start; i < end; i++) {
+        let row = allRowsData[i];
+        let tableRow = `
+            <tr>
+                <td><input type="text" value="${row.sr_no}" readonly></td>
+                <td><input type="text" value="${row.parameter_name}"></td>
+                <td><button class="cycle-button" data-column="channel_no">${row.channel_no}</button></td>
+                <td><input type="text" class="number-only" value="${row.low_master}"></td>
+                <td><input type="text" class="number-only" value="${row.high_master}"></td>
+                <td><input type="text" class="number-only" value="${row.nominal}"></td>
+                <td><input type="text" class="number-only" value="${row.lsl}"></td>
+                <td><input type="text" class="number-only" value="${row.usl}"></td>
+                <td><input type="text" class="number-only" value="${row.ltl}"></td>
+                <td><input type="text" class="number-only" value="${row.utl}"></td>
+                <td><button class="cycle-button" data-column="master_grp">${row.master_grp}</button></td>
+                <td><button class="cycle-button" data-column="step_no">${row.step_no}</button></td>
+                <td><input type="checkbox" ${row.auto_man ? 'checked' : ''} class="auto-man-checkbox"></td>
+                <td><input type="text" class="number-only timer-input" value="${row.timer}" ${row.auto_man ? '' : 'disabled'}></td>
+                <td><button class="cycle-button" data-column="digits">${row.digits}</button></td>
+                <td><button class="cycle-button" data-column="id_od">${row.id_od}</button></td>
+            </tr>
+        `;
+        tableBody.append(tableRow);
+    }
+    
+    setupEventHandlers();
+    updatePaginationButtons();
+}
+
+function setupEventHandlers() {
+    $('.number-only').on('input', function () {
+        this.value = this.value.replace(/[^0-9.]/g, '');
+    });
+
+    $('.cycle-button').on('click', function () {
+        const column = $(this).data('column');
+        const cycleOptions = {
+            "channel_no": ["1", "2", "3", "4"],
+            "master_grp": ["1", "2", "3", "4"],
+            "step_no": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21"],
+            "digits": [ "4","1", "2", "3"],
+            "id_od": [ "OD","ID"]
+        };
+
+        let currentIndex = cycleOptions[column].indexOf($(this).text());
+        let newIndex = (currentIndex + 1) % cycleOptions[column].length;
+        $(this).text(cycleOptions[column][newIndex]);
+    });
+
+    // Enable/Disable Timer input when checkbox is checked/unchecked
+    $('.auto-man-checkbox').on('change', function () {
+        let timerInput = $(this).closest('tr').find('.timer-input');
+        if ($(this).is(':checked')) {
+            timerInput.prop('disabled', false);
+        } else {
+            timerInput.prop('disabled', true);
+            timerInput.val(''); // Optionally clear the input when disabled
+        }
+    });
+
+    // Apply styles to cycle buttons
+    $('.cycle-button').each(function () {
+        $(this).css({
+            'cursor': 'pointer',
+            'background-color': '#f4f1de',
+            'color': 'black',
+            'font-weight': 'bold',
+            'height': '80%',
+            'width': '80%',
+            'font-size': '22px',
+            'padding': '5px 10px',
+            'border': '2px solid black',
+            'border-radius': '10px',
+            'box-sizing': 'border-box',
+            'text-align': 'center'
+        });
+
+        // Hover effect for buttons
+        $(this).on('mouseenter', function () {
+            $(this).css('background-color', '#e0dcc5');
+        }).on('mouseleave', function () {
+            $(this).css('background-color', '#f4f1de');
+        });
+    });
+}
+
+
+function updatePaginationButtons() {
+    const leftBtn = $('#left_arrow_btn');
+    const rightBtn = $('#right_arrow_btn');
+
+    // Left button logic
+    const disableLeft = currentPage === 1;
+    leftBtn.prop('disabled', disableLeft);
+    leftBtn.css({
+        filter: disableLeft ? 'blur(1px) grayscale(80%)' : 'none',
+        opacity: disableLeft ? '0.5' : '1',
+        cursor: disableLeft ? 'not-allowed' : 'pointer'
+    });
+
+    // Right button logic
+    let disableRight;
+
+    if (currentPage === 1 || currentPage === 2) {
+        let filledRows = 0;
+        let start = (currentPage - 1) * rowsPerPage;
+        let end = Math.min(start + rowsPerPage, allRowsData.length);
+
+        for (let i = start; i < end; i++) {
+            let row = allRowsData[i];
+            if (row.parameter_name.trim() !== '' && row.nominal.trim() !== '') {
+                filledRows++;
+            }
+        }
+
+        // For page 1 and page 2, allow move only if all 7 rows filled
+        disableRight = filledRows < 7;
+    } else if (currentPage === 3) {
+        // On last page, no right movement
+        disableRight = true;
+    }
+
+    rightBtn.prop('disabled', disableRight);
+    rightBtn.css({
+        filter: disableRight ? 'blur(1px) grayscale(80%)' : 'none',
+        opacity: disableRight ? '0.5' : '1',
+        cursor: disableRight ? 'not-allowed' : 'pointer'
+    });
+}
+
+
+// Event listeners for pagination buttons
+$('#right_arrow_btn').on('click', function () {
+    if (currentPage < 3) {
+        currentPage++;
+        renderTableRows(currentPage);
+    }
+});
+
+$('#left_arrow_btn').on('click', function () {
+    if (currentPage > 1) {
+        currentPage--;
+        renderTableRows(currentPage);
+    }
+});
+
+
+
+// Event listener for srno change
+$('#srno').on('change', function () {
+    let newSrno =  $('#part_model').val();
+    sendPartModelToBackend(newSrno)
+ 
+  
+});
+
+
+
+// Initialize page
+$(document).ready(function () {
+    const parameterSettings = JSON.parse('{{ parameter_settings_json|escapejs }}');
+    let initialId = $('#srno').val();
+    let initialPartModel = parameterSettings[initialId] || '';
+
+    $('#part_model').val(initialPartModel);
+    sendPartModelToBackend(initialPartModel);
+    renderTableRows(1); // Load first page
+});
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////
+$(document).ready(function () {
+    const csrftoken = $("meta[name='csrf-token']").attr("content");
+
+    // Handle delete button click
+    $("#delete_btn").on("click", function () {
+        const partModel = $("#part_model").val();
+
+        if (!partModel) {
+            alert("Please enter a Part Model to delete.");
+            return;
+        }
+
+        // Send DELETE request to the backend
+        $.ajax({
+            url: "/parameter/", // Update this URL if needed
+            type: "DELETE",
+            data: JSON.stringify({ part_model: partModel }),
+            contentType: "application/json",
+            headers: {
+                "X-CSRFToken": csrftoken // Include CSRF token if required
+            },
+            success: function (response) {
+               
+                showNotification('Data deleted successfully', true); 
+                // Optionally clear the input field after deletion
+                $("#part_model").val("");
+            },
+            error: function (xhr) {
+                const response = JSON.parse(xhr.responseText);
+                showNotification('Error: Failed to delete data', false); 
+                
+            }
+        });
+    });
+});
+////////////////////////////////////////////////////////////////////////
+
+// Function to show a notification with an OK button
+function showNotification(message, isSuccess) {
+    var notificationElement = document.getElementById('notification');
+    notificationElement.textContent = message;
+
+    if (isSuccess) {
+        notificationElement.style.backgroundColor = 'lightgreen';
+    } else {
+        notificationElement.style.backgroundColor = 'coral';
+    }
+
+    // Add an "OK" button to the notification
+    var okButton = document.createElement('button');
+    okButton.textContent = 'OK';
+    okButton.style.display = 'block';   // Make the button a block element
+    okButton.style.margin = 'auto';     // Center the button horizontally
+    okButton.style.marginTop = '10px';  // Add some top margin for spacing
+    okButton.style.padding = '10px';
+    okButton.style.height = '40px';     // Set the button height
+    okButton.style.width = '80px';      // Set the button width
+    okButton.style.border = 'none';     // Remove the default button border
+    okButton.style.backgroundColor = 'orangered'; // Red background color
+    okButton.style.color = 'white';     // White text color
+
+    // Add event listener to the OK button
+    okButton.addEventListener('click', function() {
+        // Redirect to the desired page (adjust the URL if needed)
+        window.location.href = '{% url "parameter" %}';
+
+       
+    });
+
+    notificationElement.appendChild(okButton);
+
+    // Center the notification vertically and horizontally
+    notificationElement.style.display = 'flex';
+    notificationElement.style.flexDirection = 'column';
+    notificationElement.style.alignItems = 'center';
+    notificationElement.style.textAlign = 'center';
+    notificationElement.style.justifyContent = 'center';
+    notificationElement.style.top = '50%';
+    notificationElement.style.left = '50%';
+    notificationElement.style.transform = 'translate(-50%, -50%)';
+    notificationElement.style.zIndex = '1000';
+
+    // Display the notification
+    notificationElement.style.display = 'block';
+}
+
+
+
+    </script>
+    
+</body>
+</html>

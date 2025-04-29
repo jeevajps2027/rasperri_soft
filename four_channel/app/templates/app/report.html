@@ -1,0 +1,530 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'fontawesome-free-6.7.2-web/css/all.min.css' %}">
+    <script src="{% static 'jquery-jquery-f79d5f1/dist/jquery.min.js' %}"></script>
+
+
+
+    <script src="{% static 'js-xlsx-master/dist/xlsx.full.min.js' %}"></script>
+
+<!-- Add jsPDF library for PDF conversion -->
+
+<script src="{% static 'parallax-jsPDF-57cbe94/dist/jspdf.umd.min.js' %}"></script>
+
+
+ 
+    <link rel="stylesheet" href="{% static 'css/report_files.css' %}">
+
+    <title>REPORT</title>  
+</head>
+<body>
+
+<div class="container-1">
+    
+    <div class="container-1-1">
+        <label for="from_date" >START DATE:</label>
+        <input type="datetime-local" class="from-date" id="from_date" name="from_date">
+
+        
+        <input type="text" id="part_model" >
+
+        <label for="total_count" >COUNT:</label>
+        <input type="text" id="total_count" >
+
+        <input type="text" id="clock-box" >
+
+        
+        <button type="submit" id="exit_btn">
+            <i class="fas fa-times" id="exit_icon"></i>
+        </button>
+
+
+       
+    </div>
+    <div class="container-1-2">
+ 
+        <label for="to_date">END DATE :</label>
+        <input type="datetime-local" class="to-date"  id="to_date" name="to_date" style=" margin-left: 2%;">
+
+
+
+        
+
+        <label for="shift_select">SHIFT:</label>
+        <select id="shift_select" name="shift">
+            <option value="ALL">ALL</option>
+            {% for shift in shift_name %}
+                <option value="{{ shift }}">{{ shift }}</option>
+            {% endfor %}
+        </select>
+
+
+
+        <label for="status_select">STATUS:</label>
+        <select id="status_select">
+            <option value="ALL" >ALL</option>
+            <option value="ACCEPT" id="accept">ACCEPT</option>
+            <option value="REJECT" id="reject">REJECT</option>
+            <option value="REWORK" id="rework">REWORK</option>
+        </select>
+
+        <label for="mode">MODE:</label>
+        <select id="mode">
+            <option value="readings" >READINGS</option>
+            <option value="max" id="max">MAX</option>
+            <option value="min" id="min">MIN</option>
+            <option value="tir" id="tir">TIR</option>
+        </select>
+
+        <div id="loading_spinner" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i> 
+        </div>
+        
+        <button type="submit" id="search_btn">
+            <i class="fas fa-search" id="search_icon"></i>
+        </button>
+
+        <button type="button" id="download_btn">
+            <i class="fas fa-download" id="download_icon"></i>
+        </button>
+
+        <form id="download_form" method="POST">
+            {% csrf_token %}
+        </form>
+        
+
+        <div id="downloadModal" style="display: none;">
+            <button id="download_pdf">Download as PDF</button>
+            <button id="download_xlsx">Download as XLSX</button>
+        </div>
+
+        <button type="button" id="left_arrow_btn">
+            <i class="fas fa-arrow-left" id="left_arrow_icon"></i>
+        </button>
+
+        <button type="button" id="right_arrow_btn">
+            <i class="fas fa-arrow-right" id="right_arrow_icon"></i>
+        </button>
+        
+        
+        
+        
+       
+    </div>
+    </div>
+    <div class="container-2" id="container-2">
+        <table id="myTable">
+            <!-- Table headers and body will go here -->
+        </table>
+    </div>
+
+    <script>
+
+
+
+document.getElementById("exit_btn").addEventListener("click", function() {
+        // Redirect to the measurement URL
+        window.location.href = "{% url 'measurement' %}";
+    });
+
+        
+
+// When the download button is clicked, show modal for format selection
+$('#download_btn').click(function() {
+    $('#downloadModal').show();
+});
+
+// For PDF download
+$('#download_pdf').click(function() {
+    // Hide modal
+    $('#downloadModal').hide();
+
+});
+
+
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+
+function getCSRFToken() {
+    return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
+
+$('#download_pdf').click(function () {
+    // Prepare the entire table data by combining all rows (including pagination)
+    let fullTableHtml = '<table>';
+    tableData.forEach((row, index) => {
+        if (index === 0) { // Add the first row as the header
+            fullTableHtml += `<thead style="height: 10%; width: 100%; font-size: 1vw; font-weight: bold; text-align: center; color: white; background-color: lightseagreen;">${row.outerHTML}</thead>`;
+        } else {
+            fullTableHtml += row.outerHTML; // Append remaining rows
+        }
+    });
+    fullTableHtml += '</table>'; // Close table tag
+    $('#loading_spinner').show();
+
+    // Collect filter inputs
+    const fromDate = $('#from_date').val();
+    const partModel = $('#part_model').val();
+    const mode = $('#mode').val();
+    const toDate = $('#to_date').val();
+    const shift = $('#shift_select').val();
+    const status = $('#status_select').val();
+    const total_count = $('#total_count').val();
+
+    console.log('Full Table HTML:', fullTableHtml); // Log full table data for debugging
+
+    // Send AJAX request to backend to generate and save PDF file
+    $.ajax({
+        url: '/report_pdf/', // Backend endpoint for PDF conversion
+        method: 'POST',
+        data: {
+            table_html: fullTableHtml, // Send all rows as HTML
+            from_date: fromDate,
+            part_model: partModel,
+            mode: mode,
+            to_date: toDate,
+            shift: shift,
+            status: status,
+            total_count: total_count,
+            csrfmiddlewaretoken: '{{ csrf_token }}' // CSRF token for security
+        },
+        success: function (response) {
+            $('#loading_spinner').hide();
+            if (response.success) {
+                alert(response.message); 
+            } else {
+                alert('Failed to generate PDF file: ' + response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error); // Handle error
+            alert('Failed to generate PDF file. Please try again.');
+            $('#loading_spinner').hide();
+        }
+    });
+    $('#downloadModal').hide();
+});
+
+
+
+
+
+
+
+
+$('#download_xlsx').click(function () {
+    // Prepare the entire table data by combining all rows (including pagination)
+    let fullTableHtml = '<table>';
+    tableData.forEach((row, index) => {
+        if (index === 0) { // Add the first row as the header
+            fullTableHtml += `<thead style="height: 10%; width: 100%; font-size: 1vw; font-weight: bold; text-align: center; color: white; background-color: lightseagreen;">${row.outerHTML}</thead>`;
+        } else {
+            fullTableHtml += row.outerHTML; // Append remaining rows
+        }
+    });
+    fullTableHtml += '</table>'; // Close table tag
+
+    $('#loading_spinner').show();
+
+    // Collect filter inputs
+    const fromDate = $('#from_date').val();
+    const partModel = $('#part_model').val();
+    const mode = $('#mode').val();
+    const toDate = $('#to_date').val();
+    const shift = $('#shift_select').val();
+    const status = $('#status_select').val();
+    const total_count = $('#total_count').val();
+
+    console.log('Full Table HTML:', fullTableHtml); // Log full table data for debugging
+
+    // Send AJAX request to backend to generate and save XLSX file
+    $.ajax({
+        url: '/report_xlsx/', // Backend endpoint for XLSX conversion
+        method: 'POST',
+        data: {
+            table_html: fullTableHtml, // Send all rows as HTML
+            from_date: fromDate,
+            part_model: partModel,
+            mode: mode,
+            to_date: toDate,
+            shift: shift,
+            status: status,
+            total_count: total_count,
+            csrfmiddlewaretoken: '{{ csrf_token }}' // CSRF token for security
+        },
+        success: function (response) {
+            $('#loading_spinner').hide();
+            if (response.success) {
+                alert(response.message); 
+            } else {
+                alert('Failed to generate XLSX file: ' + response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error); // Handle error
+            alert('Failed to generate XLSX file. Please try again.');
+            $('#loading_spinner').hide();
+        }
+    });
+    $('#downloadModal').hide();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Function to get query parameters from the URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Retrieve the 'part_model' value and set it in the input box
+        document.addEventListener("DOMContentLoaded", function () {
+            const partModel = getQueryParam("part_model");
+            if (partModel) {
+                document.getElementById("part_model").value = partModel;
+            } else {
+                document.getElementById("part_model").placeholder = "No part model provided.";
+            }
+        });
+
+
+
+
+
+      // Function to update the clock
+function updateClock() {
+  var now = new Date();
+  var hours = now.getHours();
+  var minutes = now.getMinutes();
+  var seconds = now.getSeconds();
+  var day = now.getDate();
+  var month = now.getMonth() + 1; // January is 0, so we add 1 to get the actual month
+  var year = now.getFullYear();
+
+  // Format the time string
+  var ampm = hours >= 12 ? 'PM' : 'AM'; // Determine if it's AM or PM
+  hours = hours % 12; // Convert to 12-hour format
+  hours = hours ? hours : 12; // Handle midnight (0 hours)
+  var timeString = hours + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0') + " " + ampm;
+
+  // Format the date string
+  var dateString = day.toString().padStart(2, '0') + "-" + month.toString().padStart(2, '0') + "-" + year;
+
+  var dateTimeString = timeString + " / " + dateString;
+
+  // Update the clock display
+  document.getElementById("clock-box").value = dateTimeString;
+
+  // Call this function again after 1 second
+  setTimeout(updateClock, 1000);
+}
+
+// Call the function to initially display the clock
+updateClock();
+
+
+
+
+// Parse the shift values from your JSON object
+var shiftValues = JSON.parse('{{ shift_values|escapejs }}');
+        console.log('Shift values:', shiftValues);
+
+        // Helper function to convert 12-hour time format to 24-hour format
+        function convertTo24Hour(timeString) {
+            let [time, modifier] = timeString.trim().split(' ');
+            let [hours, minutes, seconds] = time.split(':');
+            if (modifier === 'PM' && hours !== '12') {
+                hours = parseInt(hours, 10) + 12;
+            }
+            if (modifier === 'AM' && hours === '12') {
+                hours = 0;
+            }
+            return `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+        }
+
+        // Function to determine the from-date based on the current time
+        function setDateTimes() {
+            let now = new Date();
+            let currentTime = now.toTimeString().split(' ')[0]; // 'HH:MM:SS'
+            let currentDate = now.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+            // Remove seconds from the current time for to-date
+            let [hours, minutes] = currentTime.split(':');
+            let toDateTime = `${currentDate}T${hours}:${minutes}`;
+
+            // Set the to-date input
+            let toDateElements = document.getElementsByClassName('to-date');
+            for (let element of toDateElements) {
+                element.value = toDateTime;
+            }
+
+            // Determine the from-date based on the shift values
+            let fromDateTime = null;
+            for (let i = shiftValues.length - 1; i >= 0; i--) {
+                let [shiftName, shiftTime] = shiftValues[i];
+                let shift24HourTime = convertTo24Hour(shiftTime);
+                if (currentTime >= shift24HourTime) {
+                    fromDateTime = `${currentDate}T${shift24HourTime}`;
+                    break;
+                }
+            }
+            if (!fromDateTime) {
+                fromDateTime = `${currentDate}T00:00:00`; // Default to start of the day if no shift is found
+            }
+
+            // Set the from-date input
+            let fromDateElements = document.getElementsByClassName('from-date');
+            for (let element of fromDateElements) {
+                element.value = fromDateTime;
+            }
+
+            console.log('Current time:', currentTime);
+            console.log('To date-time (without seconds):', toDateTime);
+            console.log('From date-time:', fromDateTime);
+        }
+
+        setDateTimes();
+
+
+let tableData = []; // Store all rows dynamically
+let currentPage = 1; // Track the current page
+const rowsPerPage = 25; // Display 20 rows per page
+let totalRows = 0; // Total number of rows
+let totalPages = 0; // Total number of pages
+
+function renderTable(page) {
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = Math.min(startIndex + rowsPerPage, totalRows); // Ensure it doesn't exceed totalRows
+
+    // Get the required rows for the current page
+    const paginatedData = tableData.slice(startIndex, endIndex); // Slice the rows correctly
+
+    // Build table dynamically
+    let tableHtml = '<table>';
+
+    paginatedData.forEach((row, index) => {
+        if (page === 1 && index === 0) { // Check if it's the first row of the first page
+            tableHtml += `<thead style="height: 10%; width: 100%; font-size: 1vw; font-weight: bold; text-align: center; color: white; background-color: lightseagreen;">${row.outerHTML}</thead>`;
+        } else {
+            tableHtml += row.outerHTML; // Append each other row
+        }
+    });
+
+    tableHtml += '</table>';
+
+    $('#myTable').html(tableHtml); // Update the table
+
+    // Log the total pages and table content to the console after rendering the table
+    console.log('Total Pages:', totalPages);
+    console.log('Table HTML:', tableHtml);
+}
+
+// Handle Next Page button click
+$('#right_arrow_btn').click(function () {
+    if (currentPage * rowsPerPage < totalRows) {
+        currentPage++; // Move to the next page
+        renderTable(currentPage);
+    } else {
+        alert('You do not have the next page.');
+    }
+});
+
+// Handle Previous Page button click
+$('#left_arrow_btn').click(function () {
+    if (currentPage > 1) {
+        currentPage--; // Move to the previous page
+        renderTable(currentPage);
+    } else {
+        alert('You are already on the first page.');
+    }
+});
+
+// AJAX Call - Fetch Data
+$('#search_btn').click(function (event) {
+    event.preventDefault(); // Prevent form submission
+
+    $('#loading_spinner').show();
+    // Collect input values
+    const fromDate = $('#from_date').val();
+    const partModel = $('#part_model').val();
+    const mode = $('#mode').val();
+    const toDate = $('#to_date').val();
+    const shift = $('#shift_select').val();
+    const status = $('#status_select').val();
+
+    // Payload for AJAX
+    const payload = {
+        from_date: fromDate,
+        part_model: partModel,
+        mode: mode,
+        to_date: toDate,
+        shift: shift,
+        status: status,
+    };
+    console.log('Payload:', payload);
+
+    // Send AJAX request
+    $.ajax({
+        url: '/report/', // Backend URL
+        method: 'POST',
+        data: {
+            data: JSON.stringify(payload),
+            csrfmiddlewaretoken: '{{ csrf_token }}' // CSRF token
+        },
+        success: function (response) {
+            $('#loading_spinner').hide();
+            // Parse response and initialize data
+            const tempDiv = document.createElement('div'); // Create a temporary container
+            tempDiv.innerHTML = response.table_html; // Insert the HTML response
+            tableData = Array.from(tempDiv.querySelectorAll('tr')); // Extract rows as an array
+
+            totalRows = tableData.length; // Set total row count dynamically
+            $('#total_count').val(response.total_count); // Update the total count field
+            console.log('Total Rows:', totalRows);
+
+            // Calculate total pages
+            totalPages = Math.ceil(totalRows / rowsPerPage);
+            console.log('Total Pages:', totalPages);
+
+            // Render the first page
+            currentPage = 1; // Reset to first page
+            renderTable(currentPage); // Display first 20 rows
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error); // Handle errors
+            alert('Failed to fetch data. Please try again.');
+            $('#loading_spinner').hide();
+        }
+    });
+});
+
+
+
+
+
+        
+       
+
+    </script>
+</body>
+</html>

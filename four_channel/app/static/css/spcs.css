@@ -1,0 +1,215 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box; /* Includes border in the width and height calculations */
+    overflow: hidden; /* Prevents scrolling caused by overflow */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-wrap: wrap; /* Allows content to wrap to the next row */
+    border: 5px solid lightseagreen;
+}
+
+.container-1 {
+    height: 10%;
+    width: 100%;
+    border: 1px solid black;
+}
+.container_1_1{
+    width: 100%;
+border: 1px solid black;
+overflow: hidden;  /* Hides overflow content */
+height: 7vh;      /* Set a height for the container */
+position: relative;
+}
+
+.container-2 {
+width: 100%;
+border: 1px solid black;
+overflow: hidden;  /* Hides overflow content */
+height: 65vh;      /* Set a height for the container */
+position: relative;
+
+}
+.container-3 {
+width: 100%;
+border: 1px solid black;
+margin-top: 1%;
+font-size: 0.9vw;
+overflow: hidden;  /* Hides overflow content */
+height: 25vh;      /* Set a height for the container */
+position: relative;
+}
+
+.container-1-1 {
+    height: 90%; /* Allow the container to fill 100% height of its parent */
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+
+#exit_btn {
+    margin-left: 4%;
+background-color: #ff4c4c; /* Example: red background */
+border: none;
+padding: 10px;
+border-radius: 5px;
+width: 5%;
+
+}
+
+#exit_btn:hover{
+background: linear-gradient(45deg,red,rgb(61, 1, 1));
+transform: translateX(3px);
+}
+
+#exit_btn:active{
+background: linear-gradient(45deg,rgb(61, 1, 1),red);
+transform: translateX(-3px);
+}
+
+#exit_icon {
+font-size: 2vw; /* Adjust the icon size */
+color: white; /* Set the icon color */
+}
+.container-1-1  label{
+font-weight: bold;
+font-size: 1.2vw;
+margin-left: 1%;
+}
+.container_1_1  label{
+font-weight: bold;
+font-size: 1.2vw;
+margin-left: 1%;
+}
+.container_1_1  input{
+font-weight: bold;
+font-size: 1.2vw;
+text-align: center;
+width: 7%;
+height:90%;
+background-color: orange;
+}
+
+
+#clock-box{
+width: 17%;
+margin-left: 2%;
+font-weight: bold;
+font-size: 1.3vw;
+text-align: center;
+}
+
+#part_count{
+    width: 10%;
+    font-weight: bold;
+    font-size: 2vw;
+    text-align: center;
+    background-color: lightblue;
+    }
+
+#part_model{
+width: 14%;
+font-weight: bold;
+font-size: 2vw;
+text-align: center;
+}
+#parameter_button{
+width: 13%;
+background-color: blue;
+color: white;
+font-weight: bold;
+font-size: 1.3vw;
+text-align: center;
+}
+#parameter_button:hover{
+background: linear-gradient(45deg, rgb(37, 37, 247),rgb(0, 0, 27));
+transform: translateY(3px);
+}
+
+#parameter_button:active{
+background: linear-gradient(45deg,rgb(0, 0, 27), rgb(37, 37, 247));
+transform: translateY(-3px);
+}
+
+
+table { 
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+    max-height: 80vh;
+    border: 2px solid black;
+   
+}
+
+
+
+
+th, td {
+    text-align: center;
+    border: 1px solid black;
+}
+
+thead {
+    height:10%;
+    width: 100%;
+    font-size: 1vw;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    background-color: lightseagreen ;
+}
+
+#tableBody-1 input {
+    height: 90%;
+    width: 90%;
+    box-sizing: border-box;
+    font-size: 1vw;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+    border: none;
+    
+}
+
+
+#loading_spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5vw;
+    color: rgb(255, 0, 0);
+    z-index: 9999; /* Ensure spinner appears on top */
+}
+
+.fa-spinner {
+    margin-top: 10%;
+    margin-right: 20%; /* Add space between spinner and text */
+}
+
+.grid_container {
+display: grid;
+grid-template-columns: repeat(2, 50%);  /* 2 equal columns */
+grid-template-rows: repeat(2, 50%);     /* 2 equal rows */
+height: 90vh;                          /* Full viewport height */
+width: 100%;                            /* Full width */
+}
+
+.grid_item {
+border: 1px solid black;               /* For visualization */
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 20px;
+}
+
+
+
+

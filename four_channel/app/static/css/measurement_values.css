@@ -1,0 +1,603 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box; /* Includes border in the width and height calculations */
+    overflow: hidden; /* Prevents scrolling caused by overflow */
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    z-index: 1000;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    border: 5px solid lightseagreen ;
+}    
+
+.container-1 {
+    height: 15%;
+    width: 100%;
+    border: 1px solid black;
+}
+
+.container-1-1 {
+    height: 30%; /* Allow the container to fill 100% height of its parent */
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+
+#menu_btn {
+    height: 100%;
+    width: 8%;
+    font-weight: bold;
+    font-size: 1.2vw;
+    background-color: aqua;
+    border: none; /* Remove the border */
+}
+
+#menu_icon {
+    font-size: 1.5vw; /* Increase the icon size */
+    font-weight: bold; /* Make it bold */
+    color: black; /* Set color */
+}
+#exit_btn {
+   margin-left:5% ;
+    background-color: #ff4c4c; /* Example: red background */
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    width: 5%;
+   
+}
+#exit_btn:hover{
+    background: linear-gradient(45deg,red,rgb(58, 0, 0));
+    transform: translateX(3px);
+}
+
+
+#exit_btn:active{
+    background: linear-gradient(45deg,rgb(58, 0, 0),red);
+    transform: translateX(-3px);
+}
+
+#exit_icon {
+    font-size: 2vw; /* Adjust the icon size */
+    color: white; /* Set the icon color */
+}
+#operator {
+    width: 20%; 
+    height: 100%; 
+    box-sizing: border-box; 
+   margin-left: 1%;
+   font-weight: bold;
+   font-size: 1.3vw;
+   text-align: center;
+   
+}
+#shift{
+    width: 15%; 
+    height: 100%; 
+    box-sizing: border-box; 
+    margin-left: 1%;
+    font-weight: bold;
+   font-size: 1.2vw;
+   text-align: center;
+}
+#message{
+    width: 10%;
+    height: 100%;
+    box-sizing: border-box; 
+    margin-left: 2%;
+    font-weight: bold;
+    font-size: 1vw;
+    text-align: center;
+}
+#date_time{
+    width: 30%; 
+    height: 100%; 
+    box-sizing: border-box; 
+    margin-left: 1%;
+    font-weight: bold;
+   font-size: 1.5vw;
+   text-align: center;
+}
+.container-1-2 {
+    height: 30%; /* Allow the container to fill 100% height of its parent */
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+
+.container-1-2 label{
+    font-weight: bold;
+    font-size: 1vw;
+}
+#part_model{
+    width: 25%;
+    font-weight: bold;
+    font-size: 1.5vw;
+    text-align: center;
+    background-color: rgb(72, 71, 71);
+    color: white;
+}
+#part_no{
+    width: 20%;
+    font-weight: bold;
+    font-size: 1.5vw;
+    text-align: center;
+    background-color: rgb(72, 71, 71);
+    color: white;
+}
+#accept{
+    width: 5%;
+    margin-left: 1%;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2vw;
+    text-align: center;
+}
+#rework{
+    width: 5%;
+    margin-left: 1%;
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+    font-size: 1.2vw;
+    text-align: center;
+}
+#reject{
+    width: 5%;
+    margin-left: 1%;
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2vw;
+    text-align: center;
+}
+#total{
+    width: 5%;
+    margin-left: 1%;
+    background-color: blue;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2vw;
+    text-align: center;
+}
+.container-1-3 {
+    height: 25%; /* Allow the container to fill 100% height of its parent */
+    width: 100%;
+    background-color: white;
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+#notification_bar{
+    width: 80%;
+    height: 100%;
+    margin-top: -3px;
+    background-color: orange;
+    font-weight: bold;
+    font-size: 1.2vw;
+    color: black;
+    text-align: center;
+}
+#overall_status{
+    width: 15%;
+    margin-left: 2%;
+    font-weight: bold;
+    font-size: 1.5vw;
+    color: black;
+    text-align: center;
+}
+.container-2{
+    height: 70%;
+    width: 100%;
+   display: flex;
+    border: 1px solid black;
+}
+
+
+.container_2_1 {
+    height: 100%;
+    width: 70%;
+    border: 1px solid black;
+    background-color: lightgray;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    grid-template-rows: 1fr 1fr; /* Two equal rows */
+    gap: 0; /* No spacing between sections */
+}
+
+.section {
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center;
+    justify-content: center;
+    background-color: lightgray;
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.input-box {
+    width: 90%;  /* Slightly reduced to fit inside the container */
+    height: 15%;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5vw;
+    margin-top: -20px;
+    background-color:black;
+    color: white;
+   
+}
+
+.Output_box {
+    width: 60%;  /* Slightly reduced to fit inside the container */
+    height: 20%;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5vw;
+    margin-top: 20px;
+}
+
+.input-row-top, .input-row, .label-row {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    margin-top: 5px;
+}
+
+.input-box1-top {
+    width: 30%;
+    height: 20px; /* Set a fixed height for uniformity */
+    text-align: center;
+    font-weight: bold;
+    font-size: 1vw;
+    padding: 5px;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+
+.input-box1 {
+    width: 30%;
+    height: 100%; /* Set a fixed height for uniformity */
+    text-align: center;
+    font-weight: bold;
+    font-size: 1vw;
+    padding: 10px;
+    box-sizing: border-box;
+   
+}
+
+
+.input-box1-top {
+    background-color: rgb(209, 207, 207);
+}
+
+.input-box1 {
+    background-color: black;
+    color: #f2f2f2;
+}
+
+.label-row {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 1vw;
+    color: black;
+    text-align: center;
+}
+
+.label-row label {
+    flex: 1;
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+.output_container {
+    height: 100%;
+    width: 35%;
+    border: 2px solid black;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Prevent overflow issues */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.output_container > div {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.output_container table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+    table-layout: fixed; /* Ensures custom column widths work */
+}
+
+/* Set specific column widths */
+.output_container th:nth-child(1), .output_container td:nth-child(1) { width: 5%; }  /* Sr No */
+.output_container th:nth-child(2), .output_container td:nth-child(2) { width: 30%; }  /* Parameter Name */
+.output_container th:nth-child(3), .output_container td:nth-child(3) { width: 11%; }  /* Values */
+.output_container th:nth-child(4), .output_container td:nth-child(3) { width: 11%; }  /* Values */
+.output_container th:nth-child(5), .output_container td:nth-child(2) { width: 11%; }  /* Parameter Name */
+.output_container th:nth-child(6), .output_container td:nth-child(3) { width: 11%; }  /* Values */
+
+.output_container th, .output_container td {
+    border: 1px solid black;
+    padding: 5px;
+    word-wrap: break-word; /* Ensures text does not overflow */
+}
+
+.output_container th {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.output_container input {
+    width: 95%;  /* Adjust width */
+    height: 95%;
+    text-align: center;
+    padding: 5px;
+    padding-left: 0;
+    margin-left: -1px;
+    border: 1px solid white;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1vw;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.container-3 {
+    height: 15%;
+    width: 100%;
+    border: 1px solid black;
+}
+
+.container-3-1 {
+    height: 50%; /* Allow the container to fill 100% height of its parent */
+    width: 100%;
+    background-color:rgb(187, 242, 187);
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+.container-3-1 label{
+    font-weight: bold;
+    font-size: 1.2vw;
+}
+#punch_no{
+    height: 95%;
+    width: 70%;
+    font-weight: bold;
+    font-size: 2vw;
+   background-color:yellow;
+    color: black;
+}
+.container-3-2 {
+    height: 50%; 
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    display: flex;
+    padding:2px;
+}
+
+
+.toggle-btn{
+    height: 100%;
+    width: 10%;
+    margin-left:5%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5vw;
+    color: white;
+    font-family:'Courier New', Courier, monospace;
+    background-color: rgb(77, 28, 124);
+    border: 2px solid black;
+}
+.container-3-2-btn{
+    width: 15%;
+    height: 70%;
+    margin-left: 5%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2vw;
+    color: white;
+    border: 2px solid black;
+    font-family:'Courier New', Courier, monospace;
+    background-color: orangered;
+   
+}
+
+
+#spc_btn,#report_btn{
+    width: 15%;
+    height: 60%;
+    margin-left: 5%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2vw;
+    color: white;
+    border: 2px solid black;
+    font-family:'Courier New', Courier, monospace;
+    background-color: rgb(195, 0, 255);
+   
+}
+
+
+.probe-container {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Add space between the elements */
+}
+
+.notify {
+    height: 10%;
+    width: 40%;
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    font-size: 2vw;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.center-notification {
+    display: none; /* Initially hidden */
+    position: fixed;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-weight: bold;
+    justify-content: center;
+    top: 45%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    height: 250px;
+    width: 400px;
+    background-color: lightblue; /* Optional: To make it more visible */
+    padding: 20px; /* Optional: For some padding */
+    border: 2px solid black; /* Optional: For some border */
+    border-radius: 8px; /* Optional: For rounded corners */
+}
+
+#overwrite_ok_button{
+    height: 40px;
+    width: 100px;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+
+}
+
+#overwrite_cancel_button{
+    height: 40px;
+    width: 100px;
+    background-color: red;
+    color: white;
+    font-weight: bold;
+
+}
+
+#punch_login{
+    height: 40px;
+    width: 100px;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+
+}
+
+#punch_overwrite_credentials{
+    margin-top: 2%; 
+    display: none;
+}
+
+.userpassinput{
+    margin-top: 5%;
+    width: 30%;
+    margin-left: 5%;
+    text-align: center;
+    font-weight: bold;
+}
+.userpassinput1{
+    margin-top: 5%;
+    width: 30%;
+    margin-left: 10%;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+
+#loading_spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5vw;
+    color: rgb(1, 77, 1);
+    z-index: 9999; /* Ensure spinner appears on top */
+}
+
+.fa-spinner {
+    margin-top: 10%;
+    margin-right: 20%; /* Add space between spinner and text */
+}

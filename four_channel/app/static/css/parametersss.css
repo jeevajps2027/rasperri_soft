@@ -1,0 +1,304 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box; /* Includes border in the width and height calculations */
+    overflow: hidden; /* Prevents scrolling caused by overflow */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    border: 5px solid lightseagreen ;
+} 
+.container_1 {
+    height: 20%;
+    width: 100%;
+    border: 1px solid black;
+} 
+.container_2 {
+            height: 60%;
+            width: 100%;
+            border: 1px solid black;
+            display: flex;
+            background-color: rgb(228, 194, 244);
+        }
+
+        .container_3 {
+            height: 20%;
+            width: 100%;
+            border: 1px solid black;
+            display: flex;
+            background-color: white;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            height: 100%;
+            border: 2px solid black;
+           
+        }
+
+        th, td {
+            text-align: center;
+            border: 1px solid black;
+        }
+      
+      
+        thead {
+            height: 20%;
+            width: 100%;
+            font-size: 1.2vw;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            background-color: lightseagreen ;
+        }
+
+
+        #tableBody-1 input {
+            height: 90%;
+            width: 90%;
+            box-sizing: border-box;
+            font-size: 1.3vw;
+            font-weight: bold;
+            text-align: center;
+            outline: none;
+            border: none;
+            
+        }
+        
+.container_1_1 {
+    height: 30%;
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    margin: 0;
+    padding: 0;
+    display: flex; /* Enables flexbox */
+    justify-content: center; /* Centers the label horizontally */
+    align-items: center; /* Centers the label vertically */
+    font-weight: bold;
+    font-size: 1.5vw;
+    position: relative; /* Enables absolute positioning for children */
+}
+
+.container_1_1 label {
+    margin: 0; /* Ensures the label stays perfectly centered */
+}
+
+#close_btn {
+    position: absolute; /* Allows placement in the corner */
+    right: 2%; /* Adjust distance from the right edge */
+    background-color: #ff4c4c; /* Button background color */
+    border: none; /* Removes border */
+    border-radius: 5px; /* Rounded corners */
+    width: 5%; /* Button width */
+    height: 100%; /* Adjust the button height */
+    display: flex; /* Flex layout for the icon */
+    justify-content: center; /* Center the icon horizontally */
+    align-items: center; /* Center the icon vertically */
+    cursor: pointer; /* Changes cursor to pointer on hover */
+}
+
+#close_btn:hover{
+    background: linear-gradient(45deg,red,rgb(77, 1, 1));
+    transform: scale(01.5vw);
+    transform: translateY(3px);
+}
+
+#close_icon {
+    font-size: 2vw; /* Icon size */
+    color: white; /* Icon color */
+}
+
+
+.container_1_2 {
+    height:35%;
+    width: 100%;
+    background-color: rgb(149, 183, 246);
+    border: 1px solid black;
+    margin: 0;
+    padding: 0;
+    display: flex; /* Enables flexbox */
+    flex-direction: rows; /* Arrange items vertically */
+    justify-content: center; /* Centers content vertically */
+    align-items: center; /* Centers content horizontally */
+    
+}
+.container_1_2 label{
+    font-size: 1.5vw;
+    font-weight: bold;
+    margin-left: 3%;
+} 
+.container_1_2 input{
+    width: 20%;
+    height: 50%;
+    font-size: 1.5vw;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 1%;
+} 
+.container_1_2 select{
+    width: 5%;
+    height: 50%;
+    font-size: 1.5vw;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 1%;
+} 
+.container_1_3 {
+    height:35%;
+    width: 100%;
+    background-color: rgb(246, 182, 62);
+    border: 1px solid black;
+    margin: 0;
+    padding: 0;
+    display: flex; /* Enables flexbox */
+    flex-direction: rows; /* Arrange items vertically */
+    justify-content: center; /* Centers content vertically */
+    align-items: center; /* Centers content horizontally */
+   
+} 
+.container_1_3 label{
+    font-size: 1.5vw;
+    font-weight: bold;
+    margin-left: 1%;
+} 
+.container_1_3 input {
+    width: 20%;
+    height: 50%;
+    font-size: 2vw;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 1%;
+} 
+
+.container_1_3 input[type="checkbox"] {
+    width: 2%; /* Default width for checkboxes */
+    height: 30%; /* Default height for checkboxes */
+    margin-left: 1%; /* Minimal left margin for alignment */
+}
+
+.container_1_4 {
+    height: 80%;
+    width: 100%;
+    background-color: lightgray;
+    border: 1px solid black;
+    margin: 0;
+    padding: 0;
+    display: flex; /* Enables flexbox */
+    justify-content: center; /* Centers the label horizontally */
+    align-items: center; /* Centers the label vertically */
+    font-weight: bold;
+    font-size: 2.5vw;
+    position: relative; /* Enables absolute positioning for children */
+    gap: 3%; /* Space between buttons */
+}
+
+
+#addnew_btn, #save_btn, #delete_btn {
+    background-color: #ff4c4c; /* Button background color */
+    border-radius: 10px; /* Rounded corners */
+    width: 15%; /* Button width */
+    height: 50%; /* Button height */
+    display: flex; /* Flexbox layout for content */
+    justify-content: center; /* Centers text and icon horizontally */
+    align-items: center; /* Centers text and icon vertically */
+    font-size: 1.5vw; /* Button font size */
+    font-weight: bold; /* Bold text */
+    color: white; /* Text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+    border: 2px solid black;
+}
+
+#addnew_btn:hover, #save_btn:hover, #delete_btn:hover {
+background: linear-gradient(45deg,rgb(253, 3, 3),rgb(85, 0, 0));
+transform: scale(01.5vw);
+transform: translateY(3px);
+}
+
+#addnew_icon, #save_icon, #delete_icon {
+    font-size: 2.5vw; /* Icon size */
+    margin-right: 8px; /* Space between icon and text */
+}
+
+.notify{
+    display: none;
+    position: fixed;    
+    top: 50%;
+    left: 50%;
+    height: 10%;
+    width: 15%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border: 2px solid #000;
+    text-align: center;
+}
+
+
+button#left_arrow_btn,button#right_arrow_btn {
+    background-color:purple; /* Light gray background */
+    border: none;
+    padding: 10px;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 5%;
+    height: 80%;
+}
+
+button#left_arrow_btn{
+    margin-left: 1%;
+}
+button#right_arrow_btn{
+    margin-left: 1%;
+}
+button#left_arrow_btn:hover ,button#right_arrow_btn:hover  {
+    background: linear-gradient(45deg,rgb(199, 18, 199),rgb(53, 1, 53));
+    transform: translateX(3px);
+}
+
+button#left_arrow_btn:active ,button#right_arrow_btn:active {
+    background: linear-gradient(45deg,rgb(53, 1, 53),rgb(199, 18, 199));
+    transform: translateX(-3px);
+}
+
+#left_arrow_icon, #right_arrow_icon {
+    font-size: 1.5vw; /* Adjust icon size */
+    color: white; /* Icon color */
+}
+
+
+
+.num-pad {
+    position: absolute;
+    background: #ddd;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: 350px;
+    width: 300px;
+}
+
+.num-btn {
+    width: 20%;
+    height: 12%;
+    font-size: 1.5vw;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    background: white;
+    border-radius: 5px;
+}
+
+.num-btn:hover {
+    background: lightgray;
+}

@@ -1,0 +1,1217 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'fontawesome-free-6.7.2-web/css/all.min.css' %}">
+    <script src="{% static 'jquery-jquery-f79d5f1/dist/jquery.min.js' %}"></script>
+
+  
+    <link rel="stylesheet" href="{% static 'css/comport_values.css' %}">
+
+    <title>SETTINGS</title>  
+</head>
+<body>
+<div class="container-1">
+    
+    <div class="container-1-1">
+        <label>GENERAL SETTINGS</label>
+        <button type="button" id="close_btn">
+            <i class="fas fa-times" id="close_icon"></i>
+        </button>
+    </div>
+    <div class="container-1-2">
+        <button onclick="showSubContainer(1)">COMPORT SETTINGS</button>
+        <button onclick="showSubContainer(2)">SETTINGS</button>
+        <button onclick="showSubContainer(3)">CNC SETTINGS</button>
+        <button id="parameter-settings">PARAMETER SETTINGS</button>
+        <script>
+            // Select the button by its ID
+document.getElementById("parameter-settings").addEventListener("click", function() {
+    // Redirect to the 'parameter' URL
+    window.location.href = "/parameter/";
+});
+
+        </script>
+
+
+</script>
+        
+    </div>
+</div>
+
+
+<div class="container-2">
+    <div class="container-2-1">
+        <div class="sub-container-1 sub-container">
+            <div class="left-column">
+                <div class="label-select-pair">
+                    <label for="comport">COMPORT :</label>
+                    <select id="comport" name="comport">
+                        {% for port in port_list %}
+                            <option value="{{ port }}">{{ port }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="label-select-pair">
+                    <label for="baud_rate">BAUD RATE :</label>
+                    <select id="baud_rate">
+                        <option value="9600">9600</option>
+                        <option value="19200" selected>19200</option>
+                        
+                    </select>
+                </div>
+
+                <div class="label-select-pair">
+                    <label for="parity">PARITY :</label>
+                    <select id="parity">
+                        <option value="N" selected>None</option>
+                        <option value="E">EVEN</option>
+                        <option value="O">ODD</option>
+                        <option value="M">MARK</option>
+                        <option value="S">SPACE</option>
+                    </select>
+                </div>
+
+                <div class="label-select-pair">
+                    <label for="stop_bit">STOP BIT :</label>
+                    <select id="stop_bit">
+                        <option value="1">1</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+
+                <div class="label-select-pair">
+                    <label for="data_bit">DATA BIT :</label>
+                    <select id="data_bit">
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8" selected>8</option>
+                    </select>
+                </div>
+                <div class="label-select-pair">
+                <button  type="submit" id="cancel_btn">CANCEL</button>
+                <button type="submit" id="start-button">OK</button>
+
+                <script>
+                    document.getElementById("cancel_btn").addEventListener("click", function() {
+                        // Redirect to the 'parameter' URL
+                        window.location.href = "/measurement/";
+                    });
+                </script>
+            </div>
+
+
+            </div>
+            <div class="right-column">
+                <textarea id="output_result"></textarea>
+            </div>
+        </div>
+        
+        <div class="sub-container-2 sub-container">
+            <div class="left_container">
+                <button id="operators" class="toggle-btn">OPERATORS</button>
+                <button id="shift_settings" class="toggle-btn">SHIFT SETTINGS</button>
+                <button id="backup" class="toggle-btn">BACKUP</button>
+                
+                <button id="parameter_factor" class="toggle-btn">PARAMETER FACTOR</button>
+            </div>
+            <div class="right_container" style="overflow-y: auto;">
+                <table id="table1" class="table hidden">
+                    <thead>
+                        <tr class="custom-row">
+                            <th style="width: 5%;">Sr.No</th>
+                            <th id="oper_no">OPERATOR NO</th>
+                            <th id="oper_name">OPERATOR NAME</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody-1">
+                        {% for operator in operators_value %}
+                        <tr class="custom-row">
+                            <td>{{ forloop.counter }}</td>  <!-- Display row number -->
+                            <td><input type="text" class="no-outline" style="width: 100%;" value="{{ operator.operator_no }}"></td>
+                            <td><input type="text" class="no-outline" style="width: 100%;" value="{{ operator.operator_name }}"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: center;" class="button_container">
+                                <button onclick="addRow()" id="add_new_btn">ADD NEW</button>
+                                <button onclick="saveData()" id="save_btn_cus">SAVE</button>
+                                <button id="delete_btn" onclick="deleteRow()">DELETE</button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+
+
+
+
+
+
+
+
+
+
+            
+                <div id="table2" class="table hidden">
+                    <center style="color: purple; text-shadow: 2px 2px 4px rgb(240, 118, 240);">
+                        <h1><b>SHIFT SETTINGS</b></h1>
+                    </center>
+                    
+                        <div class="form-container">
+                            <div class="form-row">
+                                <label for="shift" class="form-label">SHIFT</label>
+                                <span class="colon">:</span>
+                                <input type="text" id="shift" name="shift" value="SHIFT-" class="form-input">
+                            </div>
+                            <div class="form-row">
+                                <label for="shift_time" class="form-label">START TIME</label>
+                                <span class="colon">:</span>
+                                <input type="text" id="shift_time" name="shift_time"  class="form-input" ><br><br>
+                            </div>
+                        </div>
+                        
+                        
+                        <textarea  id="shift_output">
+                            {% if shift_settings %}
+                                {% for data in shift_settings %}
+                                {{ data.shift }} - {{ data.shift_time }}
+                                {% endfor %}
+                            {% else %}
+                                No shift settings available.
+                            {% endif %}
+                            
+                        </textarea>
+                    <div class="button_container2">
+                    <button type="button" id="cancel-btn"><b>Cancel</b></button>
+                    <button type="button" id="save_btn_shift"><b>Save</b></button>  
+                    </div>
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <script>
+                    document.getElementById("cancel-btn").addEventListener("click", function() {
+                        // Redirect to the 'parameter' URL
+                        window.location.href = "/measurement/";
+                    });
+                </script>
+                </div>
+
+        <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const shiftTimeInput = document.getElementById("shift_time");
+
+    // Set initial value
+    shiftTimeInput.value = "08:01:02 AM";
+
+    // Fixed positions for hours, minutes, seconds, and AM/PM
+    const sections = [
+        { start: 0, end: 2 },  // Hours
+        { start: 3, end: 5 },  // Minutes
+        { start: 6, end: 8 },  // Seconds
+        { start: 9, end: 11 }, // AM/PM
+    ];
+    let currentSection = 0; // Default to the first section
+    let inputBuffer = ""; // Buffer to collect user input for the current section
+
+    // Update cursor position based on the current section
+    function updateCursor() {
+        const section = sections[currentSection];
+        shiftTimeInput.setSelectionRange(section.start, section.end);
+    }
+
+    // Keydown handler
+    shiftTimeInput.addEventListener("keydown", function (e) {
+        e.preventDefault(); // Prevent default behavior
+
+        const key = e.key.toUpperCase();
+        let value = shiftTimeInput.value;
+
+        if (key === "TAB") {
+            // Navigate between sections with Tab and Shift + Tab
+            currentSection = (currentSection + (e.shiftKey ? -1 : 1) + sections.length) % sections.length;
+            inputBuffer = ""; // Reset buffer
+            updateCursor();
+        } else if (key === "ARROWLEFT") {
+            // Move to the previous section with Left Arrow
+            currentSection = (currentSection - 1 + sections.length) % sections.length;
+            inputBuffer = ""; // Reset buffer
+            updateCursor();
+        } else if (key === "ARROWRIGHT") {
+            // Move to the next section with Right Arrow
+            currentSection = (currentSection + 1) % sections.length;
+            inputBuffer = ""; // Reset buffer
+            updateCursor();
+        } else if (/^\d$/.test(key)) {
+            // Allow numeric input for time sections
+            const section = sections[currentSection];
+            inputBuffer += key; // Add the digit to the buffer
+
+            if (inputBuffer.length === 2) {
+                // Validate the complete input when buffer has 2 digits
+                const newValue = parseInt(inputBuffer, 10);
+                if (
+                    (currentSection === 0 && newValue >= 1 && newValue <= 12) || // Hours: 01-12
+                    (currentSection > 0 && currentSection < 3 && newValue >= 0 && newValue <= 59) // Minutes/Seconds: 00-59
+                ) {
+                    value = value.substring(0, section.start) + String(newValue).padStart(2, "0") + value.substring(section.end);
+                    shiftTimeInput.value = value;
+                    currentSection = (currentSection + 1) % sections.length; // Move to the next section
+                }
+                inputBuffer = ""; // Reset buffer
+            }
+        } else if (key === "A" || key === "P") {
+            // Toggle AM/PM
+            if (currentSection === 3) {
+                value = value.substring(0, sections[3].start) + (key === "A" ? "AM" : "PM") + value.substring(sections[3].end);
+                shiftTimeInput.value = value;
+            }
+        }
+
+        updateCursor(); // Keep cursor within the section
+    });
+
+    // Focus event to update the cursor to the current section
+    shiftTimeInput.addEventListener("focus", updateCursor);
+
+    // Initial cursor position
+    updateCursor();
+});
+document.getElementById("close_btn").addEventListener("click", function() {
+        // Redirect to the measurement URL
+        window.location.href = "{% url 'measurement' %}";
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const shiftInput = document.getElementById('shift');
+    const saveButton = document.getElementById('save_btn_shift');
+
+    // Restrict input to "SHIFT-" followed by 1, 2, or 3 only
+    shiftInput.addEventListener('input', function () {
+        const validPattern = /^SHIFT-(1|2|3)?$/; // Allow SHIFT-, SHIFT-1, SHIFT-2, SHIFT-3
+        if (!validPattern.test(shiftInput.value)) {
+            shiftInput.value = 'SHIFT-'; // Reset to the base if invalid
+        }
+    });
+
+    saveButton.addEventListener('click', function () {
+        const shiftValue = shiftInput.value;
+        const rawTime = document.getElementById('shift_time').value;
+
+        // Validate shift input
+        if (!/^SHIFT-(1|2|3)$/.test(shiftValue)) {
+            alert('Please enter a valid shift value like SHIFT-1, SHIFT-2, or SHIFT-3.');
+            return;
+        }
+
+        // Validate time input
+        const timePattern = /^(0[1-9]|1[0-2]):[0-5][0-9]:[0-5][0-9] (AM|PM)$/i;
+        if (!timePattern.test(rawTime)) {
+            alert('Please enter a valid time in HH:MM:SS AM/PM format.');
+            return;
+        }
+
+        // Data to be sent
+        const data = {
+            request_type: 'shift_settings',
+            shift: shiftValue,
+            shift_time: rawTime,
+        };
+
+        console.log('Data to be sent:', data);
+
+        // Send data via AJAX
+        $.ajax({
+            type: 'POST',
+            url: '/comport/',
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    alert('Shift settings saved successfully!');
+                  
+
+                    localStorage.setItem("activeTab", "settings");  // save tab state
+                window.location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function (error) {
+                console.log('Error:', error);
+                alert('An error occurred while saving shift settings.');
+            },
+        });
+    });
+});
+
+        </script>                
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div id="table3" class="table hidden">
+                <center style="color: purple; text-shadow: 2px 2px 4px rgb(240, 118, 240);">
+                    <h2><b>BACKUP DATE</b></h2>
+                </center>
+                <div class="custom-border" style="margin-top: 30px;"> 
+                    <label for="backup" style="margin-top: 30px;">BACKUPDATE:</label>
+                    <input type="datetime-local" class="backup-data" value="{{ backup_date }}" id="backup_data" name="backup_data" style="width: 200px;"><br><br>
+                    <label for="confirm_backup" style="margin-top: 30px;" hidden>Confirm Backup:</label>
+                    <input type="checkbox" id="confirm_backup" name="confirm_backup" hidden><br><br>
+                    <textarea style="height: 100%; width: 70%; font-weight: bold; font-size: 1vw;" readonly>
+                        {% if backup_date %}
+                            {{ backup_date.backup_date }}
+                        {% else %}
+                            No backup_date is available.
+                        {% endif %}
+                    </textarea>
+                </div><br>
+                <a href="{% url 'measurement' %}">
+                    <button type="button" id="cancel-btn"><b>Cancel</b></button>
+                </a>
+                <button type="button" id="save-btn-4"><b>Save</b></button>                  
+            </div>
+      
+    <script>        
+    // Add event listener for save button
+    document.getElementById('save-btn-4').addEventListener('click', function () {
+
+const tableId = $('#save-btn-4').closest('div.table').attr('id');
+console.log('Table ID:', tableId); // Console log the table ID
+
+// Get the values from the input fields
+const backupDate = document.getElementById('backup_data').value; // Get input value
+const confirmBackup = document.getElementById('confirm_backup').checked; // Get checkbox state
+
+// Function to format the date and time
+function formatDateTime(dateTime) {
+const date = new Date(dateTime); // Convert to Date object
+const day = date.getDate().toString().padStart(2, '0');
+const month = (date.getMonth() + 1).toString().padStart(2, '0'); // January is 0
+const year = date.getFullYear();
+let hours = date.getHours();
+const minutes = date.getMinutes().toString().padStart(2, '0');
+const ampm = hours >= 12 ? 'PM' : 'AM'; // Determine AM or PM
+hours = hours % 12; // Convert to 12-hour format
+hours = hours ? hours : 12; // 0 should be converted to 12
+const timeString = hours + ':' + minutes + ':00 ' + ampm; // Add seconds and AM/PM
+return `${day}-${month}-${year} ${timeString}`; // Final formatted string
+}
+
+if (!backupDate || isNaN(new Date(backupDate).getTime())) {
+    alert('Please select a valid backup date before saving.');
+    return;
+}
+
+// Format the backup date
+const formattedDate = formatDateTime(backupDate);
+
+// Prepare the data to send
+const data = {
+request_type: 'backup_date',  // Specify the request type
+backup_data: formattedDate,   // Use the formatted date
+confirm_backup: confirmBackup // Send checkbox state
+};
+
+sessionStorage.setItem('showOperatorSettings', 'true');
+
+// Send an AJAX POST request
+fetch('/comport/', { // Leave the URL empty to use the current endpoint
+method: 'POST',
+headers: {
+    'Content-Type': 'application/json', // JSON content type
+    'X-CSRFToken': getCSRFToken() // Include CSRF token for security
+},
+body: JSON.stringify(data) // Convert data to JSON string
+})
+.then(response => response.json())
+.then(result => {
+if (result.status === 'success') {
+    alert('Backup settings saved successfully!');
+    location.reload(); // Reload the page
+} else {
+    alert('Failed to save backup settings. Please try again.');
+}
+})
+.catch(error => console.error('Error:', error));
+});
+
+// After page loads, check sessionStorage and perform actions
+$(document).ready(function() {
+// Hide table1 before showing table2
+document.getElementById('table2').classList.add('hidden'); // Hide table1 explicitly
+document.getElementById('table1').classList.add('hidden'); // Hide table1 explicitly
+
+const showOperatorSettings = sessionStorage.getItem('showOperatorSettings');
+
+if (showOperatorSettings === 'true') {
+// Simulate the click of the "OPERATOR SETTINGS" button
+document.querySelector('button[onclick="showSubContainer(2)"]').click();
+
+// Make the table3 visible
+document.getElementById('table3').classList.remove('hidden');
+
+// Clear the sessionStorage after using it
+sessionStorage.removeItem('showOperatorSettings');
+} else {
+// If showOperatorSettings is not set, ensure table3 is shown on page load
+document.getElementById('table1').classList.remove('hidden');
+}
+});
+
+
+// Function to get CSRF token from cookies
+function getCSRFToken() {
+const cookieValue = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1];
+return cookieValue;
+}
+
+</script>    
+
+
+
+
+<div id="table4" class="table hidden">
+    <center style="color: purple; text-shadow: 2px 2px 4px rgb(240, 118, 240);">
+        <h1><b>PARAMETER FACTOR</b></h1>
+    </center>
+
+    <div class="form-group">
+        <label for="part_model" class="form-label">PART MODEL</label>
+        {% if part_model_values %}
+            <select id="part_model" name="part_model" class="form-control" required onchange="sendPartModelValue()">
+                <option value="" disabled selected>Select a part model</option>
+                {% for part_model in part_model_values %}
+                    <option value="{{ part_model }}">{{ part_model }}</option>
+                {% endfor %}
+            </select>
+        {% else %}
+            <p>No part models available.</p>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="parameter_name" class="form-label">PARAMETER NAME</label>
+        <select id="parameter_name" name="parameter_name" class="form-control" required>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="method" class="form-label">METHOD</label>
+        <select id="method" name="method" class="form-control" required>
+            <option value="+">+</option>
+            <option value="-">-</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="value" class="form-label">VALUE</label>
+        <input type="text" id="value" name="value" class="form-control" required>
+    </div>
+
+    <a href="{% url 'measurement' %}">
+        <button type="button" id="cancel-btn"><b>Cancel</b></button>
+    </a>
+    <button type="submit" id="save-btn-5"><b>Save</b></button>
+</div>
+
+<script>
+     // Function to send the selected part_model value to the backend
+function sendPartModelValue() {
+    const selectElement = document.getElementById('part_model');
+    const selectedValue = selectElement.value;
+
+    console.log("selectedValue",selectedValue)
+
+    // Sending a POST request to the backend
+    fetch('/comport/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') // Add CSRF token
+        },
+        body: JSON.stringify({ part_model: selectedValue })
+    })
+        .then(response => response.json())
+        .then(data => {
+            //console.log('Response from server:', data);
+
+            // Now update the parameter_name dropdown
+            const parameterNameDropdown = document.getElementById('parameter_name');
+            
+            // Clear the current options
+            parameterNameDropdown.innerHTML = '';
+
+            // Add the default "Select the parameter name" option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select the parameter name';
+            parameterNameDropdown.appendChild(defaultOption);
+
+            // Check if there are parameter names returned
+            if (data.parameter_names && data.parameter_names.length > 0) {
+                // Add an initial "Select" option
+               
+
+                // Populate the dropdown with parameter names
+                data.parameter_names.forEach(param => {
+                    const option = document.createElement('option');
+                    option.value = param;
+                    option.textContent = param;
+                    parameterNameDropdown.appendChild(option);
+                });
+            } else {
+                // If no parameter names, display a message
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No parameters available';
+                parameterNameDropdown.appendChild(option);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+
+
+// Function to send all form data to the backend when the form is submitted
+function handleSaveButtonClick(event) {
+    event.preventDefault();  // Prevent the default form submission behavior
+
+    const partModel = document.getElementById('part_model').value;
+    const parameterName = document.getElementById('parameter_name').value;
+    const method = document.getElementById('method').value;
+    const value = document.getElementById('value').value;
+
+    // Prepare the data to send in the request
+    const data = {
+        request_type :"parameter_factor",
+        part_model: partModel,
+        parameter_name: parameterName,
+        method: method,
+        value: value
+    };
+
+    console.log("the data whic is send from the frntbend",data)
+
+    // Send a POST request to save the data
+    fetch('/comport/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')  // Add CSRF token
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Data saved successfully:', data);
+            alert('Data saved successfully!');
+        })
+        .catch(error => {
+            //console.error('Error:', error);
+            alert('An error occurred while saving data.');
+        });
+}
+
+// Attach event listener to the save button
+document.getElementById('save-btn-5').addEventListener('click', handleSaveButtonClick);
+
+document.getElementById('part_model').addEventListener('change', function() {
+    const partModel = this.value;
+    
+    if (partModel) {
+        fetch(`/get_parameters/?part_model=${partModel}`)
+            .then(response => response.json())
+            .then(data => {
+                const parameterDropdown = document.getElementById('parameter_name');
+                parameterDropdown.innerHTML = '<option value="" disabled selected>Select a parameter</option>';
+
+                data.parameter_names.forEach(param => {
+                    const option = document.createElement('option');
+                    option.value = param;
+                    option.textContent = param;
+                    parameterDropdown.appendChild(option);
+                });
+
+                document.getElementById('value').value = ''; // Clear the value field
+            })
+            .catch(error => console.error('Error fetching parameters:', error));
+    }
+});
+
+document.getElementById('parameter_name').addEventListener('change', function() {
+    const partModel = document.getElementById('part_model').value;
+    const parameterName = this.value;
+
+    if (partModel && parameterName) {
+        fetch(`/get_parameter_value/?part_model=${partModel}&parameter_name=${parameterName}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('value').value = data.value || ''; // Set the retrieved value
+                document.getElementById('method').value = data.method || ''; // Set the retrieved method
+            })
+            .catch(error => console.error('Error fetching value:', error));
+    }
+});
+
+
+        // Helper function to get the CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+        // Send the value when the page is loaded
+        window.onload = () => {
+            sendPartModelValue();
+        };
+</script>
+
+    </div>
+    </div>
+
+         
+        
+        <div class="sub-container-3 sub-container">
+            <div class="left_container">
+                <button id="cnc_settings" class="toggle-btn">CNC SETTINGS</button>
+                <button id="offset" class="toggle-btn">OFFSET</button>
+                <button id="cnc_ip" class="toggle-btn">CNC MACHINE IP</button>
+            </div>
+            <div class="right_container">
+               
+                <div id="table5" class="table hidden" style="height: 100%;width: 100%;">
+                    <center style="color: purple; text-shadow: 2px 2px 4px rgb(240, 118, 240);">
+                        <h1><b>CNC SETTINGS</b></h1>
+                    </center>
+                    
+                        <div class="form-container">
+                            <div class="form-row">
+                                <label for="cnc_machine_ip" class="form-label">CNC MACHINE IP</label>
+                                <span class="colon">:</span>
+                                <input type="text" id="cnc_machine_ip" name="cnc_machine_ip"  class="form-input">
+                            </div>
+                            <div class="form-row">
+                                <label for="cnc_machine_port" class="form-label">CNC MACHINE PORT</label>
+                                <span class="colon">:</span>
+                                <input type="text" id="cnc_machine_port" name="cnc_machine_port" step="1" class="form-input">
+                            </div>
+                        </div>
+                        
+                        <textarea  id="shift_output">
+                            
+                        </textarea>
+                    <div class="button_container2">
+                    
+                    <button type="button" id="cancel-btn"><b>CANCEL</b></button>
+                    <button type="button" id="edit-btn"><b>EDIT</b></button>
+                    <button type="button" id="ping_btn"><b>PING</b></button> 
+                     
+                    </div>
+                
+                
+                </div>
+                <div id="table6" class="table hidden" style="width: 100%;">
+                    <table style="border-collapse: collapse; width: 100%; border: 1px solid black;">
+                        <thead style="background-color: gray;">
+                            <tr class="custom-row">
+                                <th style="width: 5%;">SR NO</th>
+                                <th style="width: 30%;">SPEC</th>
+                                <th style="width: 15%;">CHANNEL 1</th>
+                                <th style="width: 15%;">CHANNEL 2</th>
+                                <th style="width: 15%;">CHANNEL 3</th>
+                                <th style="width: 15%;">CHANNEL 4</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody-2">
+
+                        </tbody>
+                    </table>
+                    <div class="button_container2">
+                    
+                        <button type="button" id="cancel-btn"><b>CANCEL</b></button>
+                        <button type="button" id="edit-btn"><b>EDIT</b></button>
+                        <button type="button" id="save-btn-2"><b>SAVE</b></button>  
+                    </div>
+                </div>
+                
+
+                <div id="table7" class="table hidden" style="width: 100%;">
+                    <table style="border-collapse: collapse; width: 100%; border: 1px solid black;">
+                        <thead style="background-color: gray;">
+                            <tr class="custom-row">
+                                <th style="width: 5%;">SR NO</th>
+                                <th style="width: 30%;">CNC MACHINE IP</th>
+                                <th style="width: 15%;">CHANNEL 1</th>
+                                <th style="width: 15%;">CHANNEL 2</th>
+                                <th style="width: 15%;">CHANNEL 3</th>
+                                <th style="width: 15%;">CHANNEL 4</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody-3">
+
+                        </tbody>
+                    </table>
+                    <div class="button_container2">
+                    
+                        <button type="button" id="cancel-btn"><b>CANCEL</b></button>
+                        <button type="button" id="edit-btn"><b>EDIT</b></button>
+                        <button type="button" id="save-btn-2"><b>SAVE</b></button>  
+                    </div>
+                </div>
+            </div>
+            
+               
+           
+        </div>
+    </div>
+    
+</div>
+
+<script>
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+const ws = new WebSocket('ws://localhost:8000/ws/comport/'); // WebSocket connection
+    
+    // Wait for the connection to open
+    ws.onopen = () => {
+        console.log('WebSocket connection established');
+    };
+
+    // Handle incoming messages from the WebSocket server
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const message = data.message;
+
+        // Display the received serial data in the output textarea
+        const outputResult = document.getElementById('output_result');
+        outputResult.value += message + "\n"; // Append new message to the textarea
+        outputResult.scrollTop = outputResult.scrollHeight; // Scroll to the bottom
+    };
+
+    setInterval(function() {
+    const outputResult = document.getElementById('output_result');
+    outputResult.value = '';  // Clear the textarea
+}, 2000);
+
+    // Handle WebSocket errors
+    ws.onerror = function(error) {
+        console.log('WebSocket error:', error);
+    };
+
+    // Handle WebSocket close event
+    ws.onclose = function(event) {
+        console.log('WebSocket closed:', event);
+    };
+
+    // Handle the click event on the "OK" button
+    document.getElementById('start-button').addEventListener('click', function() {
+        const comPort = document.getElementById('comport').value;
+        const baudRate = document.getElementById('baud_rate').value;
+        const parity = document.getElementById('parity').value;
+        const stopBit = document.getElementById('stop_bit').value;
+        const dataBit = document.getElementById('data_bit').value;
+
+        // Send the selected serial parameters to the WebSocket server
+        const message = {
+            command: 'start_serial',
+            com_port: comPort,
+            baud_rate: baudRate,
+            parity: parity,
+            stopbit: stopBit,
+            databit: dataBit
+        };
+
+        ws.send(JSON.stringify(message)); // Send data to WebSocket server
+    });
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+ // CSRF token setup
+ function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // AJAX POST request
+    document.getElementById("start-button").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    const data = {
+        request_type: "comport", // Add a request type to identify this request
+        com_port: document.getElementById("comport").value,
+        baud_rate: document.getElementById("baud_rate").value,
+        parity: document.getElementById("parity").value,
+        stop_bit: document.getElementById("stop_bit").value,
+        data_bit: document.getElementById("data_bit").value
+    };
+
+    fetch('/comport/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken // Include CSRF token in headers
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log(result);
+        alert(result.message);
+    })
+    .catch(error => console.error('Error:', error));
+});
+    
+////////////////////////////////////////////////////////////////////////
+
+
+   function showSubContainer(index) {
+    // Hide all sub-containers
+    const subContainers = document.querySelectorAll('.sub-container');
+    subContainers.forEach(container => container.classList.remove('active'));
+
+    // Show the selected sub-container
+    const selectedContainer = document.querySelector(`.sub-container-${index}`);
+    if (selectedContainer) {
+        selectedContainer.classList.add('active');
+    }
+}
+
+// Ensure .sub-container-1 is active initially
+document.addEventListener('DOMContentLoaded', () => {
+    const initialContainer = document.querySelector('.sub-container-1');
+    if (initialContainer) {
+        initialContainer.classList.add('active');
+    }
+});
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.toggle-btn');
+    const containers = document.querySelectorAll('.table');
+
+    // Ensure table1 and table4 are visible initially
+    const initialTables = ['table1', 'table5'];
+    initialTables.forEach(tableId => {
+        const table = document.getElementById(tableId);
+        if (table) {
+            table.classList.remove('hidden');
+        }
+    });
+
+    buttons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            // Hide all containers
+            containers.forEach(container => container.classList.add('hidden'));
+            // Show the corresponding container
+            const target = document.getElementById(`table${index + 1}`);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+        });
+    });
+});
+
+
+ // JavaScript to add 5 rows with SPEC names
+    const tableBody = document.getElementById('tableBody-2');
+
+    // List of SPEC names
+    const specNames = [
+    "TOOL NO",
+"TOOL AXIS",
+"UPPER WEAR OFFSET LIMIT ",
+"LOWER WEAR OFFSET LIMIT ",
+"NEW OFFSET ",
+"OFFSET OFFSET" ,
+    ];
+
+    // Loop through the spec names and create rows
+    specNames.forEach((spec, index) => {
+        const row = document.createElement('tr');
+        row.className = 'custom-row';
+
+        // Create the cells for each row
+        row.innerHTML = `
+            <td style="border: 1px solid black;">${index + 1}</td>
+            <td style="border: 1px solid black;">${spec}</td>
+            <td><input type="text" class="no-outline" style="width: 100%;"></td>
+            <td><input type="text" class="no-outline" style="width: 100%;"></td>
+            <td><input type="text" class="no-outline" style="width: 100%;"></td>
+            <td><input type="text" class="no-outline" style="width: 100%;"></td>
+        `;
+
+        // Append the row to the table body
+        tableBody.appendChild(row);
+    });
+
+
+    // JavaScript to add 5 rows with SPEC names
+    const tableBody3 = document.getElementById('tableBody-3');
+
+    // List of SPEC names
+    const CNC_IP = [
+    "CNC MACHINE PORT",
+"CNC TIME OUT",
+"TOOL AXIS ",
+"TOOL NO ",
+"OFFSET ",
+"PART COUNT" ,
+"CNC LEAST COUNT"
+    ];
+
+    // Loop through the spec names and create rows
+    CNC_IP.forEach((spec, index) => {
+        const row = document.createElement('tr');
+        row.className = 'custom-row';
+
+        // Create the cells for each row
+        row.innerHTML = `
+            <td style="border: 1px solid black;">${index + 1}</td>
+            <td style="border: 1px solid black;">${spec}</td>
+            <td><input type="text" class="no-outline" style="width: 100%;"></td>
+            <td><input type="text" class="no-outline" style="width: 100%;"></td>
+            <td><input type="text" class="no-outline" style="width: 100%;"></td>
+            <td><input type="text" class="no-outline" style="width: 100%;"></td>
+        `;
+
+        // Append the row to the table body
+        tableBody3.appendChild(row);
+    });
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+function addRow() {
+    const tableBody = document.getElementById("tableBody-1");
+
+    // Get the current number of rows
+    const rowCount = tableBody.getElementsByTagName("tr").length;
+
+    // Create a new row
+    const newRow = document.createElement("tr");
+    newRow.classList.add("custom-row");
+
+    // Create and append cells to the new row
+    newRow.innerHTML = `
+        <td>${rowCount + 1}</td>
+        <td><input type="text" class="no-outline" style="width: 100%;" oninput="this.value = this.value.toUpperCase();"></td>
+        <td><input type="text" class="no-outline" style="width: 100%;" oninput="this.value = this.value.toUpperCase();"></td>
+    `;
+
+    // Append the new row to the table body
+    tableBody.appendChild(newRow);
+}
+
+function saveData() {
+    const rows = document.querySelectorAll("#tableBody-1 tr");
+    const data = Array.from(rows).map(row => {
+        const inputs = row.querySelectorAll("input");
+        return {
+            request_type: "operator", // Add a request type to identify this request
+            operator_no: inputs[0].value,
+            operator_name: inputs[1].value
+        };
+    });
+
+    // Log the data that will be sent to the backend
+    console.log("Data being sent to the backend:", data);
+
+    $.ajax({
+        url: "/comport/",
+        type: "POST",
+        headers: {
+            "X-CSRFToken": getCSRFToken() // CSRF token for Django
+        },
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+            if (response.status === "success") {
+                console.log("Data saved successfully:", response);
+                alert("Data saved successfully!");
+                localStorage.setItem("activeTab", "settings");  // save tab state
+                window.location.reload();
+            } else {
+                console.error("Backend returned an error:", response.message);
+                alert("Error: " + response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error saving data:", xhr.responseText);
+            alert("An error occurred while saving the data.");
+        }
+    });
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const activeTab = localStorage.getItem("activeTab");
+
+    if (activeTab === "settings") {
+        showSubContainer(2);  // trigger the function manually
+        localStorage.removeItem("activeTab");  // clear it for next time
+    }
+});
+
+    function getCSRFToken() {
+        const cookies = document.cookie.split("; ");
+        for (let cookie of cookies) {
+            const [name, value] = cookie.split("=");
+            if (name === "csrftoken") return value;
+        }
+        return "";
+    }
+
+
+//////////////////////////////////////////////////////////
+
+// delete the seleected rows:
+
+// Function to handle row selection
+function selectRow(row) {
+    // Remove highlight from all rows
+    const rows = document.querySelectorAll("#tableBody-1 tr");
+    rows.forEach(r => r.style.backgroundColor = "");
+
+    // Highlight the selected row
+    row.style.backgroundColor = "yellow";
+
+    // Get the operator_no and operator_name from the input fields in the selected row
+    const operatorNo = row.querySelector('td:nth-child(2) input').value;
+    const operatorName = row.querySelector('td:nth-child(3) input').value;
+
+    // Console log the operator info
+    console.log(`Selected Operator No: ${operatorNo}`);
+    console.log(`Selected Operator Name: ${operatorName}`);
+
+    // Store the selected operator data in the row's data attributes
+    row.setAttribute("data-operator-no", operatorNo);
+    row.setAttribute("data-operator-name", operatorName);
+}
+
+// Function to delete the selected row
+function deleteRow() {
+    const selectedRow = document.querySelector("#tableBody-1 tr[style*='background-color: yellow']");
+    
+    if (selectedRow) {
+        const operatorNo = selectedRow.getAttribute("data-operator-no"); // Get the operator_no from data attributes
+        const operatorName = selectedRow.getAttribute("data-operator-name"); // Get the operator_name from data attributes
+        const request = 'delete'
+        if (operatorNo && operatorName) {
+            // Send a POST request to delete the operator
+            fetch("/comport/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken"), // Ensure you have CSRF protection enabled
+                },
+                body: JSON.stringify({request_type:request, operator_no: operatorNo, operator_name: operatorName }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    // Remove the row from the table
+                    selectedRow.remove();
+                    alert("Row deleted successfully!");
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert("Error deleting row: " + error);
+            });
+        } else {
+            alert("Operator No or Name not found.");
+        }
+    } else {
+        alert("Please select a row to delete.");
+    }
+}
+
+// Function to get the CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Add event listeners to existing rows for selection functionality
+const existingRows = document.querySelectorAll("#tableBody-1 tr");
+existingRows.forEach(row => {
+    row.addEventListener("click", function () {
+        selectRow(row);
+    });
+});
+
+    </script>
+    
+</body>
+</html>
