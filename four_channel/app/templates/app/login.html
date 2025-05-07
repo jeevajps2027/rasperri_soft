@@ -16,7 +16,30 @@
 <style>
     
 #close{
-    width: 100%;
+    width:30%;
+    background-color: lightslategray;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.5vw;
+    margin-top: 5%;
+    height: 5%;
+    margin-left: 5%;
+}
+
+#shutdown{
+    width:30%;
+    background-color: lightslategray;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.5vw;
+    margin-top: 5%;
+    height: 5%;
+}
+
+#reboot{
+    width:30%;
     background-color: lightslategray;
     text-align: center;
     font-weight: bold;
@@ -27,9 +50,10 @@
 }
 
 .header{
+    width: 100%;
     font-weight: bold;
-    font-size: 8vh;
-    margin-left: 10%;
+    font-size: 6vh;
+    margin-left: 7%;
     margin-top: 3%;
     -webkit-text-stroke: 2px black; /* Adds a black outline */
     font-family: apple-system;
@@ -37,7 +61,7 @@
 }
 .sub_header{
     font-weight: bold;
-    font-size: 4vh;
+    font-size: 3vh;
     margin-left: 30%;
     margin-top: 0;
     color: black;
@@ -89,13 +113,26 @@
 </div>
 
 
-<button id="close" onclick="closeApp()">Close</button>
+<button id="close" onclick="closeApp()">CLOSE</button>
+
+<button id="shutdown" onclick="shutdownApp()">SHUTDOWN</button>
+<button id="reboot" onclick="rebootApp()">REBOOT</button>
+
 <script>
     
   function closeApp() {
         fetch("http://127.0.0.1:9999/shutdown/", { method: "POST" })
             .then(() => console.log("Shutdown signal sent!"))
             .catch(err => console.error("Shutdown failed:", err));
+    }
+
+
+    function shutdownApp() {
+        fetch("http://127.0.0.1:9999/switchoff/", { method: "POST" });
+    }
+
+    function rebootApp() {
+        fetch("http://127.0.0.1:9999/reboot/", { method: "POST" });
     }
 
 document.getElementById('user_id').focus();

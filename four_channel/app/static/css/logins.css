@@ -182,28 +182,3 @@ input[type="text"]:focus {
 
 
 
-/* Close button container styling */
-#close_btn {
-    position: absolute;          /* Position relative to the viewport */
-    top: 10px;                   /* 10px from the top */
-    right: 10px;                 /* 10px from the right */
-    background-color: transparent; /* Transparent background */
-    border: none;                /* No border */
-    cursor: pointer;             /* Pointer cursor on hover */
-    font-size: 20px;             /* Icon size */
-    padding: 5px;                /* Padding around the icon */
-    color: #333;                 /* Icon color */
-    transition: color 0.3s ease; /* Smooth color transition on hover */
-}
-
-/* Hover effect for close button */
-#close_btn:hover {
-    color: orange;                  /* Change color to red on hover */
-}
-
-/* Close icon styling */
-#close_icon {
-    font-size: 24px;             /* Font size of the icon */
-    line-height: 1;              /* Align icon properly */
-}
- 

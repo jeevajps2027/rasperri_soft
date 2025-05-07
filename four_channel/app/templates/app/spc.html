@@ -83,6 +83,17 @@
 
 
 <script>
+
+document.addEventListener("keydown", function (event) {
+    // Check if F4 is pressed
+    if (event.key === "F3") {
+        event.preventDefault(); // Prevent default F4 behavior (optional)
+        
+        // Redirect to the Measurement page
+        window.location.href = "/measurement";  // Replace with your actual path
+    }
+});
+
     
 
     

@@ -26,30 +26,30 @@
             <button type="submit" id="menu_btn">
                 <i class="fas fa-bars" id="menu_icon"></i>[F12]
             </button>
-            <input type="text" id="date_time" >
-            <input type="text" id="operator" >
+            <input type="text" id="date_time" readonly>
+            <input type="text" id="operator" readonly>
             <input type="text" id="shift" class="shift-name">
-            <input type="text" id="message" style="margin-left: 1%;">
+            <input type="text" id="message" style="margin-left: 1%;" readonly>
             <button type="submit" id="exit_btn">
                 <i class="fas fa-sign-out-alt" id="exit_icon"></i>
             </button>
         </div>
         <div class="container-1-2">
             <label for="part_model">PART MODEL:</label>
-            <input type="text" id="part_model">
+            <input type="text" id="part_model" readonly>
 
             <label for="part_no" style="margin-left: 1%;">PART NAME:</label>
-            <input type="text" id="part_no" >
+            <input type="text" id="part_no" readonly>
 
             <label for="part_status" style="margin-left: 2%;">PART STATUS:</label>
-            <input type="text" id="accept">
-            <input type="text" id="rework">
-            <input type="text" id="reject">
-            <input type="text" id="total">
+            <input type="text" id="accept" readonly>
+            <input type="text" id="rework" readonly>
+            <input type="text" id="reject" readonly>
+            <input type="text" id="total" readonly>
         </div>
         <div class="container-1-3">
-            <input type="text" id="notification_bar">
-            <input type="text" id="overall_status" >
+            <input type="text" id="notification_bar" readonly>
+            <input type="text" id="overall_status" readonly>
         </div>
 
     </div>
@@ -260,6 +260,7 @@ for (let i = 1; i <= 21; i++) {
     // Create a new row
     let row = document.createElement("tr");
     row.id = `row_${i}`;  // Assign unique ID to the row
+    row.style.display = "none";
 
 
     // Set unique IDs for input fields
@@ -1405,6 +1406,8 @@ function updateMaxMinTir(gaugeIndex) {
 }
 
 
+let maxVisibleRow = 0; // Track the highest row number that should be shown
+
 function updateTableValues(step, indices, parameterNames, container) {
     console.log("Step:", step, "Indices:", indices, "Parameter Names:", parameterNames);
 
@@ -1413,13 +1416,21 @@ function updateTableValues(step, indices, parameterNames, container) {
         return;
     }
 
-  
+    // Update maxVisibleRow based on the new indices
+    let newMax = Math.max(...indices.map(i => i + 1));
+    if (newMax > maxVisibleRow) {
+        maxVisibleRow = newMax;
+    }
 
-    indices.forEach((index, paramIndex) => {  // Use paramIndex as the row index
-    let rowIndex = paramIndex + 1;  // Start from 0,1,2,3 instead of 2,3,4,5
-    let rowIndex_table = index + 1;
-    console.log("Updating rowInrowIndex_tabledex ssssssssssssssssssssssssss:", rowIndex_table);
-    console.log("Updating rowIndex:", rowIndex);
+    // Show all rows from 1 to maxVisibleRow
+    for (let i = 1; i <= 21; i++) {
+        let row = document.getElementById(`row_${i}`);
+        if (row) row.style.display = (i <= maxVisibleRow) ? "" : "none";
+    }
+
+    // Update only the rows we are passed
+    indices.forEach((index, paramIndex) => {
+        let rowIndex_table = index + 1;
 
         let paramInput = document.getElementById(`param_${rowIndex_table}`);
         let curInput = document.getElementById(`cur_${rowIndex_table}`);
@@ -1428,29 +1439,19 @@ function updateTableValues(step, indices, parameterNames, container) {
         let tirInput = document.getElementById(`tir_${rowIndex_table}`);
 
         if (!paramInput) {
-            console.warn(`paramInput for Row ${rowIndex} not found.`);
+            console.warn(`paramInput for Row ${rowIndex_table} not found.`);
             return;
         }
 
         let paramName = parameterNames[paramIndex] !== undefined ? parameterNames[paramIndex] : "UNKNOWN";
-        console.log(`Assigning parameter name for Row ${rowIndex}: ${paramName}`);
         paramInput.value = paramName;
 
-        // Check if indices contain only one element
-        let targetIndex = indices.length === 1 ? container : rowIndex;
+        let targetIndex = indices.length === 1 ? container : paramIndex + 1;
 
         let outputBox = document.getElementById(`Output_box${targetIndex}`);
         let maxBox = document.getElementById(`max${targetIndex}`);
         let minBox = document.getElementById(`min${targetIndex}`);
         let tirBox = document.getElementById(`tir${targetIndex}`);
-
-        console.log(`Values for Row ${targetIndex}:`, {
-            paramName,
-            outputBox: outputBox ? outputBox.value : null,
-            maxBox: maxBox ? maxBox.value : null,
-            minBox: minBox ? minBox.value : null,
-            tirBox: tirBox ? tirBox.value : null
-        });
 
         if (curInput && maxInput && minInput && tirInput && outputBox && maxBox && minBox && tirBox) {
             curInput.value = outputBox.value;
@@ -1458,23 +1459,15 @@ function updateTableValues(step, indices, parameterNames, container) {
             minInput.value = minBox.value;
             tirInput.value = tirBox.value;
 
-            console.log(`Updated Row ${targetIndex} with parameter ${paramName}`);
-
-            // Ensure the event listener is applied properly
             outputBox.addEventListener("input", function () {
-                let existingBgColor = curInput.style.backgroundColor; // Store the existing background color
+                let existingBgColor = curInput.style.backgroundColor;
                 let computedBgColor = window.getComputedStyle(outputBox).backgroundColor;
 
-                console.log(`Existing Background Color for Row ${targetIndex}: ${existingBgColor}`);
-                console.log(`Computed Background Color for Row ${targetIndex}: ${computedBgColor}`);
-
-                // Only update background color if it was not previously set by another source
                 if (!existingBgColor || existingBgColor === "rgba(0, 0, 0, 0)" || existingBgColor === "transparent") {
                     curInput.style.backgroundColor = computedBgColor;
                 }
             });
 
-            // Trigger event listener immediately to apply color on load if necessary
             outputBox.dispatchEvent(new Event("input"));
         } else {
             console.warn(`Some elements missing for Row ${targetIndex}`);
@@ -1486,11 +1479,9 @@ function updateTableValues(step, indices, parameterNames, container) {
 
 
 
-
-
-function DataToSend(paramValues, curValues, maxValues, minValues, tirValues,statusValues) {
+function DataToSend(paramValues, curValues, maxValues, minValues, tirValues, statusValues) {
     $('#loading_spinner').show();
-    
+
     const overallStatusInput = document.getElementById("overall_status").value;
     const partModel = document.getElementById("part_model").value;
     const partName = document.getElementById("part_no").value;
@@ -1499,16 +1490,42 @@ function DataToSend(paramValues, curValues, maxValues, minValues, tirValues,stat
     const shift = document.getElementById("shift").value;
     const punchNo = document.getElementById("punch_no").value;
 
+     // ✅ Validate top-level mandatory fields first
+     if (!partModel || !partName || !date || !operator || !shift ) {
+        $('#loading_spinner').hide();
+        alert("Please fill all required header fields before submitting.");
+        return;
+    }
+
     const parameterName = responseData.parameterNameArray;  
     const lsl = responseData.lslArray;
     const usl = responseData.uslArray;
     const ltl = responseData.ltlArray;
     const utl = responseData.utlArray;
     const nominal = responseData.nominalArray;
-  
+
     let dataToSend = [];
 
+    // First, check that all mandatory fields are present
     for (let i = 0; i < paramValues.length; i++) {
+        if (
+            !paramValues[i] || 
+            !curValues[i] || 
+            !maxValues[i] || 
+            !minValues[i] || 
+            !tirValues[i] || 
+            !statusValues[i] ||
+            !overallStatusInput
+        ) {
+            $('#loading_spinner').hide();
+            alert(`Row ${i + 1} or Overall Status is incomplete. Please fill all fields before submitting.`);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+            return; // Stop if any field is missing
+           
+        }
+
         dataToSend.push({
             date: date,
             punchNo: punchNo,
@@ -1516,28 +1533,28 @@ function DataToSend(paramValues, curValues, maxValues, minValues, tirValues,stat
             partName: partName,
             operator: operator,
             shift: shift,
-            parameterName: paramValues[i],  // Now using filtered values
+            parameterName: paramValues[i],
             lsl: lsl[i] || "",
             usl: usl[i] || "",
             ltl: ltl[i] || "",
             utl: utl[i] || "",
             nominal: nominal[i] || "",
-            output: curValues[i] || "",  // Assuming curValues corresponds to output
-            max: maxValues[i] || "",
-            min: minValues[i] || "",
-            tir: tirValues[i] || "",
-            statusCell : statusValues[i] || "",
+            output: curValues[i],
+            max: maxValues[i],
+            min: minValues[i],
+            tir: tirValues[i],
+            statusCell: statusValues[i],
             overallStatusInput: overallStatusInput,
         });
     }
 
-    console.log("Data being sent to the backend jjjjjjjjjjjjjjjjjjjjjjjjjkkkkkkkkkkkkkkkkkk:", dataToSend);
+    console.log("Data being sent to the backend:", dataToSend);
 
-    // Send the combined data to the backend using jQuery AJAX
+    // All rows valid, proceed to send
     $.ajax({
-        url: '/measure_data/', // Replace with your Django view URL
+        url: '/measure_data/',
         type: 'POST',
-        headers: { 'X-CSRFToken': getCSRFToken() }, // Include CSRF token
+        headers: { 'X-CSRFToken': getCSRFToken() },
         data: JSON.stringify(dataToSend),
         contentType: 'application/json',
         success: function (response) {

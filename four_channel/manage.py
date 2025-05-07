@@ -96,11 +96,32 @@ def run_shutdown_server(window_ref):
             if self.path == "/shutdown/":
                 self.send_response(200)
                 self.end_headers()
-                self.wfile.write(b"Shutting down from browser request...")
+                self.wfile.write(b"Shutting down app...")
                 print("Shutdown requested from browser!")
                 shutdown_everything()
+
+            elif self.path == "/switchoff/":
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(b"Switching off Raspberry Pi...")
+                print("System shutdown requested!")
+                subprocess.run(["sudo", "shutdown", "-h", "now"])
+
+            elif self.path == "/reboot/":
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(b"Rebooting Raspberry Pi...")
+                print("System reboot requested!")
+                subprocess.run(["sudo", "reboot"])
+
+            else:
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b"Unknown request path.")
+
     server = HTTPServer(("127.0.0.1", 9999), ShutdownHandler)
     server.serve_forever()
+
 
 
 
