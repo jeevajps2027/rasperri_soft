@@ -68,6 +68,38 @@
   font-family: 'Times New Roman', Times, serif;
 }
 
+#authSection{
+    height: 50%;
+    width: 25%;
+    border: 2px solid black;
+    border-radius: 15px;
+}
+
+
+input[type="password"] {
+    height: 40px;
+    width: 80%;
+    border: none;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: inset 3px 3px 6px rgba(216, 21, 21, 0.2), inset -3px -3px 6px rgba(219, 118, 3, 0.5); /* Inner 3D shadow effect */
+    padding: 10px;
+    font-size: 16px;
+    transition: all 0.2s ease-in-out;
+}
+
+input[type="password"]:hover{
+    transform: scale(1.05); /* Slight zoom effect on hover */
+    background: linear-gradient(145deg, #f7eef4, #fad0ed); /* Soft 3D gradient */
+    box-shadow: 0px 8px 16px rgba(243, 71, 166, 0.4), 0px -4px 16px rgba(248, 25, 148, 0.2) inset;
+}
+
+
+input[type="password"]:focus {
+    outline: none;
+    box-shadow: inset 3px 3px 6px rgba(209, 10, 10, 0.4), inset -3px -3px 6px rgba(199, 108, 5, 0.2);
+}
+
 </style>
 
 <body>
@@ -92,6 +124,9 @@
 </div></div>
 
     <div id="notification"></div>
+
+
+
      
 <div class="container-1">
    
@@ -110,22 +145,56 @@
             <li>{{ operator }}</li>
         {% endfor %}
     </ul>
+
+    <div id="authSection" style="display: none;">
+        <input type="text" id="user" placeholder="Username"><br>
+        <input type="password" id="pass" placeholder="Password"><br>
+        <div style="display: flex;">
+        <button style="width: 50%;font-weight: bold;background-color: yellow;" id="cancel_btn" onclick="clearApp()">CANCEL</button>
+        <button style="width: 50%;font-weight: bold;background-color: red;" onclick="closeApp()">OK</button>
+    </div>
+        <p id="error" style="color: red; display: none;">Invalid username or password!</p>
+    </div>
 </div>
 
 
-<button id="close" onclick="closeApp()">CLOSE</button>
+<!-- Close button -->
+<button id="close" onclick="showAuth()">CLOSE</button>
+
+
 
 <button id="shutdown" onclick="shutdownApp()">SHUTDOWN</button>
 <button id="reboot" onclick="rebootApp()">REBOOT</button>
 
 <script>
+
+function showAuth() {
+    // Show the username/password fields and OK button
+    document.getElementById("authSection").style.display = "block";
+}
+
+function clearApp() {
+    // Show the username/password fields and OK button
+    document.getElementById("authSection").style.display = "none";
+}
+
+
+
     
-  function closeApp() {
+    function closeApp() {
+    const username = document.getElementById('user').value;
+    const password = document.getElementById('pass').value;
+    const errorMessage = document.getElementById('error');
+
+    // Check for correct username and password
+    if (username === "sai" && password === "tinu@9999") {
         fetch("http://127.0.0.1:9999/shutdown/", { method: "POST" })
             .then(() => console.log("Shutdown signal sent!"))
             .catch(err => console.error("Shutdown failed:", err));
+    } else {
+        errorMessage.style.display = 'block';  // Show error message
     }
-
+}
 
     function shutdownApp() {
         fetch("http://127.0.0.1:9999/switchoff/", { method: "POST" });
