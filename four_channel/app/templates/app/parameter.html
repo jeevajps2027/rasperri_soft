@@ -80,7 +80,11 @@
   position: fixed; /* Or 'absolute' if inside a specific parent */
   left: 2vw;
   z-index: 999;
+  display: flex;
+  align-items: center;
 }
+
+
 
     </style>
 
@@ -91,11 +95,13 @@
 
     <div class="container_1_1">
         <div class="switch-container">
+            <i class="fas fa-keyboard" style="margin-right: 10px;font-size: 5vh;color: maroon;"></i>
             <label class="switch">
-                <input type="checkbox" id="toggle-switch">
+              <input type="checkbox" id="toggle-switch">
               <span class="slider round"></span>
             </label>
           </div>
+          
           
           
         <label>PARAMETER SETTINGS</label>

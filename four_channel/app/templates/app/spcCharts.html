@@ -25,6 +25,20 @@
 
     <title>SPC REPORTS</title>  
 </head>
+<style>
+
+#exit_btn {
+    margin-left: 4%;
+background-color: #ff4c4c; /* Example: red background */
+border: none;
+padding: 10px;
+border-radius: 5px;
+width: 5%;
+font-weight: bold;
+font-size: 3vh;
+color: white;
+}
+</style>
 
 <body>
 
@@ -48,7 +62,7 @@
         </select>
         
         <button type="submit" id="exit_btn">
-            <i class="fas fa-times" id="exit_icon"></i>
+            <i class="fas fa-times" id="exit_icon" ></i>F7
         </button>
 
 
@@ -67,7 +81,7 @@
 
 
         <label for="mode">MODE:</label>
-        <select id="mode">
+        <select id="mode" onchange="toggleSampleSizeButton()">
             <option value="r_chart" >X BAR R-CHART</option>
             <option value="histogram" id="histogram">HISTOGRAM</option>
             <option value="piechart" id="piechart">PIECHART</option>
@@ -94,10 +108,7 @@
         </form>
         
 
-        <div id="downloadModal" style="display: none;">
-            <button id="download_pdf">Download as PDF</button>
-            <button id="download_xlsx">Download as XLSX</button>
-        </div> 
+        
     </div>
     </div>
 
@@ -111,6 +122,26 @@
    
 
 <script>
+
+    
+
+function toggleSampleSizeButton() {
+    const mode = document.getElementById("mode").value;
+    const button = document.getElementById("sample_size_button");
+
+    if (mode === "r_chart") {
+        button.disabled = false;
+        button.style.opacity = "1";
+        button.style.pointerEvents = "auto";
+    } else {
+        button.disabled = true;
+        button.style.opacity = "0.1"; // visually blurred
+        button.style.pointerEvents = "none"; // no click
+    }
+}
+
+// Initialize state on page load
+document.addEventListener("DOMContentLoaded", toggleSampleSizeButton);
 
 document.addEventListener("keydown", function (event) {
     // Check if F4 is pressed
@@ -164,6 +195,59 @@ document.addEventListener("keydown", function (event) {
 
 
  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+ $('#download_btn').click(function () {
+    console.log("you click the download button")
+    $('#loading_spinner').show();
+
+    const tableHtml = $('#table-container').html();
+    const chartHtml = $('#container-2').html();
+
+    const fromDate = $('#from_date').val();
+    const partModel = $('#part_model').val();
+    const mode = $('#mode').val();
+    const toDate = $('#to_date').val();
+    const shift = $('#shift_select').val();
+    const parameter_name = $('#parameter_button').text();
+
+    const sample_size = $('#sample_size_button').text();
+
+    $.ajax({
+        url: '/spc_download/',
+        method: 'POST',
+        data: {
+            table_html: tableHtml,
+            chart_html: chartHtml,
+            from_date: fromDate,
+            part_model: partModel,
+            mode: mode,
+            to_date: toDate,
+            shift: shift,
+            parameter_name: parameter_name,
+            sample_size: sample_size,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function (response) {
+            $('#loading_spinner').hide();
+            alert(response.message);
+        },
+        error: function (xhr, status, error) {
+            $('#loading_spinner').hide();
+            console.error('Error:', error);
+            alert('Failed to generate PDF.');
+        }
+    });
+
+    $('#downloadModal').hide();
+});
+
+
+
+
+ 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 
@@ -258,6 +342,7 @@ $('#search_btn').click(function (event) {
 
         // Display the chart
         if (response.chart_img) {
+            console.log('Chart Image:', response.chart_img);
             const chartImage = $('<img>', {
                 src: 'data:image/png;base64,' + response.chart_img,
                 alt: 'SPC Chart',
@@ -274,10 +359,16 @@ $('#search_btn').click(function (event) {
         } 
     },
     error: function (xhr, status, error) {
+    $('#loading_spinner').hide();
+    
+    if (xhr.status === 404 && xhr.responseJSON && xhr.responseJSON.error) {
+        alert(xhr.responseJSON.error);  // Show specific message from server
+    } else {
         console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-        $('#loading_spinner').hide();
+        alert('An unexpected error occurred. Please try again.');
     }
+}
+
 });
 
    

@@ -87,21 +87,81 @@ def generate_readings_table(subgroups, x_bars, ranges):
     return alert_message + style + df.to_html(classes="table table-striped", index=True, header=True)
 
 
-def generate_histogram(readings):
-    """Generates a histogram and returns the image as a base64 string."""
-    fig, ax = plt.subplots(figsize=(10, 5))
+def generate_histogram(readings, usl=None, lsl=None):
+    """Generates a histogram and returns the image and a summary table as HTML."""
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(10, 4))
     ax.hist(readings, bins=10, color='skyblue', edgecolor='black')
     ax.set_title('Histogram')
     ax.set_xlabel('Readings')
     ax.set_ylabel('Frequency')
+
+    # Plot USL and LSL as vertical dashed lines
+    if usl:
+        try:
+            ax.axvline(float(usl), color='red', linestyle='--', label='USL')
+        except ValueError:
+            pass
+
+    if lsl:
+        try:
+            ax.axvline(float(lsl), color='red', linestyle='--', label='LSL')
+        except ValueError:
+            pass
+
+    ax.legend()
     plt.tight_layout()
-    return encode_chart_to_base64(fig)
+    chart_img = encode_chart_to_base64(fig)
+
+    # Prepare stats
+    count = len(readings)
+    usl_val = float(usl) if usl not in [None, '', 'N/A'] else None
+    lsl_val = float(lsl) if lsl not in [None, '', 'N/A'] else None
+    x_bar = np.mean(readings)
+    std_dev = np.std(readings)
+
+    cp = None
+    cpk = None
+
+    if usl_val is not None and lsl_val is not None and std_dev > 0:
+        cp = (usl_val - lsl_val) / (6 * std_dev)
+        cpk = min((usl_val - x_bar), (x_bar - lsl_val)) / (3 * std_dev)
+
+    # Build HTML table (headings in one row, values in the next)
+    table_html = f"""
+    <table border="1" style="width: 80%; border-collapse: collapse; margin-top: 10px; text-align: center;">
+        <tr>
+            <th>Total Readings</th>
+            <th>USL</th>
+            <th>LSL</th>
+            <th>Mean</th>
+            <th>Std Dev</th>
+            <th>Cp</th>
+            <th>Cpk</th>
+        </tr>
+        <tr>
+            <td>{count}</td>
+            <td>{usl if usl is not None else 'N/A'}</td>
+            <td>{lsl if lsl is not None else 'N/A'}</td>
+            <td>{round(x_bar, 4)}</td>
+            <td>{round(std_dev, 4)}</td>
+            <td>{round(cp, 4) if cp is not None else 'N/A'}</td>
+            <td>{round(cpk, 4) if cpk is not None else 'N/A'}</td>
+        </tr>
+    </table>
+    """
+
+    return chart_img, table_html
 
 
-def generate_pie_chart(status):
-    """Generates a pie chart based on the status values and returns it as a base64 string."""
+def generate_pie_chart(status, usl=None, lsl=None):
+    """Generates a pie chart based on the status values and returns a base64 string and an HTML summary table."""
+
     # Count the occurrences of each unique status
-    status_counts = pd.Series(status).value_counts()
+    status_series = pd.Series(status)
+    status_counts = status_series.value_counts()
 
     # Map colors for the pie chart
     colors = {
@@ -109,8 +169,7 @@ def generate_pie_chart(status):
         'reject': '#FF6347',  # Tomato red
         'rework': '#FFFF00',  # Yellow
     }
-    # Assign colors based on status keys
-    pie_colors = [colors.get(key.lower(), '#808080') for key in status_counts.index]  # Default to gray if not mapped
+    pie_colors = [colors.get(key.lower(), '#808080') for key in status_counts.index]  # Default to gray
 
     # Generate the pie chart
     fig, ax = plt.subplots(figsize=(8, 6))
@@ -122,8 +181,44 @@ def generate_pie_chart(status):
         colors=pie_colors
     )
     ax.set_title('Status Distribution')
+    chart_img = encode_chart_to_base64(fig)
 
-    return encode_chart_to_base64(fig)
+    # Calculate counts and percentages
+    total_count = len(status)
+    accept_count = (status_series.str.lower() == 'accept').sum()
+    reject_count = (status_series.str.lower() == 'reject').sum()
+    rework_count = (status_series.str.lower() == 'rework').sum()
+
+    accept_pct = accept_count * 100 / total_count if total_count else 0
+    reject_pct = reject_count * 100 / total_count if total_count else 0
+    rework_pct = rework_count * 100 / total_count if total_count else 0
+
+    # Build HTML table with all data in a single row
+    table_html = f"""
+    <table border="1" style="width: 60%; border-collapse: collapse; margin-top: 10px; text-align: center;">
+        <tr>
+            <th>Total Count</th>
+            <th>Accept Count</th>
+            <th>Accept %</th>
+            <th>Reject Count</th>
+            <th>Reject %</th>
+            <th>Rework Count</th>
+            <th>Rework %</th>
+        </tr>
+        <tr>
+            <td>{total_count}</td>
+            <td>{accept_count}</td>
+            <td>{round(accept_pct, 2)}%</td>
+            <td>{reject_count}</td>
+            <td>{round(reject_pct, 2)}%</td>
+            <td>{rework_count}</td>
+            <td>{round(rework_pct, 2)}%</td>
+        </tr>
+    </table>
+    """
+
+    return chart_img, table_html
+
 
 
 def spcCharts(request):
@@ -157,6 +252,31 @@ def spcCharts(request):
             filtered_list = filtered_data.values('output')
             filtered_result = filtered_data.values('overall_status')
 
+            # Get USL and LSL if specific parameter is selected
+            usl = None
+            lsl = None
+
+            if parameter_name != "ALL":
+                try:
+                    # Find the matching Parameter_Settings instance
+                    setting = Parameter_Settings.objects.get(part_model=part_model)
+                    
+                    # Find the matching paraTableData
+                    para_data = paraTableData.objects.get(
+                        parameter_settings=setting,
+                        parameter_name=parameter_name
+                    )
+                    
+                    usl = para_data.usl
+                    lsl = para_data.lsl
+                    print("usl",usl)
+                    print("lsl",lsl)
+
+                except (Parameter_Settings.DoesNotExist, paraTableData.DoesNotExist):
+                    usl = None
+                    lsl = None
+                    print("USL/LSL not found for the given parameter.")
+
             if not filtered_list:
                 return JsonResponse({'error': 'No data found for the given criteria'}, status=404)
 
@@ -186,9 +306,10 @@ def spcCharts(request):
                 ranges = [np.max(group) - np.min(group) for group in subgroups]
                 table_html = generate_readings_table(subgroups, x_bars, ranges)
             elif mode == 'histogram':
-                chart_img = generate_histogram(readings)
+               chart_img, table_html = generate_histogram(readings, usl=usl, lsl=lsl)
+
             elif mode == 'piechart':
-                chart_img = generate_pie_chart(status)
+                chart_img ,table_html= generate_pie_chart(status,usl=usl, lsl=lsl)
 
             # Return both chart and table if applicable
             return JsonResponse({

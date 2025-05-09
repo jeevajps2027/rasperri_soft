@@ -37,6 +37,12 @@ def report(request):
 
             filtered_data = MeasurementData.objects.filter(**filter_kwargs).order_by('date')
 
+
+            if not filtered_data.exists():
+                 return JsonResponse({'error': 'No data found for the given criteria'}, status=404)
+
+            
+
             # Data dictionary for the table
             data_dict = {
                 'Date': [],

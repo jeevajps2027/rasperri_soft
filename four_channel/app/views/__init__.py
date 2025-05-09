@@ -16,3 +16,4 @@ from .spcCharts import spcCharts
 from .backup import backup
 from .factorretrive import get_parameters
 from .factorretrive import get_parameter_value
+from .spc_download import spc_download
