@@ -329,13 +329,13 @@ body {
 .output_container {
     height: 100%;
     width: 35%;
-    border: 2px solid black;
+   
     background-color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
-    overflow: hidden; /* Prevent overflow issues */
+    
 }
 
 

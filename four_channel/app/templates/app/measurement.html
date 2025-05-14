@@ -11,7 +11,16 @@
     <title>MEASUREMENT</title>
    
   
-    <link rel="stylesheet" href="{% static 'css/measurement_values.css'%}">
+    <link rel="stylesheet" href="{% static 'css/measurement_val.css'%}">
+
+    <style>
+        #output_values_container {
+    height: 67vh;       /* Adjust as needed */
+    overflow-y: auto;   /* Enables vertical scroll */
+    position: relative; /* Required for scrollIntoView to behave correctly */
+}
+
+    </style>
     
     
 </head>
@@ -60,17 +69,17 @@
 <div class="container-2">
     <div class="container_2_1">
         <div class="section" id="sub_container_1">
-            <input type="text" id="para_name1" class="input-box" placeholder="Parameter Name"/>
+            <input type="text" id="para_name1" class="input-box" placeholder="Parameter Name" readonly/>
         
             <div class="input-row-top">
-                <input type="text" id="lsl_1" class="input-box1-top" placeholder="LSL" />
-                <input type="text" id="nominal_1" class="input-box1-top" placeholder="Nominal" />
-                <input type="text" id="usl_1" class="input-box1-top" placeholder="USL" />
+                <input type="text" id="lsl_1" class="input-box1-top" placeholder="LSL" readonly/>
+                <input type="text" id="nominal_1" class="input-box1-top" placeholder="Nominal" readonly />
+                <input type="text" id="usl_1" class="input-box1-top" placeholder="USL" readonly />
             </div>
 
 
 
-            <input type="text" class="Output_box" id="Output_box1" />
+            <input type="text" class="Output_box" id="Output_box1" readonly/>
         
             <div class="label-row">
                 <label for="max1">MAX</label>
@@ -79,24 +88,24 @@
             </div>
         
             <div class="input-row">
-                <input type="text" id="max1" class="input-box1"  />
-                <input type="text" id="min1" class="input-box1" />
-                <input type="text" id="tir1" class="input-box1" />
+                <input type="text" id="max1" class="input-box1" readonly />
+                <input type="text" id="min1" class="input-box1" readonly />
+                <input type="text" id="tir1" class="input-box1" readonly />
             </div>
         </div>
         
         <div class="section"  id="sub_container_2">
-            <input type="text" id="para_name2" class="input-box" placeholder="Parameter Name"/>
+            <input type="text" id="para_name2" class="input-box" placeholder="Parameter Name" readonly/>
         
             <div class="input-row-top">
-                <input type="text" id="lsl_2" class="input-box1-top" placeholder="LSL" />
-                <input type="text" id="nominal_2" class="input-box1-top" placeholder="Nominal" />
-                <input type="text" id="usl_2" class="input-box1-top" placeholder="USL" />
+                <input type="text" id="lsl_2" class="input-box1-top" placeholder="LSL" readonly/>
+                <input type="text" id="nominal_2" class="input-box1-top" placeholder="Nominal" readonly/>
+                <input type="text" id="usl_2" class="input-box1-top" placeholder="USL" readonly/>
             </div>
 
 
 
-            <input type="text" class="Output_box"  id="Output_box2"  />
+            <input type="text" class="Output_box"  id="Output_box2"  readonly/>
         
             <div class="label-row">
                 <label for="max1">MAX</label>
@@ -105,23 +114,23 @@
             </div>
         
             <div class="input-row">
-                <input type="text" id="max2" class="input-box1"  />
-                <input type="text" id="min2" class="input-box1" />
-                <input type="text" id="tir2" class="input-box1" />
+                <input type="text" id="max2" class="input-box1" readonly />
+                <input type="text" id="min2" class="input-box1" readonly />
+                <input type="text" id="tir2" class="input-box1" readonly />
             </div>
         </div>
         <div class="section"  id="sub_container_3">
-            <input type="text" id="para_name3" class="input-box" placeholder="Parameter Name"/>
+            <input type="text" id="para_name3" class="input-box" placeholder="Parameter Name" readonly/>
         
             <div class="input-row-top">
-                <input type="text" id="lsl_3" class="input-box1-top" placeholder="LSL" />
-                <input type="text" id="nominal_3" class="input-box1-top" placeholder="Nominal" />
-                <input type="text" id="usl_3" class="input-box1-top" placeholder="USL" />
+                <input type="text" id="lsl_3" class="input-box1-top" placeholder="LSL" readonly/>
+                <input type="text" id="nominal_3" class="input-box1-top" placeholder="Nominal" readonly/>
+                <input type="text" id="usl_3" class="input-box1-top" placeholder="USL" readonly/>
             </div>
 
 
 
-            <input type="text" class="Output_box"  id="Output_box3"  />
+            <input type="text" class="Output_box"  id="Output_box3"  readonly/>
         
             <div class="label-row">
                 <label for="max1">MAX</label>
@@ -130,23 +139,23 @@
             </div>
         
             <div class="input-row">
-                <input type="text" id="max3" class="input-box1"  />
-                <input type="text" id="min3" class="input-box1" />
-                <input type="text" id="tir3" class="input-box1" />
+                <input type="text" id="max3" class="input-box1" readonly />
+                <input type="text" id="min3" class="input-box1" readonly/>
+                <input type="text" id="tir3" class="input-box1" readonly/>
             </div>
         </div>
         <div class="section"  id="sub_container_4">
-             <input type="text" id="para_name4" class="input-box" placeholder="Parameter Name"/>
+             <input type="text" id="para_name4" class="input-box" placeholder="Parameter Name" readonly/>
         
             <div class="input-row-top">
-                <input type="text" id="lsl_4" class="input-box1-top" placeholder="LSL" />
-                <input type="text" id="nominal_4" class="input-box1-top" placeholder="Nominal" />
-                <input type="text" id="usl_4" class="input-box1-top" placeholder="USL" />
+                <input type="text" id="lsl_4" class="input-box1-top" placeholder="LSL" readonly />
+                <input type="text" id="nominal_4" class="input-box1-top" placeholder="Nominal" readonly/>
+                <input type="text" id="usl_4" class="input-box1-top" placeholder="USL" readonly/>
             </div>
 
 
 
-            <input type="text" class="Output_box"  id="Output_box4"  />
+            <input type="text" class="Output_box"  id="Output_box4" readonly />
         
             <div class="label-row">
                 <label for="max1">MAX</label>
@@ -155,9 +164,9 @@
             </div>
         
             <div class="input-row">
-                <input type="text" id="max4" class="input-box1"  />
-                <input type="text" id="min4" class="input-box1" />
-                <input type="text" id="tir4" class="input-box1" />
+                <input type="text" id="max4" class="input-box1" readonly />
+                <input type="text" id="min4" class="input-box1" readonly />
+                <input type="text" id="tir4" class="input-box1" readonly />
             </div>
         </div>
     </div>
@@ -247,43 +256,13 @@
         <input type="text" id="stopbit" value="{{ comport_stopbit }}" hidden>
         <input type="text" id="databit" value="{{ comport_databit }}" hidden>
         <textarea id="serial-data-display" cols="50" rows="10" readonly hidden></textarea>  
-   
+    
    
 <script>
-
-
-// Get the table body element
-const tableBody = document.getElementById("table_body");
-
-// Loop to create 21 rows
-for (let i = 1; i <= 21; i++) {
-    // Create a new row
-    let row = document.createElement("tr");
-    row.id = `row_${i}`;  // Assign unique ID to the row
-    row.style.display = "none";
-
-
-    // Set unique IDs for input fields
-    let paramId = `param_${i}`;
-    let curId = `cur_${i}`;
-    let maxId = `max_${i}`;
-    let minId = `min_${i}`;
-    let tirId = `tir_${i}`;
-
-    // Create 3 columns (Sr No, Parameter Name, Values)
-    row.innerHTML = `
-        <td>${i}</td>
-        <td><input type="text" id="${paramId}" ></td>
-        <td><input type="text" id="${curId}"></td>
-        <td><input type="text" id="${maxId}"></td>
-         <td><input type="text" id="${minId}"></td>
-        <td><input type="text" id="${tirId}"></td>
-    `;
-
-    // Append the row to the table body
-    tableBody.appendChild(row);
-}
-
+document.addEventListener("DOMContentLoaded", function () {
+    const inputs = document.querySelectorAll("input");
+    inputs.forEach(input => input.setAttribute("autocomplete", "off"));
+});
 
 document.addEventListener("DOMContentLoaded", function () {
             // Get the username passed from the backend
@@ -1406,10 +1385,47 @@ function updateMaxMinTir(gaugeIndex) {
 }
 
 
+
+// Get the table body element
+const tableBody = document.getElementById("table_body");
+
+// Loop to create 21 rows
+for (let i = 1; i <= 21; i++) {
+    // Create a new row
+    let row = document.createElement("tr");
+    row.id = `row_${i}`;  // Assign unique ID to the row
+    row.style.display = "none";
+
+
+    // Set unique IDs for input fields
+    let paramId = `param_${i}`;
+    let curId = `cur_${i}`;
+    let maxId = `max_${i}`;
+    let minId = `min_${i}`;
+    let tirId = `tir_${i}`;
+
+    // Create 3 columns (Sr No, Parameter Name, Values)
+    row.innerHTML = `
+        <td>${i}</td>
+        <td><input type="text" id="${paramId}" ></td>
+        <td><input type="text" id="${curId}"></td>
+        <td><input type="text" id="${maxId}"></td>
+         <td><input type="text" id="${minId}"></td>
+        <td><input type="text" id="${tirId}"></td>
+    `;
+
+    // Append the row to the table body
+    tableBody.appendChild(row);
+}
+
+
+
 let maxVisibleRow = 0; // Track the highest row number that should be shown
 
 function updateTableValues(step, indices, parameterNames, container) {
     console.log("Step:", step, "Indices:", indices, "Parameter Names:", parameterNames);
+
+     
 
     if (!Array.isArray(parameterNames) || parameterNames.length === 0) {
         console.error("parameterNames array is empty or not an array:", parameterNames);
@@ -1473,6 +1489,14 @@ function updateTableValues(step, indices, parameterNames, container) {
             console.warn(`Some elements missing for Row ${targetIndex}`);
         }
     });
+
+    const containerDiv = document.getElementById("output_values_container");
+const lastRow = document.getElementById(`row_${maxVisibleRow}`);
+if (containerDiv && lastRow) {
+    lastRow.scrollIntoView({ behavior: "smooth", block: "end" });
+}
+
+
 }
 
 

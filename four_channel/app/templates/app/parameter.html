@@ -196,6 +196,11 @@
 
 <script>
 
+document.addEventListener("DOMContentLoaded", function () {
+    const inputs = document.querySelectorAll("input");
+    inputs.forEach(input => input.setAttribute("autocomplete", "off"));
+});
+
 document.addEventListener("keydown", function (event) {
     // Check if F4 is pressed
     if (event.key === "F12") {
