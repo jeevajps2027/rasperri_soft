@@ -137,3 +137,190 @@ class SerialConsumer(AsyncWebsocketConsumer):
             'message': event['message'],
             'length': event['length']
         }))
+
+
+from gpiozero import DigitalOutputDevice, DigitalInputDevice
+from time import sleep, time
+
+class KeypadController:
+    def __init__(self, callback):
+        self.callback = callback
+        self.mode = "NUM"
+        self.typed_text = ""
+        self.last_key = None
+        self.last_press_time = 0
+        self.cycle_index = 0
+        self.start_state = False
+
+        # Keypad 1
+        self.rows_1 = [DigitalOutputDevice(pin, active_high=False, initial_value=False) for pin in [5, 6, 13, 19]]
+        self.cols_1 = [DigitalInputDevice(pin, pull_up=True) for pin in [12, 16, 20, 21]]
+        self.KEYPAD_1 = [
+            ["1", "2", "3", "UP"],
+            ["4", "5", "6", "RGT"],
+            ["7", "8", "9", "LFT"],
+            ["0", "START/STOP", "ENT", "DWN"]
+        ]
+
+        # Keypad 2
+        self.rows_2 = [DigitalOutputDevice(pin, active_high=False, initial_value=False) for pin in [27, 26, 25, 24]]
+        self.cols_2 = [DigitalInputDevice(pin, pull_up=True) for pin in [17, 18, 22, 23]]
+        self.KEYPAD_2 = [
+            ["C1", "C2", "C3", "V Key"],
+            ["C4", "C5", "C6", "TAB"],
+            ["F1", "F2", "F3", "F6"],
+            ["F9", "F10", "ALP/NUM", "F12"]
+        ]
+
+        self.alpha_map = {
+            "1": "1.,",
+            "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+            "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz",
+            "0": "0+-*#"
+        }
+
+        def close(self):
+            for pin_device in self.rows_1:
+                pin_device.close()
+            # close all other DigitalOutputDevice objects similarly
+
+    def handle_key(self, key):
+        current_time = time()
+
+        if key == "ALP/NUM":
+            self.mode = "ALPHA" if self.mode == "NUM" else "NUM"
+            print(f"[MODE SWITCH] Mode changed to {self.mode}")
+            # Return typed_text to update frontend display (mode changed)
+            return self.typed_text
+
+        if key == "TAB":
+            self.typed_text += " "
+            print(f"[SPACE] Current Text: {self.typed_text}")
+            return self.typed_text
+
+        if key == "F10":
+            if self.typed_text:
+                self.typed_text = self.typed_text[:-1]
+                print(f"[BACKSPACE] Current Text: {self.typed_text}")
+            return self.typed_text
+
+        if key == "ENT":
+            print(f"[ENTER] Final Text: {self.typed_text}")
+            self.typed_text = ""
+            return self.typed_text
+
+        if key == "START/STOP":
+            self.start_state = not self.start_state
+            print("[START]" if self.start_state else "[STOP]")
+            return self.typed_text
+
+        if self.mode == "ALPHA":
+            if key in self.alpha_map:
+                if key == self.last_key and (current_time - self.last_press_time) < 1.0:
+                    self.cycle_index = (self.cycle_index + 1) % len(self.alpha_map[key])
+                    if self.typed_text:
+                        self.typed_text = self.typed_text[:-1]
+                    self.typed_text += self.alpha_map[key][self.cycle_index]
+                else:
+                    self.cycle_index = 0
+                    self.typed_text += self.alpha_map[key][0]
+                print(f"[ALPHA] Current Text: {self.typed_text}")
+                self.last_key = key
+                self.last_press_time = current_time
+                return self.typed_text
+            else:
+                print(f"[ALPHA] Unmapped Key: {key}")
+                return self.typed_text
+
+        # NUM mode
+        if key in self.alpha_map and key in ["0", "1"]:
+            if key == self.last_key and (current_time - self.last_press_time) < 1.0:
+                self.cycle_index = (self.cycle_index + 1) % len(self.alpha_map[key])
+                if self.typed_text:
+                    self.typed_text = self.typed_text[:-1]
+                self.typed_text += self.alpha_map[key][self.cycle_index]
+            else:
+                self.cycle_index = 0
+                self.typed_text += self.alpha_map[key][0]
+            print(f"[NUM] Current Text: {self.typed_text}")
+            self.last_key = key
+            self.last_press_time = current_time
+            return self.typed_text
+        else:
+            self.typed_text += key
+            print(f"[NUM] Current Text: {self.typed_text}")
+            return self.typed_text
+
+        
+
+        
+
+    def scan_keypad(self, rows, cols, KEYPAD, label):
+        for r in rows:
+            r.off()
+
+        for row_idx, row_pin in enumerate(rows):
+            row_pin.on()
+            sleep(0.01)
+            for col_idx, col_pin in enumerate(cols):
+                if col_pin.is_active:
+                    key = KEYPAD[row_idx][col_idx]
+                    print(f"[{label}] Raw Key: {key}")
+
+                    # Get updated text after handling key
+                    updated_text = self.handle_key(key)
+
+                    if self.callback:
+                        self.callback({"key": key, "text": updated_text, "mode": self.mode})
+
+                    while col_pin.is_active:
+                        sleep(0.05)
+                    sleep(0.1)
+            row_pin.off()
+
+
+    def run(self):
+        print("Press keys on the keypad. Use ALP/NUM to toggle modes.")
+        try:
+            while True:
+                self.scan_keypad(self.rows_1, self.cols_1, self.KEYPAD_1, "Keypad 1")
+                self.scan_keypad(self.rows_2, self.cols_2, self.KEYPAD_2, "Keypad 2")
+                sleep(0.05)
+        except KeyboardInterrupt:
+            print("\n[EXITING KeypadController]")
+
+
+
+
+# Global keypad controller instance
+keypad_controller = None
+keypad_thread = None
+
+class KeypadConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        global keypad_controller, keypad_thread
+
+        await self.accept()
+
+        def send_key(data):
+            from asgiref.sync import async_to_sync
+            async_to_sync(self.send)(text_data=json.dumps(data))
+
+        
+
+        if keypad_controller is None:
+            # Create the controller once globally
+            keypad_controller = KeypadController(callback=send_key)
+            keypad_controller.loop_running = True
+
+            # Start the keypad thread once globally
+            keypad_thread = threading.Thread(target=keypad_controller.run)
+            keypad_thread.daemon = True
+            keypad_thread.start()
+
+    async def disconnect(self, close_code):
+        # Don't stop the global keypad_controller on disconnect
+        # as other clients might still be connected.
+        # You could add reference counting if needed.
+
+        pass
