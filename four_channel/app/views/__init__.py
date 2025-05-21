@@ -17,3 +17,4 @@ from .backup import backup
 from .factorretrive import get_parameters
 from .factorretrive import get_parameter_value
 from .spc_download import spc_download
+from .keyboard import keyboard

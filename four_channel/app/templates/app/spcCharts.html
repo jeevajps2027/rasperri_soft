@@ -38,6 +38,14 @@ font-weight: bold;
 font-size: 3vh;
 color: white;
 }
+
+
+:focus {
+  outline: none;
+  border: 2px solid red !important;
+  box-shadow: 0 0 5px red;
+}
+
 </style>
 
 <body>
@@ -49,9 +57,9 @@ color: white;
         <input type="datetime-local" class="from-date" id="from_date" name="from_date">
 
         
-        <input type="text" id="part_model" >
+        <input type="text" id="part_model" readonly>
 
-        <input type="text" id="clock-box" >
+        <input type="text" id="clock-box" readonly>
 
         <label for="shift_select" >SHIFT:</label>
         <select id="shift_select" name="shift">
@@ -62,7 +70,7 @@ color: white;
         </select>
         
         <button type="submit" id="exit_btn">
-            <i class="fas fa-times" id="exit_icon" ></i>F7
+            <i class="fas fa-times" id="exit_icon" ></i>F6
         </button>
 
 
@@ -145,7 +153,7 @@ document.addEventListener("DOMContentLoaded", toggleSampleSizeButton);
 
 document.addEventListener("keydown", function (event) {
     // Check if F4 is pressed
-    if (event.key === "F7") {
+    if (event.key === "F6") {
         event.preventDefault(); // Prevent default F4 behavior (optional)
         
         // Redirect to the Measurement page
@@ -471,6 +479,63 @@ var shiftValues = JSON.parse('{{ shift_values|escapejs }}');
         }
 
         setDateTimes();
+
+
+
+
+
+        const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
+
+// Focusable elements in navigation order
+const focusableIds = [
+    "from_date",
+    "shift_select",
+    "to_date",
+    "parameter_button",
+    "mode",
+    "sample_size_button",
+    "search_btn",
+    "download_btn"
+];
+
+let currentFocusIndex = 0;
+
+// Focus the first element on page load
+window.addEventListener("load", () => {
+    document.getElementById(focusableIds[currentFocusIndex]).focus();
+});
+
+keyboardSocket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    const key = data.key;
+
+    switch (key) {
+        case "F6":
+            document.getElementById("exit_btn").click();
+            break;
+
+        case "RGT":
+            currentFocusIndex = (currentFocusIndex + 1) % focusableIds.length;
+            document.getElementById(focusableIds[currentFocusIndex]).focus();
+            break;
+
+        case "LFT":
+            currentFocusIndex =
+                (currentFocusIndex - 1 + focusableIds.length) % focusableIds.length;
+            document.getElementById(focusableIds[currentFocusIndex]).focus();
+            break;
+
+        case "ENT":
+            const activeElement = document.activeElement;
+            if (activeElement.tagName === "BUTTON") {
+                activeElement.click(); // Trigger button clicks
+            }
+            break;
+    }
+};
+
+
+
     </script>
 </body>
 </html>        

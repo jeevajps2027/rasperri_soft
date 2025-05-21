@@ -9,7 +9,8 @@
 
 
     <title>MEASUREMENT</title>
-   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   
     <link rel="stylesheet" href="{% static 'css/measurement_val.css'%}">
 
@@ -19,6 +20,12 @@
     overflow-y: auto;   /* Enables vertical scroll */
     position: relative; /* Required for scrollIntoView to behave correctly */
 }
+
+.focused-report-button {
+  outline: 3px solid yellow;
+  border-radius: 6px;
+}
+
 
     </style>
     
@@ -547,7 +554,15 @@ function sendPartModelToBackend(partModel) {
 
                         const expectedLength = Number(charLockLimitValue);
                         if (inputValue.length !== expectedLength) {
-                            alert(`Input must be exactly ${expectedLength} characters long.`);
+                            // alert(`Input must be exactly ${expectedLength} characters long.`);
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Invalid Input',
+                                text: `Input must be exactly ${expectedLength} characters long.`,
+                                confirmButtonText: 'OK'
+                            });
+
                             punchNoField.value = '';
                             return;
                         }
@@ -614,7 +629,13 @@ function sendPartModelToBackend(partModel) {
                                     })
                                     .then(response => response.json())
                                     .then(deleteData => {
-                                        alert(deleteData.message); // Show success/error message
+                                        // //alert(deleteData.message); // Show success/error message
+                                        // Swal.fire({
+                                        //     icon: 'error',
+                                        //     title: 'Invalid Input',
+                                        //     text: deleteData.message, // ✅ Reuse the same message
+                                        //     confirmButtonText: 'OK'
+                                        // });
                                         location.reload();
                                         if (deleteData.success) {
                                             document.getElementById('punch_overwrite').style.display = 'none';
@@ -2102,7 +2123,276 @@ $(document).ready(function () {
 });
 
 
-    </script>
+
+
+
+
+
+
+let overwriteButtons = [
+    document.getElementById("overwrite_cancel_button"),
+    document.getElementById("overwrite_ok_button")
+];
+let overwriteIndex = 0;
+
+function updateOverwriteFocus() {
+    overwriteButtons.forEach((btn, idx) => {
+        if (idx === overwriteIndex) {
+            btn.focus(); // set focus for accessibility
+            btn.style.outline = "3px solid yellow"; // visual cue
+        } else {
+            btn.style.outline = "none";
+        }
+    });
+}
+
+
+
+let mode = "ALPHA"; // or "ALPHA"
+let lastKey = null;
+let lastPressTime = 0;
+let cycleIndex = 0;
+const cycleTimeout = 1000;
+let capsLock = false;
+
+
+
+
+// Overwrite popup buttons
+let currentButtonIndex = 0;
+const buttonList = [
+  document.getElementById("overwrite_cancel_button"),
+  document.getElementById("overwrite_ok_button")
+];
+
+
+updateButtonFocus(buttonList, currentButtonIndex);
+
+
+// Credentials inputs + button
+let credentialFocusIndex = 0;
+const credentialElements = [
+  document.getElementById("userid_punch"),
+  document.getElementById("password_punch"),
+  document.getElementById("punch_login")
+];
+
+updateCredentialFocus(credentialFocusIndex);  // Focus userid_punch
+
+
+
+function updateButtonFocus(buttons, index) {
+  buttons.forEach((btn, i) => {
+    if (i === index) {
+      btn.focus();
+      btn.style.outline = "3px solid yellow";
+    } else {
+      btn.style.outline = "none";
+    }
+  });
+}
+
+function updateCredentialFocus(index) {
+  credentialElements.forEach((el, i) => {
+    if (i === index) {
+      el.focus();
+      el.style.outline = "3px solid yellow";  // Apply to both input and button
+    } else {
+      el.style.outline = "none";  // Remove from both input and button
+    }
+  });
+}
+
+function backspaceInput() {
+    const focusedElement = credentialElements[credentialFocusIndex];
+    if (focusedElement && focusedElement.tagName === "INPUT") {
+        focusedElement.value = focusedElement.value.slice(0, -1);
+    }
+}
+
+
+
+
+
+
+const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
+
+const alpha_map = {
+  "1": "1.,",
+  "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+  "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz",
+  "0": "0+-*#"
+};
+
+let reportModeActive = false;
+let reportButtonList = [];
+let reportButtonIndex = 0;
+
+function updateReportButtonFocus() {
+  reportButtonList.forEach((btn, idx) => {
+    if (idx === reportButtonIndex) {
+      btn.focus();
+      btn.classList.add("focused-report-button");
+    } else {
+      btn.blur();
+      btn.classList.remove("focused-report-button");
+    }
+  });
+}
+
+keyboardSocket.onmessage = function(event) {
+  const data = JSON.parse(event.data);
+  const key = data.key;
+
+  const overwriteVisible = document.getElementById("punch_overwrite").style.display === "block";
+  const credentialsVisible = document.getElementById("punch_overwrite_credentials")?.style.display === "block";
+
+  if (overwriteVisible && !credentialsVisible) {
+    // Navigate popup buttons LFT/RGT
+    if (key === "LFT") {
+      currentButtonIndex = (currentButtonIndex - 1 + buttonList.length) % buttonList.length;
+      updateButtonFocus(buttonList, currentButtonIndex);
+    } else if (key === "RGT") {
+      currentButtonIndex = (currentButtonIndex + 1) % buttonList.length;
+      updateButtonFocus(buttonList, currentButtonIndex);
+    } else if (key === "ENT") {
+      buttonList[currentButtonIndex].click();
+    }
+    return;
+  }
+
+  if (credentialsVisible) {
+    const focusedElement = credentialElements[credentialFocusIndex];
+    const now = Date.now();
+
+    if (key === "UP") {
+      credentialFocusIndex = (credentialFocusIndex - 1 + credentialElements.length) % credentialElements.length;
+      updateCredentialFocus(credentialFocusIndex);
+    } else if (key === "DWN") {
+      credentialFocusIndex = (credentialFocusIndex + 1) % credentialElements.length;
+      updateCredentialFocus(credentialFocusIndex);
+    } else if (key === "ENT") {
+      if (focusedElement.tagName === "BUTTON") {
+        focusedElement.click();
+      } else {
+        focusedElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+      }
+    }
+    else if (key === "F10") {
+        backspaceInput();
+    }
+   else if (key === "ALP/NUM") {
+      mode = mode === "NUM" ? "ALPHA" : "NUM";
+      lastKey = null;
+      cycleIndex = 0;
+      console.log(`[MODE SWITCH] Mode changed to ${mode}`);
+    } else if (focusedElement.tagName === "INPUT") {
+        if (["LFT", "RGT", "UP", "DWN", "TAB", "START/STOP", "C1", "C2", "C3", "C4", "C5", "C6", "V Key", "F1", "F2", "F3", "F6", "F9", "F10", "F12"].includes(key)) {
+            return;
+        }
+        if (mode === "ALPHA" && alpha_map[key]) {
+            if (key === lastKey && (now - lastPressTime) < cycleTimeout) {
+                cycleIndex = (cycleIndex + 1) % alpha_map[key].length;
+                let charToReplace = alpha_map[key][cycleIndex];
+                if (capsLock) charToReplace = charToReplace.toUpperCase();
+                focusedElement.value = focusedElement.value.slice(0, -1) + charToReplace;
+            } else {
+                cycleIndex = 0;
+                let charToAdd = alpha_map[key][cycleIndex];
+                if (capsLock) charToAdd = charToAdd.toUpperCase();
+                focusedElement.value += charToAdd;
+            }
+            lastKey = key;
+            lastPressTime = Date.now();
+        } 
+    }
+    return;
+  }
+
+  // 🟨 Handle report mode navigation
+  if (reportModeActive) {
+    if (key === "LFT") {
+      reportButtonIndex = (reportButtonIndex - 1 + reportButtonList.length) % reportButtonList.length;
+      updateReportButtonFocus();
+      return;
+    } else if (key === "RGT") {
+      reportButtonIndex = (reportButtonIndex + 1) % reportButtonList.length;
+      updateReportButtonFocus();
+      return;
+    } else if (key === "ENT") {
+      reportButtonList[reportButtonIndex].click();
+      reportModeActive = false; // exit report mode after click
+      return;
+    }
+  }
+
+  // 🔵 Default function key handling
+  switch (key) {
+    case "F1":
+      document.getElementById("master_btn").click();
+      break;
+    case "F2":
+      document.getElementById("model_btn").click();
+      break;
+    case "F3":
+      document.getElementById("live_spc_btn").click();
+      break;
+    case "F12":
+      document.getElementById("menu_btn").click();
+      break;
+    case "F9":
+      document.getElementById("exit_btn").click();
+      break;
+    case "START/STOP":
+        if (isStart) {
+        startAction();
+        } else {
+        stopAction();
+        }
+        isStart = !isStart; // 🔁 Toggle start/stop state
+        break;
+    case "F6":
+      document.getElementById("report_btn_main").click();
+
+      // Setup for report button navigation
+      const spcBtn = document.getElementById("spc_btn");
+      const reportBtn = document.getElementById("report_btn");
+
+      if (spcBtn && reportBtn) {
+        reportButtonList = [spcBtn, reportBtn];
+        reportButtonIndex = 0;
+        reportModeActive = true;
+        updateReportButtonFocus();
+      }
+      break;
+    case "ENT":
+      const activeElement = document.activeElement;
+      if (activeElement && activeElement.tagName === 'INPUT') {
+        const enterEvent = new KeyboardEvent('keydown', {
+          key: 'Enter',
+          bubbles: true
+        });
+        activeElement.dispatchEvent(enterEvent);
+      }
+      break;
+    default:
+      console.log("Unhandled key:", key);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
     
     
 </body>

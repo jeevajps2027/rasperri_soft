@@ -12,9 +12,11 @@
     <title>MASTERING</title>
 
  
-    <link rel="stylesheet" href="{% static 'css/masterings.css'%}">
+    <link rel="stylesheet" href="{% static 'css/mastering.css'%}">
   
 </head>
+
+
 <body>
     <div class="container_1">
         <div class="container_1_1">
@@ -52,9 +54,10 @@
                     </script>
                 </select>
             </div>
+            
             <div class="sub_container_2">
-                <button id="lowMasterBtn" type="button">Low Mastering</button>
-                <button id="highMasterBtn" type="button">High Mastering</button>
+                <button id="lowMasterBtn" type="button">LOW MASTERING</button>
+                <button id="highMasterBtn" type="button">HIGH MASTERING</button>
             </div>
         </div>
         <div class="container_3">
@@ -192,6 +195,35 @@
     
 
 <script>
+
+const lowBtn = document.getElementById("lowMasterBtn");
+const highBtn = document.getElementById("highMasterBtn");
+
+// Initial state: Low is big, High is small
+lowBtn.classList.add("big-btn");
+highBtn.classList.add("small-btn");
+lowBtn.focus();
+
+function toggleSize(activeBtn, inactiveBtn) {
+    activeBtn.classList.add("big-btn");
+    activeBtn.classList.remove("small-btn");
+
+    inactiveBtn.classList.add("small-btn");
+    inactiveBtn.classList.remove("big-btn");
+
+    activeBtn.focus(); // Optional
+}
+
+// Reverse: If you click lowBtn, make highBtn big
+lowBtn.addEventListener("click", () => toggleSize(highBtn, lowBtn));
+highBtn.addEventListener("click", () => toggleSize(lowBtn, highBtn));
+
+
+
+
+
+
+
     document.addEventListener("DOMContentLoaded", function () {
     const inputs = document.querySelectorAll("input");
     inputs.forEach(input => input.setAttribute("autocomplete", "off"));
@@ -280,6 +312,7 @@ parameterwiseRadio.addEventListener('change', function () {
         showRadioButtons();
         const preInput = document.getElementById('pre');
     preInput.value = "PARAMETERWISE IS SELECTED";
+    
     }
 });
 
@@ -287,46 +320,76 @@ parameterwiseRadio.addEventListener('change', function () {
 allParameterRadio.addEventListener('change', function () {
     if (this.checked) {
         hideRadioButtons();
+
+        // Clear all selected radios
+        const selectedRadios = document.querySelectorAll('.selected_radio');
+        selectedRadios.forEach(radio => {
+            radio.checked = false;
+        });
+
+        // Remove all container highlights
+        document.querySelectorAll('.sub_container_4').forEach(container => {
+            container.style.backgroundColor = "";
+        });
+
+        
         const preInput = document.getElementById('pre');
     preInput.value = "ALL PARAMETER IS SELECTED";
+
+    const selectedValue = logSelectedValue();
+    fetchAndDisplayValues(selectedValue);
+ 
     }
 });
 
 // Track the previously selected radio button
 let previousSelectedRadio = null;
 
-// Add event listeners to all radio buttons
-selectedRadios.forEach((radio, index) => {
+selectedRadios.forEach((radio) => {
     radio.addEventListener('change', function () {
         if (this.checked) {
             console.log(`Selected Radio Button: ${this.id}`);
-            console.log(`Container ID: ${this.closest('.sub_container_4').id}`);
 
-            // Disable the previously selected radio button
+            // Remove background color from all containers first
+            document.querySelectorAll('.sub_container_4').forEach(container => {
+                container.style.backgroundColor = "";
+            });
+
+            // Highlight the container of the selected radio button
+            const container = this.closest('.sub_container_4');
+            if (container) {
+                container.style.backgroundColor = "orange";
+                console.log(`Container ID: ${container.id} highlighted`);
+            }
+
+            // Update previous radio reference
             if (previousSelectedRadio && previousSelectedRadio !== this) {
                 previousSelectedRadio.checked = false;
             }
-
-            // Update the previously selected radio button
             previousSelectedRadio = this;
         }
     });
 });
 
-// Function to hide the radio buttons
+
+
+});
+
+// ✅ Make these globally accessible
 function hideRadioButtons() {
+    const selectedRadios = document.querySelectorAll('.selected_radio');
     selectedRadios.forEach((radio) => {
         radio.style.display = 'none';
     });
 }
 
-// Function to show the radio buttons
 function showRadioButtons() {
+    const selectedRadios = document.querySelectorAll('.selected_radio');
     selectedRadios.forEach((radio) => {
         radio.style.display = 'inline-block';
     });
 }
-});
+
 
 
 // to display the input values in this:::::
@@ -478,61 +541,49 @@ function calculateAndUpdateDisplayOutput(index, parameterValues, lowMaster, high
 function fetchAndDisplayValues(selectedMasterGroup) {
     const partName = $("#partModel").val();
 
-    // Send AJAX request to fetch data for all containers
     $.ajax({
-        url: "{% url 'master' %}", // URL for the master view
+        url: "{% url 'master' %}",
         method: "POST",
-        headers: { "X-CSRFToken": "{{ csrf_token }}" }, // Include CSRF token
+        headers: { "X-CSRFToken": "{{ csrf_token }}" },
         data: { part_name: partName },
         success: function (response) {
-            console.log("Response received:", response.final_data);
-
             let fetchedData = response.final_data;
             const parameterValues = response.parameter_values;
-            console.log("parameterValues", parameterValues);
 
             window.fetchedResponse = response;
+            window.selectedMasterGroup = selectedMasterGroup;
 
-            // Extract data from response
             const lowMasterValues = fetchedData.low_master;
             const highMasterValues = fetchedData.high_master;
             const probeNumbers = fetchedData.channel_no;
             const masterGroups = fetchedData.master_grp;
             const digits = fetchedData.digits;
 
-            console.log('Probe Numbers:', probeNumbers);
-
             const availableContainers = probeNumbers.length;
 
-            // First, remove all highlights
-            $(".cal-container").css("background-color", "");
-
-            // Loop through all 4 containers
             for (let index = 1; index <= 4; index++) {
                 const container = document.getElementById(`cal_container${index}`);
 
                 if (container) {
                     if (index <= availableContainers) {
-                        // If index exists in probeNumbers, make it active
-                        container.style.filter = "none"; // Remove blur
-                        container.style.display = "none"; // Force reflow
-                        container.offsetHeight; // Trigger reflow
-                        container.style.display = ""; 
+                        container.style.filter = "none";
+                        container.style.display = "none";
+                        container.offsetHeight;
+                        container.style.display = "";
 
-                        // Apply correct background color
+                        // ✅ Always apply correct background color (do NOT clear first)
                         if (masterGroups[index - 1] == selectedMasterGroup) {
                             container.style.backgroundColor = "orange";
                         } else {
                             container.style.backgroundColor = "";
                         }
                     } else {
-                        // Otherwise, blur the remaining containers
                         container.style.filter = "blur(4px)";
                         container.style.backgroundColor = ""; 
                     }
                 }
 
-                // Update input fields dynamically if the container is valid
+                // Update input fields dynamically if valid
                 if (index <= availableContainers) {
                     const lowMasterInput = document.getElementById(`low_master${index}`);
                     if (lowMasterInput) {
@@ -546,12 +597,12 @@ function fetchAndDisplayValues(selectedMasterGroup) {
 
                     const probeNumber = probeNumbers[index - 1];
                     const textareaId = mapProbeToTextareaId(probeNumber);
-                    console.log(`Textarea ID for Probe Number ${probeNumber}:`, textareaId);
-
                     const textarea = document.getElementById(textareaId);
+
                     if (textarea) {
                         textarea.addEventListener('input', function () {
-                            const textareaValue = (textarea.value.trim() === '' || isNaN(parseFloat(textarea.value))) ? 0 : parseFloat(textarea.value);
+                            const val = textarea.value.trim();
+                            const parsedValue = val === '' || isNaN(parseFloat(val)) ? 0 : parseFloat(val);
                             calculateAndUpdateDisplayOutput(
                                 index - 1,
                                 parameterValues,
@@ -568,8 +619,10 @@ function fetchAndDisplayValues(selectedMasterGroup) {
                     }
 
                     // Initial calculation
-                    const initialTextareaValue = textarea ? textarea.value : '';
-                    const initialValue = (initialTextareaValue.trim() === '' || isNaN(parseFloat(initialTextareaValue))) ? 0 : parseFloat(initialTextareaValue);
+                    const initValue = textarea && textarea.value.trim() !== '' && !isNaN(parseFloat(textarea.value))
+                        ? parseFloat(textarea.value)
+                        : 0;
+
                     calculateAndUpdateDisplayOutput(
                         index - 1,
                         parameterValues,
@@ -585,8 +638,31 @@ function fetchAndDisplayValues(selectedMasterGroup) {
                 }
             }
 
-            // Ensure color is applied after all elements are updated
-            applyInitialBackgroundColor(selectedMasterGroup, masterGroups);
+
+             // === AFTER ALL UI UPDATED ===
+            // Override highlight if "parameterwise" is selected
+            const parameterwiseRadio = document.getElementById("parameterwise");
+            const allParameterRadio = document.getElementById("all_parameter");
+
+            if (parameterwiseRadio && parameterwiseRadio.checked) {
+                // Clear all orange backgrounds first
+                document.querySelectorAll(".sub_container_4").forEach(container => {
+                    container.style.backgroundColor = "";
+                });
+
+                // Highlight only the container linked to selected radio button
+                const selectedRadio = document.querySelector(".selected_radio:checked");
+                if (selectedRadio) {
+                    const match = selectedRadio.id.match(/selected_radio(\d+)/);
+                    if (match) {
+                        const index = match[1];
+                        const container = document.getElementById(`cal_container${index}`);
+                        if (container) {
+                            container.style.backgroundColor = "orange";
+                        }
+                    }
+                }
+            }
         },
         error: function (error) {
             console.error("Error fetching data:", error);
@@ -594,17 +670,22 @@ function fetchAndDisplayValues(selectedMasterGroup) {
     });
 }
 
-// Function to apply background color initially
-function applyInitialBackgroundColor(selectedMasterGroup, masterGroups) {
-    setTimeout(() => {
-        for (let index = 1; index <= 4; index++) {
-            const container = document.getElementById(`cal_container${index}`);
-            if (container && index <= masterGroups.length) {
-                container.style.backgroundColor = (masterGroups[index - 1] == selectedMasterGroup) ? "orange" : "";
-            }
-        }
-    }, 50); // Reduced timeout for faster execution
+
+function reapplyHighlight() {
+    const masterGroups = window.fetchedResponse.final_data.master_grp;
+    const selectedGroup = window.selectedMasterGroup;
+
+    for (let i = 1; i <= 4; i++) {
+        const container = document.getElementById(`cal_container${i}`);
+        if (!container) continue;
+
+        container.style.backgroundColor =
+            i <= masterGroups.length && masterGroups[i - 1] == selectedGroup
+                ? "orange"
+                : "";
+    }
 }
+
 
 
 
@@ -668,7 +749,7 @@ document.getElementById("lowMasterBtn").addEventListener("click", function () {
             .find(radio => radio.checked);
 
         if (!selectedContainer) {
-            customAlert("Please select a container radio button before proceeding.");
+            showCustomAlert("Please select a container radio button before proceeding.");
             return;
         }
 
@@ -676,7 +757,9 @@ document.getElementById("lowMasterBtn").addEventListener("click", function () {
         const selectedContainerId = selectedContainer.id;
         const selectedIndex = parseInt(selectedContainerId.replace("selected_radio", "")) - 1;
 
-        if (step_no[selectedIndex] == selectedMasteringValue) {
+
+        // if (step_no[selectedIndex] == selectedMasteringValue) {
+        if (step_no[selectedIndex] ) {
             const a = parseFloat(lowmaster[selectedIndex]) || 0;
 
             const probeNumber = probe_number[selectedIndex];
@@ -700,10 +783,10 @@ document.getElementById("lowMasterBtn").addEventListener("click", function () {
             const preInput = document.getElementById('pre');
             preInput.value = "LOW MASTERING IS STARTED FOR PARAMETERWISE";
         } else {
-            customAlert("The selected container does not match the mastering step number.");
+            showCustomAlert("The selected container does not match the mastering step number.");
         }
     } else {
-        customAlert("Please select either 'All Parameters' or 'Parameterwise'.");
+        showCustomAlert("Please select either 'All Parameters' or 'Parameterwise'.");
     }
 });
 
@@ -799,14 +882,15 @@ document.getElementById("highMasterBtn").addEventListener("click", function () {
             .find(radio => radio.checked);
 
         if (!selectedContainer) {
-            customAlert("Please select a container radio button before proceeding.");
+            showCustomAlert("Please select a container radio button before proceeding.");
             return;
         }
 
         // Find the index of the selected container
         const selectedIndex = Array.from(document.querySelectorAll(".selected_radio")).indexOf(selectedContainer);
         
-        if (step_no[selectedIndex] == selectedMasteringValue) {
+        // if (step_no[selectedIndex] == selectedMasteringValue) {
+        if (step_no[selectedIndex]) {
             const b = parseFloat(highmaster[selectedIndex]) || 0;
 
             const probeNumber = probe_number[selectedIndex];
@@ -944,9 +1028,63 @@ function performCalculations(a, a1, b, b1, e, index, textareaId, lsl, usl, ltl, 
 })
     .catch(error => console.error("Error:", error));
 
+
+
+
+
     setTimeout(() => {
+    const parameterwiseRadio = document.getElementById("parameterwise");
+    const allParameterRadio = document.getElementById("all_parameter");
+
+    console.log("📍 Checking selected mode...");
+    console.log("Parameterwise checked:", parameterwiseRadio?.checked);
+    console.log("All Parameter checked:", allParameterRadio?.checked);
+
+    // Clear all container highlights
+    document.querySelectorAll(".sub_container_4").forEach(container => {
+        container.style.backgroundColor = "";
+    });
+    console.log("✅ Cleared all container highlights.");
+
+    if (allParameterRadio && allParameterRadio.checked) {
+        console.log("🔵 All Parameter mode selected.");
+        // Call fetchAndDisplayValues only in All Parameter mode
+        fetchAndDisplayValues(window.selectedMasterGroup);
+    } else if (parameterwiseRadio && parameterwiseRadio.checked) {
+        console.log("🔶 Parameterwise mode selected.");
+
+        const selectedRadio = document.querySelector(".selected_radio:checked");
         fetchAndDisplayValues();
-            }, 1000);
+
+        if (selectedRadio) {
+            console.log("📦 Selected radio button:", selectedRadio.id);
+
+            const match = selectedRadio.id.match(/selected_radio(\d+)/);
+
+            if (match) {
+                const index = match[1]; // e.g., "2"
+                const containerId = `cal_container${index}`;
+                const container = document.getElementById(containerId);
+
+                console.log("🎯 Highlight target container ID:", containerId);
+
+                if (container) {
+                    container.style.backgroundColor = "orange";
+                    console.log("✅ Highlighted container:", containerId);
+                } else {
+                    console.warn("⚠️ Container not found:", containerId);
+                }
+            } else {
+                console.warn("❌ Radio button ID pattern not matched:", selectedRadio.id);
+            }
+        } else {
+            console.warn("❌ No selected radio button found.");
+        }
+    } else {
+        console.warn("⚠️ No mode selected.");
+    }
+}, 1000);
+
 
    
 }
@@ -1057,6 +1195,126 @@ $(document).ready(function () {
 });
 
 ////////////////////////////////////////////////
+
+function handleParameterSelection(key) {
+    const parameterwiseRadio = document.getElementById("parameterwise");
+    parameterwiseRadio.checked = true;
+    parameterwiseRadio.dispatchEvent(new Event("change"));
+
+    showRadioButtons(); // ✅ This now works since it's globally defined
+
+    const keyToIndex = {
+        "C1": 1,
+        "C2": 2,
+        "C3": 3,
+        "C4": 4,
+        "C5": 5,
+        "C6": 6
+    };
+
+    const index = keyToIndex[key];
+    const radio = document.getElementById(`selected_radio${index}`);
+    const container = document.getElementById(`cal_container${index}`);
+
+    if (radio) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event("change")); // ✅ Triggers any listeners
+    } else {
+        console.warn(`Radio selected_radio${index} not found`);
+    }
+
+    // Clear other backgrounds
+    document.querySelectorAll('.sub_container_4').forEach(cont => {
+        cont.style.backgroundColor = "";
+    });
+
+    if (container) {
+        container.style.backgroundColor = "orange";
+    } else {
+        console.warn(`Container cal_container${index} not found`);
+    }
+
+    const preInput = document.getElementById('pre');
+    preInput.value = `PARAMETERWISE IS SELECTED (C${index})`;
+}
+
+
+
+let toggleState = true; // Start with true to click lowMasterBtn first
+
+const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
+
+keyboardSocket.onopen = function () {
+    const masteringSelect = document.getElementById("mastering");
+    masteringSelect.focus();
+};
+
+keyboardSocket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    const key = data.key;
+
+    const masteringSelect = document.getElementById("mastering");
+    const lowBtn = document.getElementById("lowMasterBtn");
+    const highBtn = document.getElementById("highMasterBtn");
+
+    const parameterwiseRadio = document.getElementById("parameterwise");
+    const allParameterRadio = document.getElementById("all_parameter");
+
+    switch (key) {
+        case "F1":
+            document.getElementById("measureBtn").click();
+            break;
+
+        case "UP":
+            if (document.activeElement !== masteringSelect) {
+                masteringSelect.focus(); // Force focus
+            }
+            masteringSelect.selectedIndex = Math.max(masteringSelect.selectedIndex - 1, 0);
+            masteringSelect.dispatchEvent(new Event("change"));
+            break;
+
+        case "DWN":
+            if (document.activeElement !== masteringSelect) {
+                masteringSelect.focus(); // Force focus
+            }
+            masteringSelect.selectedIndex = Math.min(masteringSelect.selectedIndex + 1, masteringSelect.options.length - 1);
+            masteringSelect.dispatchEvent(new Event("change"));
+            break;
+
+        case "LFT":
+            allParameterRadio.focus(); // Focus the "All Parameter" radio button
+            break;
+
+        case "RGT":
+            masteringSelect.focus(); // Focus the dropdown again
+            break;
+
+        case "ENT":
+            if (document.activeElement === allParameterRadio) {
+                allParameterRadio.checked = true;
+                allParameterRadio.dispatchEvent(new Event("change")); // Trigger associated logic
+            }  else {
+                // Default toggle behavior
+                if (toggleState) {
+                    lowBtn.click();
+                } else {
+                    highBtn.click();
+                }
+                toggleState = !toggleState;
+            }
+            break;
+
+        case "C1":
+        case "C2":
+        case "C3":
+        case "C4":
+        case "C5":
+        case "C6":
+            handleParameterSelection(key);
+            break;
+    }
+};
+
 
 
 

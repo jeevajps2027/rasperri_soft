@@ -329,6 +329,41 @@ function updateClock() {
 updateClock();
 
 
+
+window.addEventListener('load', function () {
+    // Focus the parameter_button on page load
+    document.getElementById("parameter_button").focus();
+});
+
+
+
+
+const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
+const parameterButton = document.getElementById("parameter_button");
+
+keyboardSocket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    const key = data.key;
+
+    switch (key) {
+        case "F3":
+            document.getElementById("exit_btn").click();
+            break;
+
+        case "ENT":
+            // Trigger parameter_button click if it's focused
+            if (document.activeElement === parameterButton) {
+                parameterButton.click(); // This will call cycleParameterName()
+            }
+            break;
+
+       
+    }
+};
+
+
+
+
 </script>
 </body>
 </html>

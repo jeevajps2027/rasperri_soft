@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Keypad Input</title>
+    <style>
+        #output {
+            font-size: 2rem;
+            border: 1px solid black;
+            padding: 10px;
+            min-height: 2.5rem;
+            white-space: pre-wrap;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 1ch;
+            animation: blink 1s steps(2, start) infinite;
+        }
+
+        @keyframes blink {
+            to {
+                visibility: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Live Keypad Input:</h2>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById("output");
+        const socket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
+
+        socket.onopen = function() {
+            console.log("WebSocket connected.");
+            output.innerHTML = "<span class='cursor'>|</span>";
+        };
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            console.log("Received data:", data);
+
+            // Append blinking cursor at the end of the received text
+            const text = data.text || "";
+            output.innerHTML = text + "<span class='cursor'>|</span>";
+        };
+
+        socket.onclose = function() {
+            console.log("WebSocket disconnected.");
+        };
+
+        socket.onerror = function(error) {
+            console.error("WebSocket error:", error);
+        };
+    </script>
+</body>
+</html>

@@ -47,16 +47,16 @@
         <input type="datetime-local" class="from-date" id="from_date" name="from_date">
 
         
-        <input type="text" id="part_model" >
+        <input type="text" id="part_model" readonly>
 
         <label for="total_count" >COUNT:</label>
         <input type="text" id="total_count" >
 
-        <input type="text" id="clock-box" >
+        <input type="text" id="clock-box" readonly>
 
         
         <button type="submit" id="exit_btn">
-            <i class="fas fa-times" id="exit_icon" ></i>F8
+            <i class="fas fa-times" id="exit_icon" ></i>F6
         </button>
 
 
@@ -143,7 +143,7 @@
 
 document.addEventListener("keydown", function (event) {
     // Check if F4 is pressed
-    if (event.key === "F8") {
+    if (event.key === "F6") {
         event.preventDefault(); // Prevent default F4 behavior (optional)
         
         // Redirect to the Measurement page
@@ -551,7 +551,17 @@ $('#search_btn').click(function (event) {
 
 
 
+const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
+keyboardSocket.onmessage = function(event) {
+  const data = JSON.parse(event.data);
+  const key = data.key;
 
+  switch (key) {
+    case "F6":
+      document.getElementById("exit_btn").click();
+      break;
+    }
+};
         
        
 

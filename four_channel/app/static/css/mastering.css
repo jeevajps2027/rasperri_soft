@@ -92,7 +92,7 @@ body {
     height: 100%;
     width: 25%;
     border: 1px solid black;
-    background-color: rgb(149, 183, 246);
+    background-color: lightblue;
     display: flex;
     flex-direction: column; /* Stack canvas and input vertically */
     align-items: center;   /* Center horizontally */
@@ -147,32 +147,51 @@ input[type="radio"] {
     width: 30%;
     height: 50%;
 }
-.sub_container_2 button {
-    height: 40%;
+
+
+
+#mastering:focus {
+    outline: 3px solid rgb(247, 110, 61);
+    border-radius: 2px;
+}
+
+    .big-btn {
+        transform: scale(1.2); /* Bigger */
+        z-index: 1;
+    }
+
+    .small-btn {
+        transform: scale(0.7); /* Smaller */
+        opacity: 0.8;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    .sub_container_2 button {
+    height: 45%;
     width: 80%;
     margin-top: 1%;
     font-weight: bold;
-    font-size: 2vw;
+    font-size: 1.8vw;
     text-align: center;
-    background-color: blue;
-    color: white;
+    background-color: rgb(4, 201, 4);
+    color: black;
     border: none;
     border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3), 0px -2px 6px rgba(255, 255, 255, 0.1) inset;
     transition: all 0.2s ease-in-out;
     cursor: pointer;
+    border: 2px solid black;
 }
 
-.sub_container_2 button:active {
-    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4) inset, 0px -2px 6px rgba(255, 255, 255, 0.1) inset;
-    transform: translateY(2px);
-}
-
-.sub_container_2 button:hover {
-    background: linear-gradient(45deg, blue, rgb(4, 28, 100));
-    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.4), 0px -2px 8px rgba(255, 255, 255, 0.2) inset;
-    transform: scale(1.05);
-}
 
 .container_3{
     height: 23%;
