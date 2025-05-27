@@ -11,6 +11,7 @@ from app.models import MeasurementData, paraTableData
 def report(request):
     if request.method == 'POST':
         raw_data = request.POST.get('data')
+        print("raw_data",raw_data)
         if raw_data:
             data = json.loads(raw_data)
 

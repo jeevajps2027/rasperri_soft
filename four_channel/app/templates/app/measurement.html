@@ -27,6 +27,40 @@
 }
 
 
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px #000000aa;
+  max-width: 400px;
+}
+
+.modal-box button {
+  margin-top: 20px;
+  padding: 8px 20px;
+  font-size: 16px;
+}
+
+#notificationOkBtn:focus {
+    outline: 2px solid #007bff;
+    background-color: #e6f0ff;
+}
+
+
     </style>
     
     
@@ -263,6 +297,14 @@
         <input type="text" id="stopbit" value="{{ comport_stopbit }}" hidden>
         <input type="text" id="databit" value="{{ comport_databit }}" hidden>
         <textarea id="serial-data-display" cols="50" rows="10" readonly hidden></textarea>  
+
+            <!-- Custom Notification Modal -->
+<div id="notificationModal" style="display: none;" class="modal-overlay">
+    <div class="modal-box">
+      <p id="notificationMessage">This is a custom notification.</p>
+      <button id="notificationOkBtn">OK</button>
+    </div>
+  </div>
     
    
 <script>
@@ -270,6 +312,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const inputs = document.querySelectorAll("input");
     inputs.forEach(input => input.setAttribute("autocomplete", "off"));
 });
+
+
+let isNotificationOpen = false;
+
+function showNotifications(message) {
+    isNotificationOpen = true;
+    document.getElementById("notificationMessage").textContent = message;
+    document.getElementById("notificationModal").style.display = "flex";
+    document.getElementById("notificationOkBtn").focus();
+
+    document.getElementById("notificationOkBtn").onclick = () => {
+        document.getElementById("notificationModal").style.display = "none";
+        isNotificationOpen = false;
+
+       
+    };
+}
 
 document.addEventListener("DOMContentLoaded", function () {
             // Get the username passed from the backend
@@ -286,9 +345,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Redirect to the comport page
                     window.location.href = "{% url 'comport' %}";
                 } else {
-                    // Show an alert message and prevent redirection
+                    // Show an showNotifications message and prevent redirection
                     event.preventDefault();
-                    alert("You are not authorized to access this page.");
+                    showNotifications("You are not authorized to access this page.");
                 }
             });
         });
@@ -426,7 +485,7 @@ function showNextPartName() {
         currentIndex = (currentIndex + 1) % partNames.length;
     } else {
         // Handle no part names case
-        alert("No part names available.");
+        showNotifications("No part names available.");
     }
 }
 // Add a keydown event listener for the F2 key
@@ -547,21 +606,16 @@ function sendPartModelToBackend(partModel) {
 
                         // Validation checks for input value
                         if (!inputValue.startsWith(charLockValue)) {
-                            alert(`Input must start with ${charLockValue}`);
+                            showNotifications(`Input must start with ${charLockValue}`);
                             punchNoField.value = '';
                             return;
                         }
 
                         const expectedLength = Number(charLockLimitValue);
                         if (inputValue.length !== expectedLength) {
-                            // alert(`Input must be exactly ${expectedLength} characters long.`);
+                            showNotifications(`Input must be exactly ${expectedLength} characters long.`);
 
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Invalid Input',
-                                text: `Input must be exactly ${expectedLength} characters long.`,
-                                confirmButtonText: 'OK'
-                            });
+                            
 
                             punchNoField.value = '';
                             return;
@@ -609,7 +663,7 @@ function sendPartModelToBackend(partModel) {
 
                                     // Validate credentials before posting
                                     if (userId !== 'admin' || password !== 'admin') {
-                                        alert('Invalid credentials. Please check username and password.');
+                                        showNotifications('Invalid credentials. Please check username and password.');
                                         return;
                                     }
                                     localStorage.setItem('punchValue', inputValue);
@@ -629,13 +683,8 @@ function sendPartModelToBackend(partModel) {
                                     })
                                     .then(response => response.json())
                                     .then(deleteData => {
-                                        // //alert(deleteData.message); // Show success/error message
-                                        // Swal.fire({
-                                        //     icon: 'error',
-                                        //     title: 'Invalid Input',
-                                        //     text: deleteData.message, // ✅ Reuse the same message
-                                        //     confirmButtonText: 'OK'
-                                        // });
+                                        showNotifications(deleteData.message); // Show success/error message
+                                      
                                         location.reload();
                                         if (deleteData.success) {
                                             document.getElementById('punch_overwrite').style.display = 'none';
@@ -645,7 +694,7 @@ function sendPartModelToBackend(partModel) {
                                     })
                                     .catch(error => {
                                         console.error('Error:', error);
-                                        alert('Failed to delete punch number.');
+                                        showNotifications('Failed to delete punch number.');
                                     });
                                 };
                             }
@@ -656,7 +705,7 @@ function sendPartModelToBackend(partModel) {
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            alert('Failed to process punch number.');
+                            showNotifications('Failed to process punch number.');
                         });
                     }
                 });
@@ -1538,7 +1587,7 @@ function DataToSend(paramValues, curValues, maxValues, minValues, tirValues, sta
      // ✅ Validate top-level mandatory fields first
      if (!partModel || !partName || !date || !operator || !shift ) {
         $('#loading_spinner').hide();
-        alert("Please fill all required header fields before submitting.");
+        showNotifications("Please fill all required header fields before submitting.");
         return;
     }
 
@@ -1563,7 +1612,7 @@ function DataToSend(paramValues, curValues, maxValues, minValues, tirValues, sta
             !overallStatusInput
         ) {
             $('#loading_spinner').hide();
-            alert(`Row ${i + 1} or Overall Status is incomplete. Please fill all fields before submitting.`);
+            showNotifications(`Row ${i + 1} or Overall Status is incomplete. Please fill all fields before submitting.`);
             setTimeout(() => {
                 location.reload();
             }, 1000);
@@ -1738,7 +1787,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const partName = document.getElementById("part_model").value.trim();
 
         if (!partName) {
-            alert("Please enter a part model!");
+            showNotifications("Please enter a part model!");
             return;
         }
 
@@ -1773,7 +1822,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const partName = document.getElementById("part_model").value.trim();
 
         if (!partName) {
-            alert("Please enter a part model!");
+            showNotifications("Please enter a part model!");
             return;
         }
 
@@ -1803,7 +1852,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const partName = document.getElementById("part_model").value.trim();
 
         if (!partName) {
-            alert("Please enter a part model!");
+            showNotifications("Please enter a part model!");
             return;
         }
 
@@ -2374,6 +2423,14 @@ keyboardSocket.onmessage = function(event) {
         });
         activeElement.dispatchEvent(enterEvent);
       }
+
+      if (isNotificationOpen) {
+    if (key === "ENT") {
+        document.getElementById("notificationOkBtn").click();
+    }
+    return; // block all other key actions while notification is shown
+}
+
       break;
     default:
       console.log("Unhandled key:", key);

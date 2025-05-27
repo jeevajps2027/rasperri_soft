@@ -37,6 +37,71 @@
     font-size: 3vh;
     color: white;
     }
+
+
+.datetime-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    width: 23vw;
+    background-color: white;
+    font-size: 1vw;
+}
+
+.datetime-part {
+    width: 2.5em;
+    text-align: center;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+}
+
+.datetime-part:focus {
+    background-color: #eef;
+}
+
+.ampm-select {
+    width: 4em;
+}
+
+:focus {
+  outline: none;
+  border: 2px solid red !important;
+  box-shadow: 0 0 5px red;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px #000000aa;
+  max-width: 400px;
+}
+
+.modal-box button {
+  margin-top: 20px;
+  padding: 8px 20px;
+  font-size: 16px;
+}
+
+
     </style>
 <body>
 
@@ -44,8 +109,25 @@
     
     <div class="container-1-1">
         <label for="from_date" >START DATE:</label>
-        <input type="datetime-local" class="from-date" id="from_date" name="from_date">
-
+        <!-- <input type="datetime-local" class="from-date" id="from_date" name="from_date"> -->
+        <div id="from_date" class="datetime-wrapper">
+            <input type="text" id="dd" maxlength="2" placeholder="DD" class="datetime-part" />
+            /
+            <input type="text" id="mm" maxlength="2" placeholder="MM" class="datetime-part" />
+            /
+            
+            <input type="text" id="yyyy" maxlength="4" placeholder="YYYY" class="datetime-part" />
+            &nbsp;
+            <input type="text" id="hh" maxlength="2" placeholder="HH" class="datetime-part" />
+            :
+            <input type="text" id="min" maxlength="2" placeholder="MM" class="datetime-part" />
+            &nbsp;
+            <select id="ampm" class="datetime-part ampm-select">
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </div>
+        
         
         <input type="text" id="part_model" readonly>
 
@@ -64,9 +146,25 @@
     </div>
     <div class="container-1-2">
  
-        <label for="to_date">END DATE :</label>
-        <input type="datetime-local" class="to-date"  id="to_date" name="to_date" style=" margin-left: 2%;">
-
+        <label for="to_date" style="font-size: 1.3vw;">END DATE : </label>
+        <div id="to_date" class="datetime-wrapper"  >
+            <input type="text" id="to_dd" maxlength="2" placeholder="DD" class="datetime-part" />
+            /
+            <input type="text" id="to_mm" maxlength="2" placeholder="MM" class="datetime-part" />
+            /
+            
+            <input type="text" id="to_yyyy" maxlength="4" placeholder="YYYY" class="datetime-part" />
+            &nbsp;
+            <input type="text" id="to_hh" maxlength="2" placeholder="HH" class="datetime-part" />
+            :
+            <input type="text" id="to_min" maxlength="2" placeholder="MM" class="datetime-part" />
+            &nbsp;
+            <select id="to_ampm" class="datetime-part ampm-select">
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </div>
+        
 
 
         
@@ -139,6 +237,18 @@
         </table>
     </div>
 
+
+
+
+    <!-- Custom Notification Modal -->
+<div id="notificationModal" style="display: none;" class="modal-overlay">
+    <div class="modal-box">
+      <p id="notificationMessage">This is a custom notification.</p>
+      <button id="notificationOkBtn">OK</button>
+    </div>
+  </div>
+  
+
     <script>
 
 document.addEventListener("keydown", function (event) {
@@ -151,6 +261,29 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
+
+document.addEventListener("DOMContentLoaded", function () {
+    const inputs = document.querySelectorAll("input");
+    inputs.forEach(input => input.setAttribute("autocomplete", "off"));
+});
+
+let isNotificationOpen = false;
+
+function showNotification(message) {
+    isNotificationOpen = true;
+    document.getElementById("notificationMessage").textContent = message;
+    document.getElementById("notificationModal").style.display = "flex";
+    document.getElementById("notificationOkBtn").focus();
+
+    document.getElementById("notificationOkBtn").onclick = () => {
+        document.getElementById("notificationModal").style.display = "none";
+        isNotificationOpen = false;
+
+        // Reset focus to the first element
+        currentFocusIndex = 0;
+        document.getElementById(focusableIds[0]).focus();
+    };
+}
 
 
 
@@ -184,6 +317,25 @@ function getCSRFToken() {
 }
 
 
+// Helper to build datetime string from parts
+function getDatetime(prefix) {
+    const dd = $(`#${prefix}dd`).val().padStart(2, '0');
+    const mm = $(`#${prefix}mm`).val().padStart(2, '0');
+    const yyyy = $(`#${prefix}yyyy`).val();
+    let hh = parseInt($(`#${prefix}hh`).val(), 10);
+    const min = $(`#${prefix}min`).val().padStart(2, '0');
+    const ampm = $(`#${prefix}ampm`).val();
+
+    if (ampm === "PM" && hh < 12) hh += 12;
+    if (ampm === "AM" && hh === 12) hh = 0;
+
+    const hhStr = hh.toString().padStart(2, '0');
+
+    return `${yyyy}-${mm}-${dd}T${hhStr}:${min}:00`;
+}
+
+
+
 $('#download_pdf').click(function () {
     // Prepare the entire table data by combining all rows (including pagination)
     let fullTableHtml = '<table>';
@@ -198,10 +350,10 @@ $('#download_pdf').click(function () {
     $('#loading_spinner').show();
 
     // Collect filter inputs
-    const fromDate = $('#from_date').val();
+    const fromDate = getDatetime('');
     const partModel = $('#part_model').val();
     const mode = $('#mode').val();
-    const toDate = $('#to_date').val();
+    const toDate = getDatetime('to_');
     const shift = $('#shift_select').val();
     const status = $('#status_select').val();
     const total_count = $('#total_count').val();
@@ -226,14 +378,14 @@ $('#download_pdf').click(function () {
         success: function (response) {
             $('#loading_spinner').hide();
             if (response.success) {
-                alert(response.message); 
+                showNotification(response.message); 
             } else {
-                alert('Failed to generate PDF file: ' + response.message);
+                showNotification('Failed to generate PDF file: ' + response.message);
             }
         },
         error: function (xhr, status, error) {
             console.error('Error:', error); // Handle error
-            alert('Failed to generate PDF file. Please try again.');
+            showNotification('Failed to generate PDF file. Please try again.');
             $('#loading_spinner').hide();
         }
     });
@@ -262,10 +414,10 @@ $('#download_xlsx').click(function () {
     $('#loading_spinner').show();
 
     // Collect filter inputs
-    const fromDate = $('#from_date').val();
+    const fromDate = getDatetime('');
     const partModel = $('#part_model').val();
     const mode = $('#mode').val();
-    const toDate = $('#to_date').val();
+    const toDate = getDatetime('to_');
     const shift = $('#shift_select').val();
     const status = $('#status_select').val();
     const total_count = $('#total_count').val();
@@ -290,14 +442,14 @@ $('#download_xlsx').click(function () {
         success: function (response) {
             $('#loading_spinner').hide();
             if (response.success) {
-                alert(response.message); 
+                showNotification(response.message); 
             } else {
-                alert('Failed to generate XLSX file: ' + response.message);
+                showNotification('Failed to generate XLSX file: ' + response.message);
             }
         },
         error: function (xhr, status, error) {
             console.error('Error:', error); // Handle error
-            alert('Failed to generate XLSX file. Please try again.');
+            showNotification('Failed to generate XLSX file. Please try again.');
             $('#loading_spinner').hide();
         }
     });
@@ -370,65 +522,73 @@ updateClock();
 
 
 
-// Parse the shift values from your JSON object
+// Parse shift values from Django
 var shiftValues = JSON.parse('{{ shift_values|escapejs }}');
-        console.log('Shift values:', shiftValues);
 
-        // Helper function to convert 12-hour time format to 24-hour format
-        function convertTo24Hour(timeString) {
-            let [time, modifier] = timeString.trim().split(' ');
-            let [hours, minutes, seconds] = time.split(':');
-            if (modifier === 'PM' && hours !== '12') {
-                hours = parseInt(hours, 10) + 12;
-            }
-            if (modifier === 'AM' && hours === '12') {
-                hours = 0;
-            }
-            return `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+// Helper: Convert 12-hour to 24-hour
+function convertTo24Hour(timeString) {
+    let [time, modifier] = timeString.trim().split(' ');
+    let [hours, minutes, seconds] = time.split(':');
+    hours = parseInt(hours, 10);
+    if (modifier === 'PM' && hours !== 12) hours += 12;
+    if (modifier === 'AM' && hours === 12) hours = 0;
+    return `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+}
+
+// Helper: Populate custom input fields
+function setCustomDate(prefix, datetimeStr) {
+    const dt = new Date(datetimeStr);
+    const yyyy = dt.getFullYear().toString();
+    const mm = (dt.getMonth() + 1).toString().padStart(2, '0');
+    const dd = dt.getDate().toString().padStart(2, '0');
+    let hours = dt.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    const hh = hours.toString().padStart(2, '0');
+    const min = dt.getMinutes().toString().padStart(2, '0');
+
+    document.getElementById(`${prefix}yyyy`).value = yyyy;
+    document.getElementById(`${prefix}mm`).value = mm;
+    document.getElementById(`${prefix}dd`).value = dd;
+    document.getElementById(`${prefix}hh`).value = hh;
+    document.getElementById(`${prefix}min`).value = min;
+    document.getElementById(`${prefix}ampm`).value = ampm;
+}
+
+// Main logic
+function setDateTimes() {
+    let now = new Date();
+    let currentTime = now.toTimeString().split(' ')[0]; // 'HH:MM:SS'
+    let currentDate = now.toISOString().split('T')[0];  // 'YYYY-MM-DD'
+
+    // Determine TO datetime (now without seconds)
+    const [hh, mm] = currentTime.split(':');
+    const toDateTime = `${currentDate}T${hh}:${mm}:00`;
+
+    // Determine FROM datetime based on shifts
+    let fromDateTime = null;
+    for (let i = shiftValues.length - 1; i >= 0; i--) {
+        let [shiftName, shiftTime] = shiftValues[i];
+        let shift24 = convertTo24Hour(shiftTime);
+        if (currentTime >= shift24) {
+            fromDateTime = `${currentDate}T${shift24}`;
+            break;
         }
+    }
+    if (!fromDateTime) fromDateTime = `${currentDate}T00:00:00`;
 
-        // Function to determine the from-date based on the current time
-        function setDateTimes() {
-            let now = new Date();
-            let currentTime = now.toTimeString().split(' ')[0]; // 'HH:MM:SS'
-            let currentDate = now.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+    // Populate the custom inputs
+    setCustomDate('', fromDateTime);       // from_date (no prefix)
+    setCustomDate('to_', toDateTime);      // to_date
 
-            // Remove seconds from the current time for to-date
-            let [hours, minutes] = currentTime.split(':');
-            let toDateTime = `${currentDate}T${hours}:${minutes}`;
+    console.log("FROM:", fromDateTime);
+    console.log("TO:", toDateTime);
+}
 
-            // Set the to-date input
-            let toDateElements = document.getElementsByClassName('to-date');
-            for (let element of toDateElements) {
-                element.value = toDateTime;
-            }
+window.addEventListener('load', setDateTimes);
 
-            // Determine the from-date based on the shift values
-            let fromDateTime = null;
-            for (let i = shiftValues.length - 1; i >= 0; i--) {
-                let [shiftName, shiftTime] = shiftValues[i];
-                let shift24HourTime = convertTo24Hour(shiftTime);
-                if (currentTime >= shift24HourTime) {
-                    fromDateTime = `${currentDate}T${shift24HourTime}`;
-                    break;
-                }
-            }
-            if (!fromDateTime) {
-                fromDateTime = `${currentDate}T00:00:00`; // Default to start of the day if no shift is found
-            }
 
-            // Set the from-date input
-            let fromDateElements = document.getElementsByClassName('from-date');
-            for (let element of fromDateElements) {
-                element.value = fromDateTime;
-            }
 
-            console.log('Current time:', currentTime);
-            console.log('To date-time (without seconds):', toDateTime);
-            console.log('From date-time:', fromDateTime);
-        }
-
-        setDateTimes();
 
 
 let tableData = []; // Store all rows dynamically
@@ -470,7 +630,7 @@ $('#right_arrow_btn').click(function () {
         currentPage++; // Move to the next page
         renderTable(currentPage);
     } else {
-        alert('You do not have the next page.');
+        showNotification('You do not have the next page.');
     }
 });
 
@@ -480,7 +640,7 @@ $('#left_arrow_btn').click(function () {
         currentPage--; // Move to the previous page
         renderTable(currentPage);
     } else {
-        alert('You are already on the first page.');
+        showNotification('You are already on the first page.');
     }
 });
 
@@ -490,10 +650,10 @@ $('#search_btn').click(function (event) {
 
     $('#loading_spinner').show();
     // Collect input values
-    const fromDate = $('#from_date').val();
+    const fromDate = getDatetime('');
     const partModel = $('#part_model').val();
     const mode = $('#mode').val();
-    const toDate = $('#to_date').val();
+    const toDate =getDatetime('to_');
     const shift = $('#shift_select').val();
     const status = $('#status_select').val();
 
@@ -539,10 +699,10 @@ $('#search_btn').click(function (event) {
     $('#loading_spinner').hide();
     
     if (xhr.status === 404 && xhr.responseJSON && xhr.responseJSON.error) {
-        alert(xhr.responseJSON.error);  // Show specific message from server
+        showNotification(xhr.responseJSON.error);  // Show specific message from server
     } else {
         console.error('Error:', error);
-        alert('An unexpected error occurred. Please try again.');
+        showNotification('An unexpected error occurred. Please try again.');
     }
         }
     });
@@ -551,19 +711,242 @@ $('#search_btn').click(function (event) {
 
 
 
-const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
-keyboardSocket.onmessage = function(event) {
-  const data = JSON.parse(event.data);
-  const key = data.key;
 
-  switch (key) {
-    case "F6":
-      document.getElementById("exit_btn").click();
-      break;
+const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
+
+
+// === Helper: Cycle <select> options ===
+function cycleSelect(selectElement, direction) {
+    const options = selectElement.options;
+    const currentIndex = selectElement.selectedIndex;
+    const newIndex = (direction === 'UP')
+        ? (currentIndex - 1 + options.length) % options.length
+        : (currentIndex + 1) % options.length;
+    selectElement.selectedIndex = newIndex;
+    selectElement.dispatchEvent(new Event('change'));
+}
+
+// === Datetime part auto-focus ===
+const datetimeIds = ["dd","mm",  "yyyy", "hh", "min"];
+
+datetimeIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.addEventListener("input", () => {
+        if (el.value.length >= el.maxLength) {
+            const nextId = datetimeIds[i + 1];
+            if (nextId) document.getElementById(nextId).focus();
+            else document.getElementById("ampm").focus();
+        }
+    });
+});
+
+const toDatetimeIds = ["to_dd","to_mm",  "to_yyyy", "to_hh", "to_min"];
+
+toDatetimeIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.addEventListener("input", () => {
+        if (el.value.length >= el.maxLength) {
+            const nextId = toDatetimeIds[i + 1];
+            if (nextId) document.getElementById(nextId).focus();
+            else document.getElementById("to_ampm").focus();
+        }
+    });
+});
+
+
+// === Convert to ISO datetime string ===
+function getFromDateISO() {
+    let mm = document.getElementById("mm").value.padStart(2, '0');
+    let dd = document.getElementById("dd").value.padStart(2, '0');
+    let yyyy = document.getElementById("yyyy").value;
+    let hh = parseInt(document.getElementById("hh").value, 10);
+    let min = document.getElementById("min").value.padStart(2, '0');
+    let ampm = document.getElementById("ampm").value;
+
+    if (ampm === "PM" && hh < 12) hh += 12;
+    if (ampm === "AM" && hh === 12) hh = 0;
+
+    hh = String(hh).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}
+
+
+function getToDateISO() {
+    let mm = document.getElementById("to_mm").value.padStart(2, '0');
+    let dd = document.getElementById("to_dd").value.padStart(2, '0');
+    let yyyy = document.getElementById("to_yyyy").value;
+    let hh = parseInt(document.getElementById("to_hh").value, 10);
+    let min = document.getElementById("to_min").value.padStart(2, '0');
+    let ampm = document.getElementById("to_ampm").value;
+
+    if (ampm === "PM" && hh < 12) hh += 12;
+    if (ampm === "AM" && hh === 12) hh = 0;
+
+    hh = String(hh).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}
+
+const focusableIds = [
+    // from_date fields
+    "dd", "mm", "yyyy", "hh", "min", "ampm",
+    // to_date fields
+    "to_dd", "to_mm", "to_yyyy", "to_hh", "to_min", "to_ampm",
+    "shift_select", "status_select",
+    // other fields
+    "mode", "search_btn", "download_btn", "left_arrow_btn", "right_arrow_btn"
+];
+
+const downloadOptions = ["download_pdf", "download_xlsx"];
+let digitBuffer = {};
+let downloadFocusIndex = 0;
+let isDownloadModalOpen = false;
+
+// Initial focus on load
+window.addEventListener("load", () => {
+    document.getElementById(focusableIds[0]).focus();
+});
+
+// Show download modal
+const downloadBtn = document.getElementById("download_btn");
+if (downloadBtn) {
+    downloadBtn.addEventListener("click", () => {
+        document.getElementById("downloadModal").style.display = "block";
+        isDownloadModalOpen = true;
+        downloadFocusIndex = 0;
+        document.getElementById(downloadOptions[downloadFocusIndex]).focus();
+    });
+}
+
+// Keydown for physical keyboard digit input
+document.addEventListener("keydown", function (event) {
+    const activeElement = document.activeElement;
+    if (activeElement.tagName === "INPUT" && /^\d$/.test(event.key)) {
+        event.preventDefault();
+        const fieldId = activeElement.id;
+        const maxLen = activeElement.maxLength || 2;
+
+        digitBuffer[fieldId] = (digitBuffer[fieldId] || "") + event.key;
+        activeElement.value = digitBuffer[fieldId];
+
+        if (digitBuffer[fieldId].length >= maxLen) {
+            digitBuffer[fieldId] = "";
+            const index = focusableIds.indexOf(fieldId);
+            const nextIndex = (index + 1) % focusableIds.length;
+            document.getElementById(focusableIds[nextIndex]).focus();
+        }
+    }
+});
+
+keyboardSocket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    const key = data.key;
+    const activeElement = document.activeElement;
+    const activeId = activeElement.id;
+    const currentIndex = focusableIds.indexOf(activeId);
+
+    // === If download modal is open, override navigation ===
+    if (isDownloadModalOpen) {
+        switch (key) {
+            case "UP":
+                downloadFocusIndex = (downloadFocusIndex - 1 + downloadOptions.length) % downloadOptions.length;
+                document.getElementById(downloadOptions[downloadFocusIndex]).focus();
+                break;
+            case "DWN":
+                downloadFocusIndex = (downloadFocusIndex + 1) % downloadOptions.length;
+                document.getElementById(downloadOptions[downloadFocusIndex]).focus();
+                break;
+            case "ENT":
+                document.getElementById(downloadOptions[downloadFocusIndex]).click();
+                document.getElementById("downloadModal").style.display = "none";
+                isDownloadModalOpen = false;
+                document.getElementById("download_btn").focus();
+                break;
+            case "F10":
+                document.getElementById("downloadModal").style.display = "none";
+                isDownloadModalOpen = false;
+                document.getElementById("download_btn").focus();
+                break;
+        }
+        return;
+    }
+
+    switch (key) {
+        case "F6":
+            document.getElementById("exit_btn")?.click();
+            break;
+
+        case "RGT":
+            if (currentIndex !== -1) {
+                const nextIndex = (currentIndex + 1) % focusableIds.length;
+                document.getElementById(focusableIds[nextIndex]).focus();
+            }
+            break;
+
+        case "LFT":
+            if (currentIndex !== -1) {
+                const prevIndex = (currentIndex - 1 + focusableIds.length) % focusableIds.length;
+                document.getElementById(focusableIds[prevIndex]).focus();
+            }
+            break;
+
+        case "UP":
+        case "DWN":
+            if (activeElement.tagName === "SELECT") {
+                cycleSelect(activeElement, key);
+            }
+            break;
+
+        case "ENT":
+            if (
+                activeElement.tagName === "BUTTON" ||
+                activeId === "search_btn" ||
+                activeId === "download_btn"
+            ) {
+                activeElement.click();
+            } else if (currentIndex !== -1) {
+                const nextIndex = (currentIndex + 1) % focusableIds.length;
+                document.getElementById(focusableIds[nextIndex]).focus();
+            }
+            break;
+
+        case "F10":
+            if (activeElement.tagName === "INPUT") {
+                activeElement.value = "";
+                digitBuffer[activeId] = "";
+            }
+            break;
+
+        default:
+            if (/^\d$/.test(key) && activeElement.tagName === "INPUT") {
+                const maxLen = activeElement.maxLength || 2;
+
+                digitBuffer[activeId] = (digitBuffer[activeId] || "") + key;
+                activeElement.value = digitBuffer[activeId];
+
+                if (digitBuffer[activeId].length >= maxLen && currentIndex !== -1) {
+                    digitBuffer[activeId] = "";
+                    const nextIndex = (currentIndex + 1) % focusableIds.length;
+                    document.getElementById(focusableIds[nextIndex]).focus();
+                }
+            }
+            break;
     }
 };
-        
-       
+
+
+function cycleSelect(selectEl, direction) {
+    const options = Array.from(selectEl.options);
+    const currentIndex = selectEl.selectedIndex;
+
+    let newIndex = direction === "UP"
+        ? (currentIndex - 1 + options.length) % options.length
+        : (currentIndex + 1) % options.length;
+
+    selectEl.selectedIndex = newIndex;
+    selectEl.dispatchEvent(new Event("change"));
+}
+
+   
 
     </script>
 </body>

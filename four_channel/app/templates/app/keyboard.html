@@ -1,58 +1,240 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Keypad Input</title>
-    <style>
-        #output {
-            font-size: 2rem;
-            border: 1px solid black;
-            padding: 10px;
-            min-height: 2.5rem;
-            white-space: pre-wrap;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 1ch;
-            animation: blink 1s steps(2, start) infinite;
-        }
-
-        @keyframes blink {
-            to {
-                visibility: hidden;
-            }
-        }
-    </style>
+<meta charset="UTF-8" />
+<title>Datetime-local controlled by 4x4 keypad</title>
+<style>
+  #from_date {
+    font-size: 1.5em;
+    padding: 5px;
+    width: 250px;
+  }
+  #info {
+    font-family: monospace;
+    margin-top: 15px;
+    white-space: pre-wrap;
+  }
+</style>
 </head>
 <body>
-    <h2>Live Keypad Input:</h2>
-    <div id="output"></div>
 
-    <script>
-        const output = document.getElementById("output");
-        const socket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
+<label for="from_date">START DATE:</label>
+<input type="datetime-local" id="from_date" name="from_date" autocomplete="off" />
 
-        socket.onopen = function() {
-            console.log("WebSocket connected.");
-            output.innerHTML = "<span class='cursor'>|</span>";
-        };
+<div id="info">Use your keypad to input date and time</div>
 
-        socket.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            console.log("Received data:", data);
+<script>
+  const fromDateInput = document.getElementById('from_date');
 
-            // Append blinking cursor at the end of the received text
-            const text = data.text || "";
-            output.innerHTML = text + "<span class='cursor'>|</span>";
-        };
+  // Internal state for input parts and AM/PM
+  const state = {
+    year: '2025',
+    month: '05',
+    day: '01',
+    hour24: 23, // 24-hour clock internally
+    minute: '00',
+    ampm: 'PM', // for display and toggle purposes
+  };
 
-        socket.onclose = function() {
-            console.log("WebSocket disconnected.");
-        };
+  // Current part user is editing, order: month, day, year, hour, minute
+  const parts = ['month', 'day', 'year', 'hour24', 'minute'];
+  let currentPartIndex = 0;
+  let digitBuffer = '';
 
-        socket.onerror = function(error) {
-            console.error("WebSocket error:", error);
-        };
-    </script>
+  // Utility: update input value from state
+  function updateInputValue() {
+    // Format hour24 and minute with leading zeros
+    const hourStr = state.hour24.toString().padStart(2, '0');
+    const minuteStr = state.minute.toString().padStart(2, '0');
+
+    // Compose value as YYYY-MM-DDTHH:mm
+    const valueStr = `${state.year}-${state.month.padStart(2,'0')}-${state.day.padStart(2,'0')}T${hourStr}:${minuteStr}`;
+    fromDateInput.value = valueStr;
+    updateInfo();
+  }
+
+  // Update info text showing internal state for debugging
+  function updateInfo() {
+    document.getElementById('info').textContent =
+      `Editing part: ${parts[currentPartIndex]}\n` +
+      `Current state:\n` +
+      `Year: ${state.year}\n` +
+      `Month: ${state.month}\n` +
+      `Day: ${state.day}\n` +
+      `Hour (24h): ${state.hour24} (${state.ampm})\n` +
+      `Minute: ${state.minute}\n\n` +
+      `Use keypad digits to enter numbers, LEFT/RIGHT to move fields, UP/DOWN to toggle AM/PM (on hour field).`;
+  }
+
+  // Validate and clamp parts (simple)
+  function clampValues() {
+    // Clamp month 1-12
+    let m = parseInt(state.month) || 1;
+    m = Math.min(Math.max(m,1),12);
+    state.month = m.toString().padStart(2,'0');
+
+    // Clamp day 1-31 (naive, no month-day validation)
+    let d = parseInt(state.day) || 1;
+    d = Math.min(Math.max(d,1),31);
+    state.day = d.toString().padStart(2,'0');
+
+    // Clamp year between 1900-2099
+    let y = parseInt(state.year) || 2025;
+    y = Math.min(Math.max(y,1900),2099);
+    state.year = y.toString();
+
+    // Clamp minute 0-59
+    let min = parseInt(state.minute) || 0;
+    min = Math.min(Math.max(min,0),59);
+    state.minute = min.toString().padStart(2,'0');
+
+    // Clamp hour24 0-23
+    let h = parseInt(state.hour24) || 0;
+    h = Math.min(Math.max(h,0),23);
+    state.hour24 = h;
+  }
+
+  
+
+  // Toggle AM/PM based on current hour24
+  function toggleAmPm() {
+    if(state.ampm === 'AM') {
+      state.ampm = 'PM';
+      // Convert hour from AM to PM (add 12 if hour < 12)
+      if(state.hour24 < 12) state.hour24 += 12;
+    } else {
+      state.ampm = 'AM';
+      // Convert hour from PM to AM (subtract 12 if hour >= 12)
+      if(state.hour24 >= 12) state.hour24 -= 12;
+    }
+  }
+
+  // Handle digit input per part
+  function inputDigit(digit) {
+    digitBuffer += digit;
+
+    const part = parts[currentPartIndex];
+
+    if(part === 'year') {
+      // Year expects 4 digits max
+      if(digitBuffer.length > 4) digitBuffer = digitBuffer.slice(-4);
+      state.year = digitBuffer.padEnd(4,'0');
+      if(digitBuffer.length === 4) {
+        nextPart();
+      }
+    } else if(part === 'hour24') {
+      // Special: user inputs hour 1-12, internally store 24h respecting AM/PM
+      // Accept 1 or 2 digits max
+      if(digitBuffer.length > 2) digitBuffer = digitBuffer.slice(-2);
+
+      let hourInput = parseInt(digitBuffer);
+      if(isNaN(hourInput)) hourInput = 0;
+
+      // Clamp hourInput 1-12 for user input
+      if(hourInput < 1) hourInput = 1;
+      else if(hourInput > 12) hourInput = 12;
+
+      // Convert user input + AM/PM to 24-hour hour24
+      if(state.ampm === 'AM') {
+        state.hour24 = (hourInput === 12) ? 0 : hourInput;
+      } else {
+        state.hour24 = (hourInput === 12) ? 12 : hourInput + 12;
+      }
+
+      if(digitBuffer.length === 2 || hourInput >= 12) {
+        nextPart();
+      }
+    } else {
+      // For month, day, minute — accept 1 or 2 digits max
+      if(digitBuffer.length > 2) digitBuffer = digitBuffer.slice(-2);
+      if(part === 'month' || part === 'day' || part === 'minute') {
+        state[part] = digitBuffer.padStart(2,'0');
+      }
+      if(digitBuffer.length === 2) {
+        nextPart();
+      }
+    }
+
+    clampValues();
+    updateInputValue();
+  }
+
+  // Move to next part
+  function nextPart() {
+    digitBuffer = '';
+    currentPartIndex++;
+    if(currentPartIndex >= parts.length) currentPartIndex = 0;
+    updateInfo();
+  }
+
+  // Move to previous part
+  function prevPart() {
+    digitBuffer = '';
+    currentPartIndex--;
+    if(currentPartIndex < 0) currentPartIndex = parts.length - 1;
+    updateInfo();
+  }
+
+  // Handle keypad keys
+  function handleKeypadKey(key) {
+    if(key === 'LFT') {
+      prevPart();
+    } else if(key === 'RGT') {
+      nextPart();
+    } else if(key === 'UP') {
+      // Only toggle AM/PM if on hour part
+      if(parts[currentPartIndex] === 'hour24') {
+        toggleAmPm();
+        updateInputValue();
+        updateInfo();
+      }
+    } else if(key === 'DWN') {
+      // Same as UP for toggling AM/PM
+      if(parts[currentPartIndex] === 'hour24') {
+        toggleAmPm();
+        updateInputValue();
+        updateInfo();
+      }
+    } else if(/^\d$/.test(key)) {
+      inputDigit(key);
+    }
+  }
+
+  // Initialize input and info
+  clampValues();
+  updateInputValue();
+  updateInfo();
+
+  // WebSocket connection example to receive keys from keypad
+  const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
+
+  keyboardSocket.onopen = () => {
+    console.log("WebSocket connected");
+  };
+
+  keyboardSocket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    const key = data.key;
+    console.log("Key received from keypad:", key);
+    handleKeypadKey(key);
+  };
+
+  keyboardSocket.onerror = (e) => {
+    console.error("WebSocket error:", e);
+  };
+
+  // For testing without keypad, uncomment below to simulate keys:
+  /*
+  const testKeys = ['0','5','1','2','2','0','2','5','0','9','3','0','UP'];
+  let testIndex=0;
+  setInterval(() => {
+    if(testIndex<testKeys.length) {
+      handleKeypadKey(testKeys[testIndex]);
+      testIndex++;
+    }
+  }, 500);
+  */
+</script>
+
 </body>
 </html>

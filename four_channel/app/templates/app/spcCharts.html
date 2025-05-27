@@ -46,6 +46,64 @@ color: white;
   box-shadow: 0 0 5px red;
 }
 
+
+
+.datetime-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    width: 23vw;
+    background-color: white;
+    font-size: 1vw;
+}
+
+.datetime-part {
+    width: 2.5em;
+    text-align: center;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+}
+
+.datetime-part:focus {
+    background-color: #eef;
+}
+
+.ampm-select {
+    width: 4em;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px #000000aa;
+  max-width: 400px;
+}
+
+.modal-box button {
+  margin-top: 20px;
+  padding: 8px 20px;
+  font-size: 16px;
+}
+
 </style>
 
 <body>
@@ -54,8 +112,25 @@ color: white;
     
     <div class="container-1-1">
         <label for="from_date" >START DATE:</label>
-        <input type="datetime-local" class="from-date" id="from_date" name="from_date">
-
+        <div id="from_date" class="datetime-wrapper">
+            <input type="text" id="dd" maxlength="2" placeholder="DD" class="datetime-part" />
+            /
+            <input type="text" id="mm" maxlength="2" placeholder="MM" class="datetime-part" />
+            /
+            
+            <input type="text" id="yyyy" maxlength="4" placeholder="YYYY" class="datetime-part" />
+            &nbsp;
+            <input type="text" id="hh" maxlength="2" placeholder="HH" class="datetime-part" />
+            :
+            <input type="text" id="min" maxlength="2" placeholder="MM" class="datetime-part" />
+            &nbsp;
+            <select id="ampm" class="datetime-part ampm-select">
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </div>
+        
+        
         
         <input type="text" id="part_model" readonly>
 
@@ -78,9 +153,26 @@ color: white;
     </div>
     <div class="container-1-2">
  
-        <label for="to_date">END DATE :</label>
-        <input type="datetime-local" class="to-date"  id="to_date" name="to_date" style=" margin-left: 2%;">
-
+        <label for="to_date" style="font-size: 1.3vw;">END DATE : </label>
+        <!-- <input type="datetime-local" class="to-date"  id="to_date" name="to_date" style=" margin-left: 2%;"> -->
+        <div id="to_date" class="datetime-wrapper"  >
+            <input type="text" id="to_dd" maxlength="2" placeholder="DD" class="datetime-part" />
+            /
+            <input type="text" id="to_mm" maxlength="2" placeholder="MM" class="datetime-part" />
+            /
+            
+            <input type="text" id="to_yyyy" maxlength="4" placeholder="YYYY" class="datetime-part" />
+            &nbsp;
+            <input type="text" id="to_hh" maxlength="2" placeholder="HH" class="datetime-part" />
+            :
+            <input type="text" id="to_min" maxlength="2" placeholder="MM" class="datetime-part" />
+            &nbsp;
+            <select id="to_ampm" class="datetime-part ampm-select">
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </div>
+        
 
 
         
@@ -128,6 +220,13 @@ color: white;
         
     </div>
    
+    <!-- Custom Notification Modal -->
+<div id="notificationModal" style="display: none;" class="modal-overlay">
+    <div class="modal-box">
+      <p id="notificationMessage">This is a custom notification.</p>
+      <button id="notificationOkBtn">OK</button>
+    </div>
+  </div>
 
 <script>
 
@@ -147,6 +246,25 @@ function toggleSampleSizeButton() {
         button.style.pointerEvents = "none"; // no click
     }
 }
+
+let isNotificationOpen = false;
+
+function showNotification(message) {
+    isNotificationOpen = true;
+    document.getElementById("notificationMessage").textContent = message;
+    document.getElementById("notificationModal").style.display = "flex";
+    document.getElementById("notificationOkBtn").focus();
+
+    document.getElementById("notificationOkBtn").onclick = () => {
+        document.getElementById("notificationModal").style.display = "none";
+        isNotificationOpen = false;
+
+        // Reset focus to the first element
+        currentFocusIndex = 0;
+        document.getElementById(focusableIds[0]).focus();
+    };
+}
+
 
 // Initialize state on page load
 document.addEventListener("DOMContentLoaded", toggleSampleSizeButton);
@@ -203,6 +321,22 @@ document.addEventListener("keydown", function (event) {
 
 
  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helper to build datetime string from parts
+function getDatetime(prefix) {
+    const dd = $(`#${prefix}dd`).val().padStart(2, '0');
+    const mm = $(`#${prefix}mm`).val().padStart(2, '0');
+    const yyyy = $(`#${prefix}yyyy`).val();
+    let hh = parseInt($(`#${prefix}hh`).val(), 10);
+    const min = $(`#${prefix}min`).val().padStart(2, '0');
+    const ampm = $(`#${prefix}ampm`).val();
+
+    if (ampm === "PM" && hh < 12) hh += 12;
+    if (ampm === "AM" && hh === 12) hh = 0;
+
+    const hhStr = hh.toString().padStart(2, '0');
+
+    return `${yyyy}-${mm}-${dd}T${hhStr}:${min}:00`;
+}
 
 
  $('#download_btn').click(function () {
@@ -212,10 +346,10 @@ document.addEventListener("keydown", function (event) {
     const tableHtml = $('#table-container').html();
     const chartHtml = $('#container-2').html();
 
-    const fromDate = $('#from_date').val();
+    const fromDate = getDatetime('');
     const partModel = $('#part_model').val();
     const mode = $('#mode').val();
-    const toDate = $('#to_date').val();
+    const toDate = getDatetime('to_');
     const shift = $('#shift_select').val();
     const parameter_name = $('#parameter_button').text();
 
@@ -238,12 +372,12 @@ document.addEventListener("keydown", function (event) {
         },
         success: function (response) {
             $('#loading_spinner').hide();
-            alert(response.message);
+            showNotification(response.message);
         },
         error: function (xhr, status, error) {
             $('#loading_spinner').hide();
             console.error('Error:', error);
-            alert('Failed to generate PDF.');
+            showNotification('Failed to generate PDF.');
         }
     });
 
@@ -311,19 +445,21 @@ if (sampleSizes.length > 0) {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
+
 // AJAX Call - Fetch Data
 $('#search_btn').click(function (event) {
     event.preventDefault(); // Prevent form submission
 
     $('#loading_spinner').show();
     // Collect input values
-    const fromDate = $('#from_date').val();
+    const fromDate = getDatetime('');
     const partModel = $('#part_model').val();
     const parameterName = $('#parameter_button').text();
     const sampleSize = $('#sample_size_button').text();
     
     const mode = $('#mode').val();
-    const toDate = $('#to_date').val();
+    const toDate = getDatetime('to_');
     const shift = $('#shift_select').val();
    
     // Payload for AJAX
@@ -358,7 +494,7 @@ $('#search_btn').click(function (event) {
             });
             $('#container-2').html(chartImage);
         } else {
-            alert('No chart data available.');
+            showNotification('No chart data available.');
         }
 
         // Display the table
@@ -370,10 +506,10 @@ $('#search_btn').click(function (event) {
     $('#loading_spinner').hide();
     
     if (xhr.status === 404 && xhr.responseJSON && xhr.responseJSON.error) {
-        alert(xhr.responseJSON.error);  // Show specific message from server
+        showNotification(xhr.responseJSON.error);  // Show specific message from server
     } else {
         console.error('Error:', error);
-        alert('An unexpected error occurred. Please try again.');
+        showNotification('An unexpected error occurred. Please try again.');
     }
 }
 
@@ -419,66 +555,81 @@ updateClock();
 
 
 
-
-// Parse the shift values from your JSON object
+// Parse shift values from Django
 var shiftValues = JSON.parse('{{ shift_values|escapejs }}');
-        console.log('Shift values:', shiftValues);
 
-        // Helper function to convert 12-hour time format to 24-hour format
-        function convertTo24Hour(timeString) {
-            let [time, modifier] = timeString.trim().split(' ');
-            let [hours, minutes, seconds] = time.split(':');
-            if (modifier === 'PM' && hours !== '12') {
-                hours = parseInt(hours, 10) + 12;
-            }
-            if (modifier === 'AM' && hours === '12') {
-                hours = 0;
-            }
-            return `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+// Helper: Convert 12-hour to 24-hour
+function convertTo24Hour(timeString) {
+    let [time, modifier] = timeString.trim().split(' ');
+    let [hours, minutes, seconds] = time.split(':');
+    hours = parseInt(hours, 10);
+    if (modifier === 'PM' && hours !== 12) hours += 12;
+    if (modifier === 'AM' && hours === 12) hours = 0;
+    return `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`;
+}
+
+// Helper: Populate custom input fields
+function setCustomDate(prefix, datetimeStr) {
+    const dt = new Date(datetimeStr);
+    const yyyy = dt.getFullYear().toString();
+    const mm = (dt.getMonth() + 1).toString().padStart(2, '0');
+    const dd = dt.getDate().toString().padStart(2, '0');
+    let hours = dt.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    const hh = hours.toString().padStart(2, '0');
+    const min = dt.getMinutes().toString().padStart(2, '0');
+
+    document.getElementById(`${prefix}yyyy`).value = yyyy;
+    document.getElementById(`${prefix}mm`).value = mm;
+    document.getElementById(`${prefix}dd`).value = dd;
+    document.getElementById(`${prefix}hh`).value = hh;
+    document.getElementById(`${prefix}min`).value = min;
+    document.getElementById(`${prefix}ampm`).value = ampm;
+}
+
+// Main logic
+function setDateTimes() {
+    let now = new Date();
+    let currentTime = now.toTimeString().split(' ')[0]; // 'HH:MM:SS'
+    let currentDate = now.toISOString().split('T')[0];  // 'YYYY-MM-DD'
+
+    // Determine TO datetime (now without seconds)
+    const [hh, mm] = currentTime.split(':');
+    const toDateTime = `${currentDate}T${hh}:${mm}:00`;
+
+    // Determine FROM datetime based on shifts
+    let fromDateTime = null;
+    for (let i = shiftValues.length - 1; i >= 0; i--) {
+        let [shiftName, shiftTime] = shiftValues[i];
+        let shift24 = convertTo24Hour(shiftTime);
+        if (currentTime >= shift24) {
+            fromDateTime = `${currentDate}T${shift24}`;
+            break;
         }
+    }
+    if (!fromDateTime) fromDateTime = `${currentDate}T00:00:00`;
 
-        // Function to determine the from-date based on the current time
-        function setDateTimes() {
-            let now = new Date();
-            let currentTime = now.toTimeString().split(' ')[0]; // 'HH:MM:SS'
-            let currentDate = now.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+    // Populate the custom inputs
+    setCustomDate('', fromDateTime);       // from_date (no prefix)
+    setCustomDate('to_', toDateTime);      // to_date
 
-            // Remove seconds from the current time for to-date
-            let [hours, minutes] = currentTime.split(':');
-            let toDateTime = `${currentDate}T${hours}:${minutes}`;
+    console.log("FROM:", fromDateTime);
+    console.log("TO:", toDateTime);
+}
 
-            // Set the to-date input
-            let toDateElements = document.getElementsByClassName('to-date');
-            for (let element of toDateElements) {
-                element.value = toDateTime;
-            }
+window.addEventListener('load', setDateTimes);
 
-            // Determine the from-date based on the shift values
-            let fromDateTime = null;
-            for (let i = shiftValues.length - 1; i >= 0; i--) {
-                let [shiftName, shiftTime] = shiftValues[i];
-                let shift24HourTime = convertTo24Hour(shiftTime);
-                if (currentTime >= shift24HourTime) {
-                    fromDateTime = `${currentDate}T${shift24HourTime}`;
-                    break;
-                }
-            }
-            if (!fromDateTime) {
-                fromDateTime = `${currentDate}T00:00:00`; // Default to start of the day if no shift is found
-            }
 
-            // Set the from-date input
-            let fromDateElements = document.getElementsByClassName('from-date');
-            for (let element of fromDateElements) {
-                element.value = fromDateTime;
-            }
 
-            console.log('Current time:', currentTime);
-            console.log('To date-time (without seconds):', toDateTime);
-            console.log('From date-time:', fromDateTime);
-        }
 
-        setDateTimes();
+
+
+
+
+
+
+
 
 
 
@@ -486,55 +637,224 @@ var shiftValues = JSON.parse('{{ shift_values|escapejs }}');
 
         const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
 
-// Focusable elements in navigation order
+// === Helper: Cycle parameter button ===
+function cycleParameterName() {
+    currentIndex = (currentIndex + 1) % parameterNames.length;
+    document.getElementById('parameter_button').textContent = parameterNames[currentIndex];
+}
+
+// === Helper: Cycle sample size button ===
+function cycleSampleSize() {
+    currentSampleSizeIndex = (currentSampleSizeIndex + 1) % sampleSizes.length;
+    document.getElementById('sample_size_button').textContent = sampleSizes[currentSampleSizeIndex];
+}
+
+// === Helper: Cycle <select> options ===
+function cycleSelect(selectElement, direction) {
+    const options = selectElement.options;
+    const currentIndex = selectElement.selectedIndex;
+    const newIndex = (direction === 'UP')
+        ? (currentIndex - 1 + options.length) % options.length
+        : (currentIndex + 1) % options.length;
+    selectElement.selectedIndex = newIndex;
+    selectElement.dispatchEvent(new Event('change'));
+}
+
+// === Datetime part auto-focus ===
+const datetimeIds = ["dd","mm",  "yyyy", "hh", "min"];
+
+datetimeIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.addEventListener("input", () => {
+        if (el.value.length >= el.maxLength) {
+            const nextId = datetimeIds[i + 1];
+            if (nextId) document.getElementById(nextId).focus();
+            else document.getElementById("ampm").focus();
+        }
+    });
+});
+
+const toDatetimeIds = ["to_dd","to_mm",  "to_yyyy", "to_hh", "to_min"];
+
+toDatetimeIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.addEventListener("input", () => {
+        if (el.value.length >= el.maxLength) {
+            const nextId = toDatetimeIds[i + 1];
+            if (nextId) document.getElementById(nextId).focus();
+            else document.getElementById("to_ampm").focus();
+        }
+    });
+});
+
+
+// === Convert to ISO datetime string ===
+function getFromDateISO() {
+    let mm = document.getElementById("mm").value.padStart(2, '0');
+    let dd = document.getElementById("dd").value.padStart(2, '0');
+    let yyyy = document.getElementById("yyyy").value;
+    let hh = parseInt(document.getElementById("hh").value, 10);
+    let min = document.getElementById("min").value.padStart(2, '0');
+    let ampm = document.getElementById("ampm").value;
+
+    if (ampm === "PM" && hh < 12) hh += 12;
+    if (ampm === "AM" && hh === 12) hh = 0;
+
+    hh = String(hh).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}
+
+
+function getToDateISO() {
+    let mm = document.getElementById("to_mm").value.padStart(2, '0');
+    let dd = document.getElementById("to_dd").value.padStart(2, '0');
+    let yyyy = document.getElementById("to_yyyy").value;
+    let hh = parseInt(document.getElementById("to_hh").value, 10);
+    let min = document.getElementById("to_min").value.padStart(2, '0');
+    let ampm = document.getElementById("to_ampm").value;
+
+    if (ampm === "PM" && hh < 12) hh += 12;
+    if (ampm === "AM" && hh === 12) hh = 0;
+
+    hh = String(hh).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}
+
 const focusableIds = [
-    "from_date",
+    // from_date fields
+    "dd","mm",  "yyyy", "hh", "min", "ampm",
     "shift_select",
-    "to_date",
-    "parameter_button",
-    "mode",
-    "sample_size_button",
-    "search_btn",
-    "download_btn"
+    // to_date fields
+    "to_dd", "to_mm", "to_yyyy", "to_hh", "to_min", "to_ampm",
+    // other fields
+     "parameter_button", "mode",
+    "sample_size_button", "search_btn", "download_btn"
 ];
 
 let currentFocusIndex = 0;
+let digitBuffer = {};  // Tracks typed digits per field
 
-// Focus the first element on page load
+document.addEventListener("keydown", function (event) {
+    const activeElement = document.activeElement;
+
+    if (activeElement.tagName === "INPUT" && /^\d$/.test(event.key)) {
+        event.preventDefault();  // Prevent default typing
+
+        const fieldId = activeElement.id;
+        const maxLen = activeElement.maxLength || 2;
+
+        if (!digitBuffer[fieldId]) {
+            digitBuffer[fieldId] = "";
+        }
+
+        digitBuffer[fieldId] += event.key;
+        activeElement.value = digitBuffer[fieldId];
+
+        if (digitBuffer[fieldId].length >= maxLen) {
+            digitBuffer[fieldId] = "";
+            const index = focusableIds.indexOf(fieldId);
+            const nextIndex = (index + 1) % focusableIds.length;
+            currentFocusIndex = nextIndex;
+            document.getElementById(focusableIds[nextIndex]).focus();
+        }
+    }
+});
+
+
+
 window.addEventListener("load", () => {
     document.getElementById(focusableIds[currentFocusIndex]).focus();
 });
 
+// === Keypad Input Handler ===
 keyboardSocket.onmessage = function (event) {
     const data = JSON.parse(event.data);
     const key = data.key;
+   ////////////////////////////////////////////////
+
+
+   const activeElement = document.activeElement;
+    const activeId = activeElement.id;
+    const currentIndex = focusableIds.indexOf(activeId);
 
     switch (key) {
         case "F6":
             document.getElementById("exit_btn").click();
             break;
 
-        case "RGT":
-            currentFocusIndex = (currentFocusIndex + 1) % focusableIds.length;
-            document.getElementById(focusableIds[currentFocusIndex]).focus();
+            case "RGT":
+            if (currentIndex !== -1) {
+                const nextIndex = (currentIndex + 1) % focusableIds.length;
+                document.getElementById(focusableIds[nextIndex]).focus();
+            }
             break;
 
         case "LFT":
-            currentFocusIndex =
-                (currentFocusIndex - 1 + focusableIds.length) % focusableIds.length;
-            document.getElementById(focusableIds[currentFocusIndex]).focus();
+            if (currentIndex !== -1) {
+                const prevIndex = (currentIndex - 1 + focusableIds.length) % focusableIds.length;
+                document.getElementById(focusableIds[prevIndex]).focus();
+            }
+            break;
+
+        case "UP":
+        case "DWN":
+            if (activeElement.tagName === "SELECT") {
+                cycleSelect(activeElement, key);
+            }
             break;
 
         case "ENT":
-            const activeElement = document.activeElement;
-            if (activeElement.tagName === "BUTTON") {
-                activeElement.click(); // Trigger button clicks
+            if (activeElement.id === "parameter_button") {
+                cycleParameterName();
+            } else if (activeElement.id === "sample_size_button") {
+                cycleSampleSize();
+            } else if (
+                activeElement.tagName === "BUTTON" ||
+                activeElement.id === "search_btn" ||
+                activeElement.id === "download_btn"
+            ) {
+                activeElement.click();
+            } else {
+                // If inside datetime inputs, move to next on ENT
+                const currentId = activeElement.id;
+                const index = focusableIds.indexOf(currentId);
+                if (index >= 0) {
+                    const nextIndex = (index + 1) % focusableIds.length;
+                    currentFocusIndex = nextIndex;
+                    document.getElementById(focusableIds[nextIndex]).focus();
+                }
             }
             break;
+
+            default:
+    if (/^\d$/.test(key) && activeElement.tagName === "INPUT") {
+        const fieldId = activeElement.id;
+        const maxLen = activeElement.maxLength || 2;  // default to 2 if not set
+
+        // Initialize buffer if not present
+        if (!digitBuffer[fieldId]) {
+            digitBuffer[fieldId] = "";
+        }
+
+        // Append digit to buffer
+        digitBuffer[fieldId] += key;
+
+        // Overwrite value with buffer
+        activeElement.value = digitBuffer[fieldId];
+
+        // Auto-move if buffer length reached max
+        if (digitBuffer[fieldId].length >= maxLen) {
+            digitBuffer[fieldId] = "";  // reset buffer
+            const index = focusableIds.indexOf(fieldId);
+            const nextIndex = (index + 1) % focusableIds.length;
+            currentFocusIndex = nextIndex;
+            document.getElementById(focusableIds[nextIndex]).focus();
+        }
+    }
+    break;
+
     }
 };
-
-
 
     </script>
 </body>
