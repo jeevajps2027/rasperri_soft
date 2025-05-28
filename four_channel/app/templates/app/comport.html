@@ -64,6 +64,30 @@
 }
 
 
+.backup-data-wrapper{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    gap: 1px;
+    border: 2px solid black;
+    padding: 5px;
+    border-radius: 4px;
+    width: 26vw;
+    background-color: white;
+    font-size: 1vw;
+    margin-left: 25%;
+}
+.backup-data {
+    width: 3em;
+    text-align: center;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+}
+
+.backup-data:focus {
+    background-color: #eef;
+}
 
 </style>
 <body>
@@ -166,7 +190,7 @@
             <div class="left_container">
                 <button id="operators" class="toggle-btn">OPERATORS</button>
                 <button id="shift_settings" class="toggle-btn">SHIFT SETTINGS</button>
-                <button id="backup" class="toggle-btn">BACKUP</button>
+                <button id="open_backup" class="toggle-btn">BACKUP</button>
                 <button id="parameter_factor" class="toggle-btn">PARAMETER FACTOR</button>
             </div>
             <div class="right_container" style="overflow-y: auto;">
@@ -268,7 +292,26 @@
                     </center>
                     <div class="custom-border" style="margin-top: 30px;"> 
                         <label for="backup" style="margin-top: 30px;">BACKUPDATE:</label>
-                        <input type="datetime-local" class="backup-data" value="{{ backup_date }}" id="backup_data" name="backup_data" style="width: 200px;"><br><br>
+                        <!-- <input type="datetime-local" class="backup-data" id="backup_data" name="backup_data" style="width: 200px;"><br><br> -->
+
+                        <div id="backup_data" class="backup-data-wrapper">
+                            <input type="text" id="dd" maxlength="2" placeholder="DD" class="backup-data focusable" />
+                            /
+                            <input type="text" id="mm" maxlength="2" placeholder="MM" class="backup-data focusable" />
+                            /
+                            
+                            <input type="text" id="yyyy" maxlength="4" placeholder="YYYY" class="backup-data focusable" />
+                            &nbsp;
+                            <input type="text" id="hour" maxlength="2" placeholder="HH" class="backup-data focusable" />
+                            :
+                            <input type="text" id="minute" maxlength="2" placeholder="MM" class="backup-data focusable" />
+                            &nbsp;
+                            <select id="ampm_back" class="backup-data ampm-select focusable">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
+                        
                         <label for="confirm_backup" style="margin-top: 30px;" hidden>Confirm Backup:</label>
                         <input type="checkbox" id="confirm_backup" name="confirm_backup" hidden><br><br>
                         <textarea style="height: 100%; width: 70%; font-weight: bold; font-size: 1vw;" readonly>
@@ -280,9 +323,9 @@
                         </textarea>
                     </div><br>
                     <a href="{% url 'measurement' %}">
-                        <button type="button" id="cancel-btn"><b>Cancel</b></button>
+                        <button type="button" id="cancel-btn" class="focusable"><b>Cancel</b></button>
                     </a>
-                    <button type="button" id="save-btn-4"><b>Save</b></button>                  
+                    <button type="button" id="save-btn-4" class="focusable"><b>Save</b></button>                  
                 </div>
 
 <div id="table4" class="table hidden">
@@ -293,7 +336,7 @@
     <div class="form-group">
         <label for="part_model" class="form-label">PART MODEL</label>
         {% if part_model_values %}
-            <select id="part_model" name="part_model" class="form-control" required onchange="sendPartModelValue()">
+            <select id="part_model" name="part_model" class="form-control focusable" required onchange="sendPartModelValue()">
                 <option value="" disabled selected>Select a part model</option>
                 {% for part_model in part_model_values %}
                     <option value="{{ part_model }}">{{ part_model }}</option>
@@ -306,13 +349,13 @@
 
     <div class="form-group">
         <label for="parameter_name" class="form-label">PARAMETER NAME</label>
-        <select id="parameter_name" name="parameter_name" class="form-control" required>
+        <select id="parameter_name" name="parameter_name" class="form-control focusable" required>
         </select>
     </div>
 
     <div class="form-group">
         <label for="method" class="form-label">METHOD</label>
-        <select id="method" name="method" class="form-control" required>
+        <select id="method" name="method" class="form-control focusable" required>
             <option value="+">+</option>
             <option value="-">-</option>
         </select>
@@ -320,14 +363,17 @@
 
     <div class="form-group">
         <label for="value" class="form-label">VALUE</label>
-        <input type="text" id="value" name="value" class="form-control" required>
+        <input type="text" id="value" name="value" class="form-control focusable" required>
     </div>
 
     <a href="{% url 'measurement' %}">
-        <button type="button" id="cancel-btn"><b>Cancel</b></button>
+        <button type="button" id="cancel-btn" class="focusable"><b>Cancel</b></button>
     </a>
-    <button type="submit" id="save-btn-5"><b>Save</b></button>
+    <button type="submit" id="save-btn-5" class="focusable"><b>Save</b></button>
 </div>
+
+
+
 </div>
 </div>
 
@@ -452,48 +498,53 @@ document.getElementById("close_btn").addEventListener("click", function() {
 // this is for the backup script
 
 
+document.getElementById('save-btn-4').addEventListener('click', function () {
+    const dd = document.getElementById('dd').value.trim().padStart(2, '0');
+    const mm = document.getElementById('mm').value.trim().padStart(2, '0');
+    const yyyy = document.getElementById('yyyy').value.trim();
+    let hh = document.getElementById('hour').value.trim();
+    let min = document.getElementById('minute').value.trim();
+    const ampm = document.getElementById('ampm_back').value;
 
-    // Add event listener for save button
-    document.getElementById('save-btn-4').addEventListener('click', function () {
+    const confirmBackup = document.getElementById('confirm_backup').checked;
 
-const tableId = $('#save-btn-4').closest('div.table').attr('id');
-console.log('Table ID:', tableId); // Console log the table ID
+    // Input validation
+    if (!dd || !mm || !yyyy || !hh || !min || !ampm) {
+        alert('Please fill in all backup date fields before saving.');
+        return;
+    }
 
-// Get the values from the input fields
-const backupDate = document.getElementById('backup_data').value; // Get input value
-const confirmBackup = document.getElementById('confirm_backup').checked; // Get checkbox state
+    // Convert to integers
+    hh = parseInt(hh, 10);
+    min = parseInt(min, 10);
 
-// Function to format the date and time
-function formatDateTime(dateTime) {
-const date = new Date(dateTime); // Convert to Date object
-const day = date.getDate().toString().padStart(2, '0');
-const month = (date.getMonth() + 1).toString().padStart(2, '0'); // January is 0
-const year = date.getFullYear();
-let hours = date.getHours();
-const minutes = date.getMinutes().toString().padStart(2, '0');
-const ampm = hours >= 12 ? 'PM' : 'AM'; // Determine AM or PM
-hours = hours % 12; // Convert to 12-hour format
-hours = hours ? hours : 12; // 0 should be converted to 12
-const timeString = hours + ':' + minutes + ':00 ' + ampm; // Add seconds and AM/PM
-return `${day}-${month}-${year} ${timeString}`; // Final formatted string
-}
+    if (isNaN(hh) || isNaN(min) || hh < 1 || hh > 12 || min < 0 || min > 59) {
+        alert('Please enter valid hour (1-12) and minute (0-59).');
+        return;
+    }
 
-if (!backupDate || isNaN(new Date(backupDate).getTime())) {
-    alert('Please select a valid backup date before saving.');
-    return;
-}
+    // Convert 12-hour format to 24-hour
+    let hours24 = hh;
+    if (ampm === 'PM' && hh !== 12) {
+        hours24 += 12;
+    } else if (ampm === 'AM' && hh === 12) {
+        hours24 = 0;
+    }
 
-// Format the backup date
-const formattedDate = formatDateTime(backupDate);
+    const hhStr = hours24.toString().padStart(2, '0');
+    const minStr = min.toString().padStart(2, '0');
 
-// Prepare the data to send
-const data = {
-request_type: 'backup_date',  // Specify the request type
-backup_data: formattedDate,   // Use the formatted date
-confirm_backup: confirmBackup // Send checkbox state
-};
+    // Final format
+    const formattedDate = `${dd}-${mm}-${yyyy} ${hhStr}:${minStr}:00 ${ampm}`;
+    console.log("Formatted Backup Date:", formattedDate);
 
-sessionStorage.setItem('showOperatorSettings', 'true');
+    const data = {
+        request_type: 'backup_date',
+        backup_data: formattedDate,
+        confirm_backup: confirmBackup
+    };
+
+    sessionStorage.setItem('showOperatorSettings', 'true');
 
 // Send an AJAX POST request
 fetch('/comport/', { // Leave the URL empty to use the current endpoint
@@ -1450,7 +1501,7 @@ function handleT9Input(key) {
     }
 }
 ///////////////////////////////////////////////////////////////////////////////////////
-
+// SHIFT SETTING KEYPAD CODE 
 
 document.getElementById("shift_settings").addEventListener("click", () => {
     const table2 = document.getElementById("table2");
@@ -1541,6 +1592,209 @@ function handleShiftSettingsInput(key) {
     }
 }
 
+//----------------------------------------BACKUP SETTINGS--------------------------------------------//
+
+
+
+document.getElementById("open_backup").addEventListener("click", () => {
+    const table3 = document.getElementById("table3");
+    if (table3) {
+        table3.classList.remove("hidden");
+
+        const table1 = document.getElementById("table1");
+        if (table1) table1.classList.add("hidden");
+
+        const table2 = document.getElementById("table2");
+        if (table2) table2.classList.add("hidden");
+
+        // Reset focus index or selection logic if needed
+
+        setTimeout(() => {
+            const ddInput = document.getElementById("dd");
+
+            if (ddInput) {
+                ddInput.focus();
+
+                // Optional: move cursor to end
+                const cursorPos = ddInput.value.length;
+                ddInput.setSelectionRange(cursorPos, cursorPos);
+
+                // Highlight the input as focused
+                document.querySelectorAll(".focusable").forEach(el => el.classList.remove("focused"));
+                ddInput.classList.add("focused");
+
+                console.log("[FOCUS] #dd input is now focused with cursor at end");
+            }
+        }, 100);
+    }
+});
+
+
+
+let backupFocusIndex = 0;
+
+function handleBackupSettingsNavigation(key) {
+    const backupTable = document.getElementById("table3");
+    if (!backupTable || backupTable.classList.contains("hidden")) return;
+
+    const focusables = Array.from(backupTable.querySelectorAll(".focusable"));
+
+    if (focusables.length === 0) return;
+
+    // Remove existing focus style
+    focusables.forEach(el => el.classList.remove("focused"));
+
+    // Update index based on key
+    if (key === "RGT") {
+        backupFocusIndex = (backupFocusIndex + 1) % focusables.length;
+    } else if (key === "LFT") {
+        backupFocusIndex = (backupFocusIndex - 1 + focusables.length) % focusables.length;
+    } else {
+        return; // Ignore other keys
+    }
+
+    // Apply focus and highlight
+    const newEl = focusables[backupFocusIndex];
+    newEl.focus();
+    newEl.classList.add("focused");
+
+    // Move caret to end if input
+    if (newEl.tagName === "INPUT" && typeof newEl.setSelectionRange === "function") {
+        const len = newEl.value.length;
+        newEl.setSelectionRange(len, len);
+    }
+
+    console.log(`[NAV] Backup focus moved to: #${newEl.id}`);
+}
+
+
+//----------------------------------------------PARAMETER FACTOR ---------------------------------------------//
+
+
+
+
+document.getElementById("parameter_factor").addEventListener("click", () => {
+    const table4 = document.getElementById("table4");
+    if (table4) {
+        table4.classList.remove("hidden");
+
+        // Hide other tables
+        const tables = ["table1", "table2", "table3"];
+        tables.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add("hidden");
+        });
+
+        // Set focus to "part_model" after short delay
+        setTimeout(() => {
+            const partModel = document.getElementById("part_model");
+
+            if (partModel) {
+                partModel.focus();
+
+                // Highlight the select as focused
+                document.querySelectorAll(".focusable").forEach(el => el.classList.remove("focused"));
+                partModel.classList.add("focused");
+
+                console.log("[FOCUS] #part_model select is now focused");
+            }
+        }, 100);
+    }
+});
+
+let parameterFocusIndex = 0;
+
+function handleParameterFactorNavigation(key) {
+    const table4 = document.getElementById("table4");
+    if (!table4 || table4.classList.contains("hidden")) return;
+
+    // Elements to focus/navigate
+    const focusables = Array.from(table4.querySelectorAll("#part_model, #parameter_name, #method, #value, #cancel-btn, #save-btn-5"));
+
+    if (focusables.length === 0) return;
+
+    const currentEl = focusables[parameterFocusIndex];
+
+    // Handle up/down for select elements only
+    if (key === "UP" || key === "DWN") {
+        if (currentEl.tagName === "SELECT") {
+            const maxIndex = currentEl.options.length - 1;
+            let newIndex = currentEl.selectedIndex;
+
+            if (key === "UP") {
+                newIndex = (newIndex - 1 + currentEl.options.length) % currentEl.options.length;
+            } else if (key === "DWN") {
+                newIndex = (newIndex + 1) % currentEl.options.length;
+            }
+
+            currentEl.selectedIndex = newIndex;
+            currentEl.focus();
+
+            console.log(`[SELECT] ${key} pressed, new selectedIndex: ${newIndex} for #${currentEl.id}`);
+
+            // Optionally trigger change event if you rely on it
+            currentEl.dispatchEvent(new Event('change'));
+
+            return; // Stop here, don't move focus
+        }
+    }
+
+    // Remove existing focus style for navigation keys LFT and RGT
+    if (key === "LFT" || key === "RGT") {
+        focusables.forEach(el => el.classList.remove("focused"));
+
+        if (key === "RGT") {
+            parameterFocusIndex = (parameterFocusIndex + 1) % focusables.length;
+        } else if (key === "LFT") {
+            parameterFocusIndex = (parameterFocusIndex - 1 + focusables.length) % focusables.length;
+        }
+
+        const newEl = focusables[parameterFocusIndex];
+        newEl.focus();
+        newEl.classList.add("focused");
+
+        // Move caret to end if input
+        if (newEl.tagName === "INPUT" && typeof newEl.setSelectionRange === "function") {
+            const len = newEl.value.length;
+            newEl.setSelectionRange(len, len);
+        }
+
+        console.log(`[NAV] Parameter Factor focus moved to: #${newEl.id}`);
+    }
+
+    const valueInput = document.getElementById("value");
+    if (!valueInput) return;
+
+    // Check if #value is focused
+    if (document.activeElement === valueInput) {
+        if (/^[0-9]$/.test(key)) {
+            // Prevent default behavior if you want to fully control input
+            // (optional, depending on your event context)
+            
+            if (key === lastValueKey) {
+                // Same key pressed twice → add '.'
+                valueInput.value += '.';
+                lastValueKey = null; // reset
+            } else {
+                valueInput.value += key;
+                lastValueKey = key;
+            }
+
+            // Move caret to end
+            const len = valueInput.value.length;
+            valueInput.setSelectionRange(len, len);
+            valueInput.focus();
+
+            console.log(`[PARAMETER FACTOR] Added '${valueInput.value.slice(-1)}'`);
+        } else {
+            lastValueKey = null; // reset if other key pressed
+        }
+    }
+     // New: If focused element is button and ENT pressed → click it
+     if (key === "ENT" && currentEl.tagName === "BUTTON") {
+        currentEl.click();
+    }
+}
 
 
 
@@ -1551,7 +1805,7 @@ function handleShiftSettingsInput(key) {
 const settingsButtons = [
     document.getElementById("operators"),
     document.getElementById("shift_settings"),
-    document.getElementById("backup"),
+    document.getElementById("open_backup"),
     document.getElementById("parameter_factor")
 ];
 
@@ -1663,11 +1917,11 @@ keyboardSocket.onmessage = function(event) {
 
 // Handle secondary settings navigation ONLY if table2 is hidden
 if (document.querySelector('.sub-container-2').style.display !== "none" &&
-    (document.getElementById("table2")?.classList.contains("hidden") ?? true)) {
+    (document.getElementById("table2")?.classList.contains("hidden") ?? true) && 
+    (document.getElementById("table3")?.classList.contains("hidden") ?? true) &&
+    (document.getElementById("table4")?.classList.contains("hidden") ?? true)) {
     handleSettingsNavigation(key);
 }
-
-
 
 
 
@@ -1758,6 +2012,16 @@ if ((key === "UP" || key === "DWN") && document.getElementById("table2") && !doc
     }
 }
 
+if (key === "F9") {
+    const table2 = document.getElementById("table2");
+    if (table2) {
+        table2.classList.toggle("hidden");
+        console.log(`[TOGGLE] Table2 visibility toggled. Now hidden: ${table2.classList.contains("hidden")}`);
+    }
+    return;
+}
+
+
 
     
 
@@ -1770,6 +2034,127 @@ if ((key === "UP" || key === "DWN") && document.getElementById("table2") && !doc
         return;
     }
 }
+
+
+
+// Handle backup settings (table3)
+if (document.getElementById("table3") && !document.getElementById("table3").classList.contains("hidden")) {
+    const activeElement = document.activeElement;
+
+    // Navigation
+    handleBackupSettingsNavigation(key);
+
+    // Handle digit input
+    if (/^[0-9]$/.test(key)) {
+    if (activeElement && activeElement.tagName === "INPUT" && activeElement.id !== "ampm_back") {
+        const id = activeElement.id;
+        let currentValue = activeElement.value;
+
+        const limits = {
+            dd:  { maxLen: 2, maxVal: 31 },
+            mm:  { maxLen: 2, maxVal: 12 },
+            hour:{ maxLen: 2, maxVal: 12 },
+            minute:{ maxLen: 2, maxVal: 59 },
+            yyyy:{ maxLen: 4 }
+        };
+
+        if (!(id in limits)) return;
+
+        const { maxLen, maxVal } = limits[id];
+
+        if (currentValue.length < maxLen) {
+            currentValue += key;
+
+            // Check value range if maxVal is defined and enough digits entered
+            if (maxVal !== undefined && currentValue.length === maxLen) {
+                const numericValue = parseInt(currentValue, 10);
+                if (numericValue > maxVal) {
+                    console.warn(`[INVALID] ${id.toUpperCase()} value ${numericValue} exceeds max allowed ${maxVal}`);
+                    return; // Reject input
+                }
+            }
+
+            activeElement.value = currentValue;
+
+            // Move caret to end
+            const len = currentValue.length;
+            activeElement.setSelectionRange(len, len);
+            activeElement.focus();
+            activeElement.classList.add("focused");
+
+            console.log(`[INPUT] Inserted ${key} in #${id}`);
+        } else {
+            console.log(`[LIMIT] Max length reached for #${id}`);
+        }
+    }
+    return;
+}
+
+
+
+    // Handle backspace with F10
+    if (key === "F10") {
+        if (activeElement && activeElement.tagName === "INPUT") {
+            activeElement.value = activeElement.value.slice(0, -1);
+
+            // Maintain caret
+            const len = activeElement.value.length;
+            activeElement.setSelectionRange(len, len);
+            activeElement.focus();
+            activeElement.classList.add("focused");
+
+            console.log(`[BACKSPACE] F10 pressed in #${activeElement.id}`);
+        }
+        return;
+    }
+
+    if (key === "F9") {
+    const table3 = document.getElementById("table3");
+    if (table3) {
+        table3.classList.toggle("hidden");
+        console.log(`[TOGGLE] Table2 visibility toggled. Now hidden: ${table3.classList.contains("hidden")}`);
+    }
+    return;
+}
+
+
+    // Handle UP/DWN for AM/PM
+    if ((key === "UP" || key === "DWN") && activeElement.id === "ampm_back") {
+        const select = activeElement;
+        const options = Array.from(select.options);
+        const currentIndex = select.selectedIndex;
+
+        let newIndex = key === "UP"
+            ? (currentIndex - 1 + options.length) % options.length
+            : (currentIndex + 1) % options.length;
+
+        select.selectedIndex = newIndex;
+        select.focus();
+        select.classList.add("focused");
+
+        console.log(`[AMPM] ${key} toggled to ${select.value}`);
+        return;
+    }
+
+     // Handle Enter key press on focused button
+     if (key === "ENT") {
+        if (activeElement && activeElement.tagName === "BUTTON") {
+            activeElement.click();
+            console.log(`[CLICK] Button #${activeElement.id} clicked by ENT`);
+        }
+        return;
+    }
+
+    
+}
+
+
+if (document.getElementById("table4") && !document.getElementById("table4").classList.contains("hidden")) {
+    handleParameterFactorNavigation(key);
+}
+
+
+
 
 };
 
