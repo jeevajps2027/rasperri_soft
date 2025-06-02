@@ -168,7 +168,7 @@ class KeypadController:
         self.rows_2 = [DigitalOutputDevice(pin, active_high=False, initial_value=False) for pin in [27, 26, 25, 24]]
         self.cols_2 = [DigitalInputDevice(pin, pull_up=True) for pin in [17, 18, 22, 23]]
         self.KEYPAD_2 = [
-            ["C1", "C2", "C3", "V Key"],
+            ["C1", "C2", "C3", "V-Key"],
             ["C4", "C5", "C6", "TAB"],
             ["F1", "F2", "F3", "F6"],
             ["F9", "F10", "ALP/NUM", "F12"]

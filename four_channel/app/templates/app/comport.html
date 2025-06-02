@@ -96,7 +96,7 @@
     <div class="container-1-1">
         <label>GENERAL SETTINGS</label>
         <button type="button" id="close_btn">
-            <i class="fas fa-times" id="close_icon"></i>
+            <i class="fas fa-times" id="close_icon"></i>F12
         </button>
     </div>
     <div class="container-1-2">
@@ -105,7 +105,7 @@
         <button id="comport_btn" onclick="activateButton('comport_btn'); showSubContainer(1)">COMPORT SETTINGS [F1]</button>
         <button id="settings_btn" onclick="activateButton('settings_btn'); showSubContainer(2)">SETTINGS [F2]</button>
         <button id="cmc_btn" onclick="activateButton('cmc_btn'); showSubContainer(3)">CNC SETTINGS [F3]</button>
-        <button id="parameter-settings" onclick="activateButton('parameter-settings');">PARAMETER SETTINGS [F4]</button>
+        <button id="parameter-settings" onclick="activateButton('parameter-settings');">PARAMETER SETTINGS [F6]</button>
         
         
     </div>
@@ -1794,6 +1794,15 @@ function handleParameterFactorNavigation(key) {
      if (key === "ENT" && currentEl.tagName === "BUTTON") {
         currentEl.click();
     }
+
+    if (key === "F9") {
+    const table4 = document.getElementById("table4");
+    if (table4) {
+        table4.classList.toggle("hidden");
+        console.log(`[TOGGLE] Table2 visibility toggled. Now hidden: ${table4.classList.contains("hidden")}`);
+    }
+    return;
+}
 }
 
 
@@ -1882,7 +1891,7 @@ keyboardSocket.onmessage = function(event) {
         "F1": "comport_btn",
         "F2": "settings_btn",
         "F3": "cmc_btn",
-        "F4": "parameter-settings"
+        "F6": "parameter-settings"
     };
 
     if (key in keyMap) {
@@ -1909,6 +1918,10 @@ keyboardSocket.onmessage = function(event) {
     if (document.querySelector('.sub-container-1').style.display !== "none") {
         handleFormNavigation(key);
     }
+
+    if (key === "F12") {
+            document.getElementById("close_btn").click();
+        } 
 
     // // Handle secondary settings navigation
     // if (document.querySelector('.sub-container-2').style.display !== "none") {
