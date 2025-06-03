@@ -70,9 +70,8 @@
 
 #authSection{
     height: 50%;
-    width: 25%;
-    border: 2px solid black;
-    border-radius: 15px;
+    width: 23%;
+  
 }
 
 
@@ -102,9 +101,26 @@ input[type="password"]:focus {
 
 
 input:focus, button:focus {
-    outline: 3px solid #00f;
+    outline: none;
+  border: 2px solid blue !important;
+  box-shadow: 0 0 7px blue;
+   
+}
+#cancel_btn{
+    width: 50%;
+    font-weight: bold;
+    background-color: yellow;
+    border-radius: 10px;
+    margin-top: 5px;
 }
 
+#ok_btn{
+    width: 50%;
+    font-weight: bold;
+    background-color: red;
+    border-radius: 10px;
+    margin-top: 5px;
+}
 
 </style>
 
@@ -155,10 +171,10 @@ input:focus, button:focus {
 
     <div id="authSection" style="display: none;">
         <input type="text" id="user" placeholder="Username"><br>
-        <input type="password" id="pass" placeholder="Password"><br>
+        <input type="password" id="pass" placeholder="Password" style="margin-top: 5px;"><br>
         <div style="display: flex;">
-        <button style="width: 50%;font-weight: bold;background-color: yellow;" id="cancel_btn" onclick="clearApp()">CANCEL</button>
-        <button style="width: 50%;font-weight: bold;background-color: red;" id="ok_btn" onclick="closeApp()">OK</button>
+        <button  id="cancel_btn" onclick="clearApp()">CANCEL</button>
+        <button  id="ok_btn" onclick="closeApp()">OK</button>
     </div>
         <p id="error" style="color: red; display: none;">Invalid username or password!</p>
     </div>

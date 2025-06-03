@@ -92,6 +92,53 @@
   box-shadow: 0 0 5px red;
 }
 
+
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px #000000aa;
+  max-width: 400px;
+}
+
+.modal-box button {
+  margin-top: 20px;
+  padding: 8px 20px;
+  font-size: 16px;
+}
+
+#notificationOkBtn:focus {
+    outline: 2px solid #007bff;
+    background-color: #e6f0ff;
+    box-shadow: 0 0 5px blue;
+}
+
+
+#dynamicOkBtn:focus {
+    outline: 2px solid blue;
+    outline-offset: 2px;
+    box-shadow: 0 0 5px blue;
+}
+
+
+
+
     </style>
 
 
@@ -200,6 +247,15 @@
 </div>
 
 
+            <!-- Custom Notification Modal -->
+            <div id="notificationModal" style="display: none;" class="modal-overlay">
+                <div class="modal-box">
+                  <p id="notificationMessage">This is a custom notification.</p>
+                  <button id="notificationOkBtn">OK</button>
+                </div>
+              </div>
+                
+
 <script>
     
 
@@ -207,6 +263,26 @@ document.addEventListener("DOMContentLoaded", function () {
     const inputs = document.querySelectorAll("input");
     inputs.forEach(input => input.setAttribute("autocomplete", "off"));
 });
+
+
+
+let isNotificationOpen = false;
+
+function showNotifications(message) {
+    isNotificationOpen = true;
+    document.getElementById("notificationMessage").textContent = message;
+    document.getElementById("notificationModal").style.display = "flex";
+    document.getElementById("notificationOkBtn").focus();
+
+    document.getElementById("notificationOkBtn").onclick = () => {
+        document.getElementById("notificationModal").style.display = "none";
+        isNotificationOpen = false;
+
+       
+    };
+}
+
+
 
 document.addEventListener("keydown", function (event) {
     // Check if F4 is pressed
@@ -643,7 +719,7 @@ $(document).ready(function () {
     $("#save_btn").on("click", function () {
         const partModel = $("#part_model").val();
         if (!partModel) {
-            alert("Part Model is required.");
+            showNotifications("Part Model is required.");
             return;
         }
 
@@ -790,7 +866,7 @@ $(document).ready(function () {
         }
 
         if (validationFailed) {
-            alert(`Validation Error:\n${validationMessage}`);
+            showNotifications(`Validation Error:\n${validationMessage}`);
             return;
         }
 
@@ -1151,7 +1227,7 @@ $(document).ready(function () {
         const partModel = $("#part_model").val();
 
         if (!partModel) {
-            alert("Please enter a Part Model to delete.");
+            showNotifications("Please enter a Part Model to delete.");
             return;
         }
 
@@ -1182,52 +1258,58 @@ $(document).ready(function () {
 
 // Function to show a notification with an OK button
 function showNotification(message, isSuccess) {
-    var notificationElement = document.getElementById('notification');
-    notificationElement.textContent = message;
+    const notificationElement = document.getElementById('notification');
+    notificationElement.innerHTML = ''; // Clear previous content
 
-    if (isSuccess) {
-        notificationElement.style.backgroundColor = 'lightgreen';
-    } else {
-        notificationElement.style.backgroundColor = 'coral';
-    }
+    // Create message text
+    const messageText = document.createElement('p');
+    messageText.textContent = message;
+    notificationElement.appendChild(messageText);
 
-    // Add an "OK" button to the notification
-    var okButton = document.createElement('button');
+    // Style based on success or error
+    notificationElement.style.backgroundColor = isSuccess ? 'lightgreen' : 'coral';
+
+    // Create OK button
+    const okButton = document.createElement('button');
     okButton.textContent = 'OK';
-    okButton.style.display = 'block';   // Make the button a block element
-    okButton.style.margin = 'auto';     // Center the button horizontally
-    okButton.style.marginTop = '10px';  // Add some top margin for spacing
+    okButton.id = 'dynamicOkBtn'; // Unique ID to find it later
+    okButton.style.display = 'block';
+    okButton.style.margin = 'auto';
+    okButton.style.marginTop = '10px';
     okButton.style.padding = '10px';
-    okButton.style.height = '40px';     // Set the button height
-    okButton.style.width = '80px';      // Set the button width
-    okButton.style.border = 'none';     // Remove the default button border
-    okButton.style.backgroundColor = 'orangered'; // Red background color
-    okButton.style.color = 'white';     // White text color
+    okButton.style.height = '40px';
+    okButton.style.width = '80px';
+    okButton.style.border = 'none';
+    okButton.style.backgroundColor = 'orangered';
+    okButton.style.color = 'white';
 
-    // Add event listener to the OK button
-    okButton.addEventListener('click', function() {
-        // Redirect to the desired page (adjust the URL if needed)
+    
+
+    // Add event handler
+    okButton.addEventListener('click', function () {
         window.location.href = '{% url "parameter" %}';
-
-       
     });
 
+    // Add button to notification
     notificationElement.appendChild(okButton);
 
-    // Center the notification vertically and horizontally
+    // Center and show notification
     notificationElement.style.display = 'flex';
     notificationElement.style.flexDirection = 'column';
     notificationElement.style.alignItems = 'center';
-    notificationElement.style.textAlign = 'center';
     notificationElement.style.justifyContent = 'center';
+    notificationElement.style.position = 'fixed';
     notificationElement.style.top = '50%';
     notificationElement.style.left = '50%';
     notificationElement.style.transform = 'translate(-50%, -50%)';
     notificationElement.style.zIndex = '1000';
 
-    // Display the notification
-    notificationElement.style.display = 'block';
+    // Focus the button after rendering
+    setTimeout(() => {
+        okButton.focus();
+    }, 100);
 }
+
 
 
 
@@ -1512,6 +1594,23 @@ keyboardSocket.onmessage = function (event) {
             }
         }
         else if (key === "ENT") {
+
+
+            const active = document.activeElement;
+
+            if (active && active.tagName === "BUTTON") {
+                // Only click if it's one of our OK buttons
+                if (
+                    active.id === "notificationOkBtn" ||
+                    active.id === "dynamicOkBtn"
+                ) {
+                    active.click();
+                    return; // stop further processing
+                }
+            }
+
+
+
     const el = getCurrentFocusedInput();
     if (!el) return;
 

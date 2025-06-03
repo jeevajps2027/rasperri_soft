@@ -21,9 +21,24 @@
     position: relative; /* Required for scrollIntoView to behave correctly */
 }
 
+#spc_btn,#report_btn{
+    width: 15%;
+    height: 60%;
+    margin-left: 5%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2vw;
+    color: black;
+    border: 2px solid black;
+    font-family:'Courier New', Courier, monospace;
+    background-color: rgb(240, 189, 95);
+   
+}
+
 .focused-report-button {
-  outline: 3px solid yellow;
+  outline: 3px solid blue;
   border-radius: 6px;
+  box-shadow: 0 0 5px blue;
 }
 
 
@@ -608,6 +623,8 @@ function sendPartModelToBackend(partModel) {
                         if (!inputValue.startsWith(charLockValue)) {
                             showNotifications(`Input must start with ${charLockValue}`);
                             punchNoField.value = '';
+                            punchNoField.focus();
+
                             return;
                         }
 
@@ -618,6 +635,8 @@ function sendPartModelToBackend(partModel) {
                             
 
                             punchNoField.value = '';
+                            punchNoField.focus();
+
                             return;
                         }
 
