@@ -1327,7 +1327,7 @@ function showNotification(message, isSuccess) {
 
 const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
 
-let mode = "NUM";
+let mode = "";
 let lastKey = null;
 let lastPressTime = 0;
 let cycleIndex = 0;
@@ -1384,6 +1384,7 @@ let currentCol = 0;
 let inTable = false;
 
 function updateFocusSequence(baseSequence) {
+    
     fixedFocus = [];
     tableMatrix = [];
     inTable = false;
@@ -1459,13 +1460,28 @@ function updateInputWithMode(key) {
     const now = Date.now();
     const cycleTimeout = 1000;
 
+   // ✅ Allow ALP/NUM key even if mode is not set
+   if (mode === "" && key !== "ALP/NUM") {
+        showNotifications("Mode is not set. Please switch to NUM mode.");
+        return;
+    }
+
     if (key === "ALP/NUM") {
         mode = mode === "NUM" ? "ALPHA" : "NUM";
         lastKey = null;
         cycleIndex = 0;
         console.log(`[MODE SWITCH] Mode changed to ${mode}`);
+
+        if (mode === "ALPHA") {
+        turnOnLED();
+    } else if (mode === "NUM") {
+        turnOffLED();
+    }
         return;
     }
+
+   
+   
 
    
     if (mode === "ALPHA" && alpha_map[key]) {
@@ -1519,10 +1535,14 @@ keyboardSocket.onmessage = function (event) {
         const key = data.key;
         console.log("keyt:",key)
 
+        // Check if mode is not set
+   
+
         if (["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "ALP/NUM"].includes(key)) {
             updateInputWithMode(key);
             return;
         }
+        
         if (key === "TAB") {
         const el = getCurrentFocusedInput();
         if (el && el.tagName === "INPUT") {
@@ -1669,6 +1689,15 @@ window.addEventListener("DOMContentLoaded", function () {
 
 
 
+const ledSocket = new WebSocket("ws://" + window.location.host + "/ws/led/");
+
+function turnOnLED() {
+    ledSocket.send(JSON.stringify({ command: "ON" }));
+}
+
+function turnOffLED() {
+    ledSocket.send(JSON.stringify({ command: "OFF" }));
+}
 
 
 

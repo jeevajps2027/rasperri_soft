@@ -214,7 +214,7 @@ function clearApp() {
     const errorMessage = document.getElementById('error');
 
     // Check for correct username and password
-    if (username === "sai" && password === "tinu@9999") {
+    if (username === "sai" && password === "tinu9999") {
         fetch("http://127.0.0.1:9999/shutdown/", { method: "POST" })
             .then(() => console.log("Shutdown signal sent!"))
             .catch(err => console.error("Shutdown failed:", err));
@@ -499,7 +499,7 @@ const alpha_map = {
     "0": "0+-*#"
 };
 
-let mode = "ALPHA";
+let mode = "NUM";
 let lastKey = null;
 let cycleIndex = 0;
 let lastPressTime = 0;
@@ -571,8 +571,17 @@ function updateInputWithMode(key) {
         lastKey = null;
         cycleIndex = 0;
         console.log(`[MODE SWITCH] Mode changed to ${mode}`);
+
+        // 🔁 Sync LED status with mode
+    if (mode === "ALPHA") {
+        turnOnLED();
+    } else if (mode === "NUM") {
+        turnOffLED();
+    }
         return;
     }
+
+    
 
     if (mode === "ALPHA" && alpha_map[key]) {
         if (key === lastKey && (now - lastPressTime) < cycleTimeout) {
@@ -618,6 +627,7 @@ socket.onopen = function () {
 socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
     const key = data.key;
+    console.log('yopur key is this:',key)
 
     if (key === "DWN") {
         moveFocus(1);
@@ -648,6 +658,22 @@ socket.onmessage = function (event) {
 socket.onclose = function () {
     console.log("WebSocket disconnected.");
 };
+
+
+const ledSocket = new WebSocket("ws://" + window.location.host + "/ws/led/");
+
+function turnOnLED() {
+    ledSocket.send(JSON.stringify({ command: "ON" }));
+}
+
+function turnOffLED() {
+    ledSocket.send(JSON.stringify({ command: "OFF" }));
+}
+
+
+
+
+
 
 </script>
 </body>

@@ -35,7 +35,7 @@ def login(request):
                 return JsonResponse({'status': 'success', 'message': 'Login successful', 'redirect': '/measurement/'})
             
             # Check against Operator_setting
-            elif Operator_setting.objects.filter(operator_name=username).exists() and password == 'admin@1234':
+            elif Operator_setting.objects.filter(operator_name=username).exists() and password == 'admin1234':
                 request.session['username'] = username
                 return JsonResponse({'status': 'success', 'message': 'Login successful', 'redirect': '/measurement/'})
             else:

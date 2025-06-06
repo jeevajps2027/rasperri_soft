@@ -1534,7 +1534,9 @@ function handleOperatorNavigation(key) {
 
 
 
-let mode = "ALPHA"; // "ALPHA" or "NUM"
+
+
+let mode = ""; // "ALPHA" or "NUM"
 let capsLock = true;
 let lastTabPressTime = 0;
 const doubleTapThreshold = 500; // milliseconds
@@ -1545,6 +1547,8 @@ const cycleTimeout = 1000; // for character cycling
 
 
 function handleT9Input(key) {
+    
+    
     const el = document.activeElement;
     if (!el || el.tagName !== "INPUT") return;
 
@@ -1558,8 +1562,17 @@ function handleT9Input(key) {
         lastKey = null;
         cycleIndex = 0;
         console.log(`[MODE] Switched to ${mode}`);
+             // 🔁 Sync LED status with mode
+    if (mode === "ALPHA") {
+        turnOnLED();
+    } else if (mode === "NUM") {
+        turnOffLED();
+    }
         return;
     }
+
+
+
 
     // ✅ ALPHA MODE TYPING
     if (mode === "ALPHA" && alpha_map[key]) {
@@ -1618,12 +1631,14 @@ document.getElementById("shift_settings").addEventListener("click", () => {
         
         }, 100);
     }
+
 });
 
 
 let shiftFocusIndex = 0;
 
 function handleShiftSettingsNavigation(key) {
+   
     const shiftTable = document.getElementById("table2");
     if (!shiftTable || shiftTable.classList.contains("hidden")) return;
 
@@ -1662,7 +1677,7 @@ function handleShiftSettingsInput(key) {
             activeElement.value = "SHIFT-" + key;
         } else if (["hh", "min"].includes(activeElement.id)) {
             const maxLength = parseInt(activeElement.getAttribute("maxlength") || "2");
-            if (activeElement.value.length < maxLength) {
+            if (activeElement.valu/comport/e.length < maxLength) {
                 activeElement.value += key;
             }
         }
@@ -1682,6 +1697,7 @@ function handleShiftSettingsInput(key) {
 
 
 document.getElementById("open_backup").addEventListener("click", () => {
+
     const table3 = document.getElementById("table3");
     if (table3) {
         table3.classList.remove("hidden");
@@ -1759,6 +1775,7 @@ function handleBackupSettingsNavigation(key) {
 
 
 document.getElementById("parameter_factor").addEventListener("click", () => {
+  
     const table4 = document.getElementById("table4");
     if (table4) {
         table4.classList.remove("hidden");
@@ -1850,8 +1867,11 @@ function handleParameterFactorNavigation(key) {
     const valueInput = document.getElementById("value");
     if (!valueInput) return;
 
+
+
     // Check if #value is focused
     if (document.activeElement === valueInput) {
+        if (mode === "NUM") {
         if (/^[0-9]$/.test(key)) {
             // Prevent default behavior if you want to fully control input
             // (optional, depending on your event context)
@@ -1871,8 +1891,13 @@ function handleParameterFactorNavigation(key) {
             valueInput.focus();
 
             console.log(`[PARAMETER FACTOR] Added '${valueInput.value.slice(-1)}'`);
-        } else {
+        } }else {
             lastValueKey = null; // reset if other key pressed
+             // ❗ Show warning when in ALPHA mode but user tries to enter numbers
+             if (/^[0-9]$/.test(key)) {
+                showNotifications("Please change mode to NUM to enter numbers.");
+                return;
+            }
         }
     }
      // New: If focused element is button and ENT pressed → click it
@@ -1967,6 +1992,7 @@ function activateButton(buttonId) {
 // WebSocket handling
 const keyboardSocket = new WebSocket("ws://" + window.location.host + "/ws/keypad/");
 
+
 keyboardSocket.onmessage = function(event) {
     const data = JSON.parse(event.data);
     const key = data.key;
@@ -1991,6 +2017,25 @@ keyboardSocket.onmessage = function(event) {
         if (key === "F2") {
             settingsActiveIndex = 0;
             updateSettingsFocus();
+            turnOffLED();
+
+            if (mode === "") {
+            showNotifications("Mode is not set. Please switch to NUM mode.");
+
+            // 🔁 Re-focus after a slight delay to allow notification dismissal
+            setTimeout(() => {
+                const table = document.getElementById("table1");
+                table.classList.remove("hidden");
+
+                inTable = true;
+                tableRowIndex = 0;
+                tableColIndex = 0;
+
+                focusTableCell(tableRowIndex, tableColIndex);
+            }, 1000);  // slightly longer delay to let alert finish
+
+            return;
+        }
 
             setTimeout(() => {
                 const table = document.getElementById("table1");
@@ -2040,8 +2085,13 @@ if (document.querySelector('.sub-container-2').style.display !== "none" &&
     if (document.getElementById("table1") && !document.getElementById("table1").classList.contains("hidden")) {
         handleOperatorNavigation(key);
 
+        
+        
+
         if (/^[0-9]$/.test(key) || key === "ALP/NUM") {
             if (inTable) {
+                 // 🔴 Alert if mode is null
+            
                 handleT9Input(key);
                 return;
             }
@@ -2058,13 +2108,61 @@ if (document.querySelector('.sub-container-2').style.display !== "none" &&
     // Navigation first (LFT, RGT, UP, DWN)
     handleShiftSettingsNavigation(key);
 
+    if (key === "ALP/NUM") {
+        mode = mode === "NUM" ? "ALPHA" : "NUM";
+        lastKey = null;
+        cycleIndex = 0;
+        console.log(`[MODE] Switched to ${mode}`);
+                  // 🔁 Sync LED status with mode
+    if (mode === "ALPHA") {
+        turnOnLED();
+    } else if (mode === "NUM") {
+        turnOffLED();
+    }
+   
+        return;
+    }
+    
+
     const activeElement = document.activeElement;
 
     // Input digits only into inputs (#shift, #hh, #min)
+
+    if (mode === "NUM") {
+        if (/^[0-9]$/.test(key)) {
+            handleShiftSettingsInput(key);
+            return;
+        }
+        } else {
+    // ❗ Show warning when in ALPHA mode but user tries to enter numbers
     if (/^[0-9]$/.test(key)) {
-        handleShiftSettingsInput(key);
+        showNotifications("Please change mode to NUM to enter numbers.");
+
+        // 🔁 Re-focus the #shift input after notification
+        setTimeout(() => {
+            const shiftInput = document.getElementById("shift");
+
+            if (shiftInput) {
+                shiftInput.focus();
+
+                // Place cursor at end
+                const cursorPos = shiftInput.value.length;
+                shiftInput.setSelectionRange(cursorPos, cursorPos);
+
+                // Optional: highlight focused style
+                document.querySelectorAll(".focusable").forEach(el => el.classList.remove("focused"));
+                shiftInput.classList.add("focused");
+
+                console.log("[FOCUS RESTORED] #shift input is focused again");
+            }
+        }, 500); // Delay allows notification (e.g. modal/toast) to be dismissed
+
         return;
     }
+}
+
+   
+    
 
     // Handle backspace in these inputs with F10
     if (key === "F10") {
@@ -2145,10 +2243,27 @@ if (key === "F9") {
 // Handle backup settings (table3)
 if (document.getElementById("table3") && !document.getElementById("table3").classList.contains("hidden")) {
     const activeElement = document.activeElement;
+    if (key === "ALP/NUM") {
+        mode = mode === "NUM" ? "ALPHA" : "NUM";
+        lastKey = null;
+        cycleIndex = 0;
+        console.log(`[MODE] Switched to ${mode}`);
+                  // 🔁 Sync LED status with mode
+    if (mode === "ALPHA") {
+        turnOnLED();
+    } else if (mode === "NUM") {
+        turnOffLED();
+    }
+   
+        return;
+    }
 
     // Navigation
     handleBackupSettingsNavigation(key);
 
+
+ 
+    if (mode === "NUM") {
     // Handle digit input
     if (/^[0-9]$/.test(key)) {
     if (activeElement && activeElement.tagName === "INPUT" && activeElement.id !== "ampm_back") {
@@ -2193,7 +2308,14 @@ if (document.getElementById("table3") && !document.getElementById("table3").clas
         }
     }
     return;
-}
+}}
+else {
+            // ❗ Show warning when in ALPHA mode but user tries to enter numbers
+            if (/^[0-9]$/.test(key)) {
+                showNotifications("Please change mode to NUM to enter numbers.");
+                return;
+            }
+    }
 
 
 
@@ -2256,6 +2378,20 @@ if (document.getElementById("table3") && !document.getElementById("table3").clas
 
 if (document.getElementById("table4") && !document.getElementById("table4").classList.contains("hidden")) {
     handleParameterFactorNavigation(key);
+    if (key === "ALP/NUM") {
+        mode = mode === "NUM" ? "ALPHA" : "NUM";
+        lastKey = null;
+        cycleIndex = 0;
+        console.log(`[MODE] Switched to ${mode}`);
+                  // 🔁 Sync LED status with mode
+    if (mode === "ALPHA") {
+        turnOnLED();
+    } else if (mode === "NUM") {
+        turnOffLED();
+    }
+   
+        return;
+    }
 }
 
 
@@ -2285,6 +2421,7 @@ function updateFocus() {
     current.focus();
     focusOrder.forEach(el => el.classList.remove("focused"));
     current.classList.add("focused");
+    
 }
 
 function handleFormNavigation(key) {
@@ -2340,6 +2477,15 @@ window.onload = function() {
 
 
 
+const ledSocket = new WebSocket("ws://" + window.location.host + "/ws/led/");
+
+function turnOnLED() {
+    ledSocket.send(JSON.stringify({ command: "ON" }));
+}
+
+function turnOffLED() {
+    ledSocket.send(JSON.stringify({ command: "OFF" }));
+}
 
 
 

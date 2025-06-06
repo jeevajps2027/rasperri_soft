@@ -8,6 +8,16 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
 import sys
 
+import RPi.GPIO as GPIO
+import time
+
+led_pin = 4  # BCM GPIO 4 (physical pin 7)
+
+# Initialize LED to OFF on module load
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(led_pin, GPIO.OUT)
+GPIO.output(led_pin, GPIO.LOW)
+
 class SerialConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.group_name = 'serial_group'
@@ -103,6 +113,14 @@ class SerialConsumer(AsyncWebsocketConsumer):
                                     self.previous_data[com_port] = message
                                     self.print_com_port_data(com_port, message, length)
 
+
+                                    # 🔴 Blink LED for valid new message
+                                    GPIO.output(led_pin, GPIO.HIGH)
+                                    time.sleep(0.1)
+                                    GPIO.output(led_pin, GPIO.LOW)
+                                    time.sleep(0.1)
+                                    
+
                                     async_to_sync(self.channel_layer.group_send)(self.group_name, {
                                         'type': 'serial_message',
                                         'message': message,
@@ -111,6 +129,9 @@ class SerialConsumer(AsyncWebsocketConsumer):
                                     })
 
                 time.sleep(0.1)
+                
+
+
         except Exception as e:
             print(f"❌ Error in serial read thread for {com_port}: {str(e)}")
         finally:
@@ -118,6 +139,8 @@ class SerialConsumer(AsyncWebsocketConsumer):
                 ser.close()
             self.serial_connections.pop(com_port, None)
             self.serial_threads.pop(com_port, None)
+            GPIO.output(led_pin, GPIO.LOW)
+            print(f"[{com_port}] Serial closed, LED OFF")
 
     def print_com_port_data(self, com_port, message, length):
         """
@@ -126,6 +149,7 @@ class SerialConsumer(AsyncWebsocketConsumer):
         if com_port not in self.printed_lines:
             print(f"{com_port}: {message} (Length: {length})")
             self.printed_lines[com_port] = True
+            
         else:
             print(f"\n{com_port}: {message} (Length: {length})", end="")
 
@@ -252,3 +276,43 @@ class KeypadConsumer(AsyncWebsocketConsumer):
         print(f"[WebSocket] Disconnected client (code {close_code})")
         # Optionally: you could clear the callback if no more clients are connected
         pass
+
+
+
+
+import json
+import RPi.GPIO as GPIO
+from channels.generic.websocket import AsyncWebsocketConsumer
+
+class LEDConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.led_pin = 8  # BCM GPIO pin 8
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.led_pin, GPIO.OUT)
+
+        # Ensure LED is OFF on initial connection
+        GPIO.output(self.led_pin, GPIO.LOW)
+
+        await self.accept()
+        print("[LEDConsumer] Client connected")
+
+    async def disconnect(self, close_code):
+        # 🔴 Turn OFF LED when WebSocket disconnects
+        GPIO.output(self.led_pin, GPIO.LOW)
+        print("[LEDConsumer] Client disconnected - LED OFF")
+
+    async def receive(self, text_data):
+        try:
+            data = json.loads(text_data)
+            command = data.get("command")
+
+            if command == "ON":
+                GPIO.output(self.led_pin, GPIO.HIGH)
+                print("[LED] ON")
+            elif command == "OFF":
+                GPIO.output(self.led_pin, GPIO.LOW)
+                print("[LED] OFF")
+            else:
+                print(f"[LEDConsumer] Unknown command: {command}")
+        except Exception as e:
+            print(f"[LEDConsumer] Error: {e}")
